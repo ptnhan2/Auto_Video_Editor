@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# bmad
+_bmad-output/
+.kilocodemodes
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
