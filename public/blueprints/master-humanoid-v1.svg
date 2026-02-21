@@ -1,0 +1,41 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background for visibility -->
+  <rect width="1024" height="1024" fill="white"/>
+  
+  <!-- Master Blueprint: Standard T-Pose Wireframe -->
+  <!-- Head -->
+  <circle cx="512" cy="150" r="70" stroke="black" stroke-width="5"/>
+  <circle cx="512" cy="150" r="5" fill="red"/> <!-- Pivot: Neck -->
+
+  <!-- Torso -->
+  <rect x="442" y="220" width="140" height="280" stroke="black" stroke-width="5"/>
+  <line x1="512" y1="220" x2="512" y2="500" stroke="blue" stroke-width="2" stroke-dasharray="5 5"/> <!-- Spine -->
+
+  <!-- Left Arm -->
+  <line x1="442" y1="250" x2="150" y2="250" stroke="black" stroke-width="5"/>
+  <circle cx="442" cy="250" r="8" fill="red"/> <!-- Pivot: L Shoulder -->
+  <circle cx="296" cy="250" r="8" fill="red"/> <!-- Pivot: L Elbow -->
+  <circle cx="150" cy="250" r="8" fill="red"/> <!-- Pivot: L Wrist -->
+
+  <!-- Right Arm -->
+  <line x1="582" y1="250" x2="874" y2="250" stroke="black" stroke-width="5"/>
+  <circle cx="582" cy="250" r="8" fill="red"/> <!-- Pivot: R Shoulder -->
+  <circle cx="728" cy="250" r="8" fill="red"/> <!-- Pivot: R Elbow -->
+  <circle cx="874" cy="250" r="8" fill="red"/> <!-- Pivot: R Wrist -->
+
+  <!-- Left Leg -->
+  <line x1="472" y1="500" x2="472" y2="950" stroke="black" stroke-width="5"/>
+  <circle cx="472" cy="500" r="8" fill="red"/> <!-- Pivot: L Hip -->
+  <circle cx="472" cy="725" r="8" fill="red"/> <!-- Pivot: L Knee -->
+  <circle cx="472" cy="950" r="8" fill="red"/> <!-- Pivot: L Ankle -->
+
+  <!-- Right Leg -->
+  <line x1="552" y1="500" x2="552" y2="950" stroke="black" stroke-width="5"/>
+  <circle cx="552" cy="500" r="8" fill="red"/> <!-- Pivot: R Hip -->
+  <circle cx="552" cy="725" r="8" fill="red"/> <!-- Pivot: R Knee -->
+  <circle cx="552" cy="950" r="8" fill="red"/> <!-- Pivot: R Ankle -->
+
+  <!-- Labels for AI guidance (invisible or metadata-only in real use) -->
+  <text x="490" y="100" font-family="Arial" font-size="20">HEAD</text>
+  <text x="480" y="350" font-family="Arial" font-size="20">TORSO</text>
+</svg>

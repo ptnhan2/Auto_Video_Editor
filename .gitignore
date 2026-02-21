@@ -38,6 +38,7 @@ yarn-error.log*
 
 # bmad
 _bmad-output/
+!_bmad-output/planning-artifacts/
 .kilocodemodes
 
 # typescript
