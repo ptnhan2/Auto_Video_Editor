@@ -1,0 +1,33 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Boxy 3/4 View Wireframe V6 (No Markers) -->
+  <g stroke="black" stroke-width="2" fill="none">
+    
+    <!-- Head -->
+    <rect x="460" y="40" width="160" height="160" rx="20" />
+    
+    <!-- Neck -->
+    <rect x="520" y="200" width="40" height="30" />
+    
+    <!-- Torso -->
+    <polygon points="450,230 630,230 610,500 470,500" />
+    
+    <!-- Left Arm -->
+    <polygon points="450,230 480,235 440,350 410,345" />
+    <polygon points="410,345 440,350 400,470 370,465" />
+    
+    <!-- Right Arm -->
+    <polygon points="600,235 630,230 680,350 650,355" />
+    <polygon points="650,355 680,350 730,470 700,475" />
+    
+    <!-- Left Leg -->
+    <polygon points="470,500 510,500 500,720 460,720" />
+    <polygon points="460,720 500,720 490,920 450,920" />
+    <polygon points="450,920 490,920 420,950 350,950 380,920" />
+
+    <!-- Right Leg -->
+    <polygon points="540,500 580,500 600,720 560,720" />
+    <polygon points="560,720 600,720 620,920 580,920" />
+    <polygon points="580,920 620,920 550,950 480,950 510,920" />
+    
+  </g>
+</svg>

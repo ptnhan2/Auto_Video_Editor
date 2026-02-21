@@ -1,5 +1,5 @@
 import { google } from '@ai-sdk/google';
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAI, openai } from '@ai-sdk/openai';
 
 // Primary Model: Gemini 3 Flash Preview (Experimental/Preview)
 export const primaryModel = google('gemini-3-flash-preview');
@@ -20,3 +20,10 @@ export const fallbackModel = deepseek('deepseek-chat');
 export const getModel = (preferFallback = false) => {
   return preferFallback ? fallbackModel : primaryModel;
 };
+
+/**
+ * OpenAI Client for Moderation (Experimental/Direct)
+ */
+export const openaiClient = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
