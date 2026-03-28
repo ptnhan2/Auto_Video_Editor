@@ -1,0 +1,44 @@
+{
+  "title": "Thanh niên nghỉ chân tại trạm xe buýt",
+  "description": "Trong cảnh 1, nhân vật char_001 đi qua đằng sau cột đèn. Trong cảnh 2, nhân vật ngồi vào ghế đá, bị cái bàn che khuất phần chân.",
+  "scenes": [
+    {
+      "sceneId": "scene_01_walking",
+      "backgroundId": "bg_bus_stop_layered",
+      "durationSeconds": 3,
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "walk_cycle",
+          "expressionId": "neutral",
+          "facing": "right",
+          "movement": {
+            "from": "front_left",
+            "to": "mid_center"
+          },
+          "zIndex": 10,
+          "dialogue": "Trời hôm nay mây trong xanh quá!"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_02_resting",
+      "backgroundId": "bg_bus_stop_layered",
+      "durationSeconds": 4,
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "talk_sad",
+          "expressionId": "sad",
+          "facing": "left",
+          "movement": {
+            "from": "mid_center",
+            "to": "wooden_bench"
+          },
+          "zIndex": 10,
+          "dialogue": "Nhưng mà mỏi chân quá, nghỉ chút đã..."
+        }
+      ]
+    }
+  ]
+}

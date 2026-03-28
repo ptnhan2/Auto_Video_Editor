@@ -1,0 +1,4195 @@
+{
+  "pack_id": "female_pack",
+  "asset_type": "expression",
+  "source_image": "female_expression_sprite_sheet_001.png",
+  "source_hashes": {
+    "xml": "89a2e600edb22f7654c4f7273a6d9b54",
+    "png": "7e05be3739bffba36afb86df8ce1899d"
+  },
+  "metrics": {
+    "width": 143,
+    "height": 102
+  },
+  "assets": [
+    {
+      "asset_id": "exp_female_001",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 0,
+          "y": 0,
+          "w": 143,
+          "h": 102,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 102
+        },
+        {
+          "name": "frame_1",
+          "x": 0,
+          "y": 0,
+          "w": 143,
+          "h": 102,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 102
+        },
+        {
+          "name": "frame_2",
+          "x": 143,
+          "y": 0,
+          "w": 143,
+          "h": 102,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 102
+        },
+        {
+          "name": "frame_3",
+          "x": 143,
+          "y": 0,
+          "w": 143,
+          "h": 102,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 102
+        },
+        {
+          "name": "frame_4",
+          "x": 143,
+          "y": 0,
+          "w": 143,
+          "h": 102,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 102
+        },
+        {
+          "name": "frame_5",
+          "x": 143,
+          "y": 0,
+          "w": 143,
+          "h": 102,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 102
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_002",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 286,
+          "y": 0,
+          "w": 151,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_1",
+          "x": 286,
+          "y": 0,
+          "w": 151,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_2",
+          "x": 286,
+          "y": 0,
+          "w": 151,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_3",
+          "x": 437,
+          "y": 0,
+          "w": 151,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_4",
+          "x": 437,
+          "y": 0,
+          "w": 151,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_5",
+          "x": 437,
+          "y": 0,
+          "w": 151,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 111
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_003",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 588,
+          "y": 0,
+          "w": 140,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 140,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_1",
+          "x": 588,
+          "y": 0,
+          "w": 140,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 140,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_2",
+          "x": 588,
+          "y": 0,
+          "w": 140,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 140,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_3",
+          "x": 728,
+          "y": 0,
+          "w": 140,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 140,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_4",
+          "x": 728,
+          "y": 0,
+          "w": 140,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 140,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_5",
+          "x": 728,
+          "y": 0,
+          "w": 140,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 140,
+          "sourceH": 86
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_004",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 868,
+          "y": 0,
+          "w": 100,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 100,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_1",
+          "x": 868,
+          "y": 0,
+          "w": 100,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 100,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_2",
+          "x": 868,
+          "y": 0,
+          "w": 100,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 100,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_3",
+          "x": 968,
+          "y": 0,
+          "w": 100,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 100,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_4",
+          "x": 968,
+          "y": 0,
+          "w": 100,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 100,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_5",
+          "x": 968,
+          "y": 0,
+          "w": 100,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 100,
+          "sourceH": 85
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_005",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1068,
+          "y": 0,
+          "w": 131,
+          "h": 91,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 91
+        },
+        {
+          "name": "frame_1",
+          "x": 1068,
+          "y": 0,
+          "w": 131,
+          "h": 91,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 91
+        },
+        {
+          "name": "frame_2",
+          "x": 1068,
+          "y": 0,
+          "w": 131,
+          "h": 91,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 91
+        },
+        {
+          "name": "frame_3",
+          "x": 1199,
+          "y": 0,
+          "w": 131,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 91
+        },
+        {
+          "name": "frame_4",
+          "x": 1199,
+          "y": 0,
+          "w": 131,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 91
+        },
+        {
+          "name": "frame_5",
+          "x": 1199,
+          "y": 0,
+          "w": 131,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 91
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_006",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1330,
+          "y": 0,
+          "w": 122,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 95
+        },
+        {
+          "name": "frame_1",
+          "x": 1330,
+          "y": 0,
+          "w": 122,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 95
+        },
+        {
+          "name": "frame_2",
+          "x": 1330,
+          "y": 0,
+          "w": 122,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 95
+        },
+        {
+          "name": "frame_3",
+          "x": 1452,
+          "y": 0,
+          "w": 122,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 95
+        },
+        {
+          "name": "frame_4",
+          "x": 1452,
+          "y": 0,
+          "w": 122,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 95
+        },
+        {
+          "name": "frame_5",
+          "x": 1452,
+          "y": 0,
+          "w": 122,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 95
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_007",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1574,
+          "y": 0,
+          "w": 137,
+          "h": 106,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 137,
+          "sourceH": 106
+        },
+        {
+          "name": "frame_1",
+          "x": 1574,
+          "y": 0,
+          "w": 137,
+          "h": 106,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 137,
+          "sourceH": 106
+        },
+        {
+          "name": "frame_2",
+          "x": 1574,
+          "y": 0,
+          "w": 137,
+          "h": 106,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 137,
+          "sourceH": 106
+        },
+        {
+          "name": "frame_3",
+          "x": 1711,
+          "y": 0,
+          "w": 137,
+          "h": 94,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 137,
+          "sourceH": 106
+        },
+        {
+          "name": "frame_4",
+          "x": 1711,
+          "y": 0,
+          "w": 137,
+          "h": 94,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 137,
+          "sourceH": 106
+        },
+        {
+          "name": "frame_5",
+          "x": 1711,
+          "y": 0,
+          "w": 137,
+          "h": 94,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 137,
+          "sourceH": 106
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_008",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1848,
+          "y": 0,
+          "w": 122,
+          "h": 90,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_1",
+          "x": 1848,
+          "y": 0,
+          "w": 122,
+          "h": 90,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_2",
+          "x": 1848,
+          "y": 0,
+          "w": 122,
+          "h": 90,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_3",
+          "x": 0,
+          "y": 111,
+          "w": 122,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_4",
+          "x": 0,
+          "y": 111,
+          "w": 122,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_5",
+          "x": 0,
+          "y": 111,
+          "w": 122,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 122,
+          "sourceH": 90
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_009",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 122,
+          "y": 111,
+          "w": 111,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 111,
+          "sourceH": 66
+        },
+        {
+          "name": "frame_1",
+          "x": 122,
+          "y": 111,
+          "w": 111,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 111,
+          "sourceH": 66
+        },
+        {
+          "name": "frame_2",
+          "x": 122,
+          "y": 111,
+          "w": 111,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 111,
+          "sourceH": 66
+        },
+        {
+          "name": "frame_3",
+          "x": 233,
+          "y": 111,
+          "w": 111,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 111,
+          "sourceH": 66
+        },
+        {
+          "name": "frame_4",
+          "x": 233,
+          "y": 111,
+          "w": 111,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 111,
+          "sourceH": 66
+        },
+        {
+          "name": "frame_5",
+          "x": 233,
+          "y": 111,
+          "w": 111,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 111,
+          "sourceH": 66
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_010",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 344,
+          "y": 111,
+          "w": 117,
+          "h": 82,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 117,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_1",
+          "x": 344,
+          "y": 111,
+          "w": 117,
+          "h": 82,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 117,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_2",
+          "x": 344,
+          "y": 111,
+          "w": 117,
+          "h": 82,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 117,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_3",
+          "x": 461,
+          "y": 111,
+          "w": 117,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 117,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_4",
+          "x": 461,
+          "y": 111,
+          "w": 117,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 117,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_5",
+          "x": 461,
+          "y": 111,
+          "w": 117,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 117,
+          "sourceH": 82
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_011",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 578,
+          "y": 111,
+          "w": 144,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 144,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_1",
+          "x": 578,
+          "y": 111,
+          "w": 144,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 144,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_2",
+          "x": 578,
+          "y": 111,
+          "w": 144,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 144,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_3",
+          "x": 722,
+          "y": 111,
+          "w": 144,
+          "h": 96,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 144,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_4",
+          "x": 722,
+          "y": 111,
+          "w": 144,
+          "h": 96,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 144,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_5",
+          "x": 722,
+          "y": 111,
+          "w": 144,
+          "h": 96,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 144,
+          "sourceH": 111
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_012",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 866,
+          "y": 111,
+          "w": 131,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_1",
+          "x": 866,
+          "y": 111,
+          "w": 131,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_2",
+          "x": 866,
+          "y": 111,
+          "w": 131,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_3",
+          "x": 997,
+          "y": 111,
+          "w": 131,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_4",
+          "x": 997,
+          "y": 111,
+          "w": 131,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_5",
+          "x": 997,
+          "y": 111,
+          "w": 131,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 131,
+          "sourceH": 111
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_013",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1128,
+          "y": 111,
+          "w": 106,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 106,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_1",
+          "x": 1128,
+          "y": 111,
+          "w": 106,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 106,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_2",
+          "x": 1128,
+          "y": 111,
+          "w": 106,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 106,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_3",
+          "x": 1234,
+          "y": 111,
+          "w": 106,
+          "h": 63,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 106,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_4",
+          "x": 1234,
+          "y": 111,
+          "w": 106,
+          "h": 63,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 106,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_5",
+          "x": 1234,
+          "y": 111,
+          "w": 106,
+          "h": 63,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 106,
+          "sourceH": 67
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_014",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1340,
+          "y": 111,
+          "w": 130,
+          "h": 90,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 130,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_1",
+          "x": 1340,
+          "y": 111,
+          "w": 130,
+          "h": 90,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 130,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_2",
+          "x": 1340,
+          "y": 111,
+          "w": 130,
+          "h": 90,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 130,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_3",
+          "x": 1470,
+          "y": 111,
+          "w": 130,
+          "h": 84,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 130,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_4",
+          "x": 1470,
+          "y": 111,
+          "w": 130,
+          "h": 84,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 130,
+          "sourceH": 90
+        },
+        {
+          "name": "frame_5",
+          "x": 1470,
+          "y": 111,
+          "w": 130,
+          "h": 84,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 130,
+          "sourceH": 90
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_015",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1600,
+          "y": 111,
+          "w": 152,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 152,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_1",
+          "x": 1600,
+          "y": 111,
+          "w": 152,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 152,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_2",
+          "x": 1600,
+          "y": 111,
+          "w": 152,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 152,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_3",
+          "x": 1752,
+          "y": 111,
+          "w": 152,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 152,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_4",
+          "x": 1752,
+          "y": 111,
+          "w": 152,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 152,
+          "sourceH": 86
+        },
+        {
+          "name": "frame_5",
+          "x": 1752,
+          "y": 111,
+          "w": 152,
+          "h": 86,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 152,
+          "sourceH": 86
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_016",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1904,
+          "y": 111,
+          "w": 139,
+          "h": 119,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 139,
+          "sourceH": 120
+        },
+        {
+          "name": "frame_1",
+          "x": 1904,
+          "y": 111,
+          "w": 139,
+          "h": 119,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 139,
+          "sourceH": 120
+        },
+        {
+          "name": "frame_2",
+          "x": 1904,
+          "y": 111,
+          "w": 139,
+          "h": 119,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 139,
+          "sourceH": 120
+        },
+        {
+          "name": "frame_3",
+          "x": 0,
+          "y": 230,
+          "w": 139,
+          "h": 120,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 139,
+          "sourceH": 120
+        },
+        {
+          "name": "frame_4",
+          "x": 0,
+          "y": 230,
+          "w": 139,
+          "h": 120,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 139,
+          "sourceH": 120
+        },
+        {
+          "name": "frame_5",
+          "x": 0,
+          "y": 230,
+          "w": 139,
+          "h": 120,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 139,
+          "sourceH": 120
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_017",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 139,
+          "y": 230,
+          "w": 112,
+          "h": 75,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 75
+        },
+        {
+          "name": "frame_1",
+          "x": 139,
+          "y": 230,
+          "w": 112,
+          "h": 75,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 75
+        },
+        {
+          "name": "frame_2",
+          "x": 139,
+          "y": 230,
+          "w": 112,
+          "h": 75,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 75
+        },
+        {
+          "name": "frame_3",
+          "x": 251,
+          "y": 230,
+          "w": 112,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 75
+        },
+        {
+          "name": "frame_4",
+          "x": 251,
+          "y": 230,
+          "w": 112,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 75
+        },
+        {
+          "name": "frame_5",
+          "x": 251,
+          "y": 230,
+          "w": 112,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 75
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_018",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 363,
+          "y": 230,
+          "w": 97,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 97,
+          "sourceH": 71
+        },
+        {
+          "name": "frame_1",
+          "x": 363,
+          "y": 230,
+          "w": 97,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 97,
+          "sourceH": 71
+        },
+        {
+          "name": "frame_2",
+          "x": 363,
+          "y": 230,
+          "w": 97,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 97,
+          "sourceH": 71
+        },
+        {
+          "name": "frame_3",
+          "x": 460,
+          "y": 230,
+          "w": 97,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 97,
+          "sourceH": 71
+        },
+        {
+          "name": "frame_4",
+          "x": 460,
+          "y": 230,
+          "w": 97,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 97,
+          "sourceH": 71
+        },
+        {
+          "name": "frame_5",
+          "x": 460,
+          "y": 230,
+          "w": 97,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 97,
+          "sourceH": 71
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_019",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 557,
+          "y": 230,
+          "w": 116,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 116,
+          "sourceH": 69
+        },
+        {
+          "name": "frame_1",
+          "x": 557,
+          "y": 230,
+          "w": 116,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 116,
+          "sourceH": 69
+        },
+        {
+          "name": "frame_2",
+          "x": 557,
+          "y": 230,
+          "w": 116,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 116,
+          "sourceH": 69
+        },
+        {
+          "name": "frame_3",
+          "x": 673,
+          "y": 230,
+          "w": 116,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 116,
+          "sourceH": 69
+        },
+        {
+          "name": "frame_4",
+          "x": 673,
+          "y": 230,
+          "w": 116,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 116,
+          "sourceH": 69
+        },
+        {
+          "name": "frame_5",
+          "x": 673,
+          "y": 230,
+          "w": 116,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 116,
+          "sourceH": 69
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_020",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 789,
+          "y": 230,
+          "w": 125,
+          "h": 79,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 125,
+          "sourceH": 79
+        },
+        {
+          "name": "frame_1",
+          "x": 789,
+          "y": 230,
+          "w": 125,
+          "h": 79,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 125,
+          "sourceH": 79
+        },
+        {
+          "name": "frame_2",
+          "x": 789,
+          "y": 230,
+          "w": 125,
+          "h": 79,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 125,
+          "sourceH": 79
+        },
+        {
+          "name": "frame_3",
+          "x": 914,
+          "y": 230,
+          "w": 125,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 125,
+          "sourceH": 79
+        },
+        {
+          "name": "frame_4",
+          "x": 914,
+          "y": 230,
+          "w": 125,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 125,
+          "sourceH": 79
+        },
+        {
+          "name": "frame_5",
+          "x": 914,
+          "y": 230,
+          "w": 125,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 125,
+          "sourceH": 79
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_021",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1039,
+          "y": 230,
+          "w": 136,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 136,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_1",
+          "x": 1039,
+          "y": 230,
+          "w": 136,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 136,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_2",
+          "x": 1039,
+          "y": 230,
+          "w": 136,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 136,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_3",
+          "x": 1175,
+          "y": 230,
+          "w": 136,
+          "h": 93,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 136,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_4",
+          "x": 1175,
+          "y": 230,
+          "w": 136,
+          "h": 93,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 136,
+          "sourceH": 111
+        },
+        {
+          "name": "frame_5",
+          "x": 1175,
+          "y": 230,
+          "w": 136,
+          "h": 93,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 136,
+          "sourceH": 111
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_022",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1311,
+          "y": 230,
+          "w": 132,
+          "h": 130,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 132,
+          "sourceH": 130
+        },
+        {
+          "name": "frame_1",
+          "x": 1311,
+          "y": 230,
+          "w": 132,
+          "h": 130,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 132,
+          "sourceH": 130
+        },
+        {
+          "name": "frame_2",
+          "x": 1311,
+          "y": 230,
+          "w": 132,
+          "h": 130,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 132,
+          "sourceH": 130
+        },
+        {
+          "name": "frame_3",
+          "x": 1443,
+          "y": 230,
+          "w": 132,
+          "h": 99,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 132,
+          "sourceH": 130
+        },
+        {
+          "name": "frame_4",
+          "x": 1443,
+          "y": 230,
+          "w": 132,
+          "h": 99,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 132,
+          "sourceH": 130
+        },
+        {
+          "name": "frame_5",
+          "x": 1443,
+          "y": 230,
+          "w": 132,
+          "h": 99,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 132,
+          "sourceH": 130
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_023",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1575,
+          "y": 230,
+          "w": 143,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_1",
+          "x": 1575,
+          "y": 230,
+          "w": 143,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_2",
+          "x": 1575,
+          "y": 230,
+          "w": 143,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_3",
+          "x": 1718,
+          "y": 230,
+          "w": 143,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_4",
+          "x": 1718,
+          "y": 230,
+          "w": 143,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_5",
+          "x": 1718,
+          "y": 230,
+          "w": 143,
+          "h": 80,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 143,
+          "sourceH": 98
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_024",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1861,
+          "y": 230,
+          "w": 135,
+          "h": 107,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 135,
+          "sourceH": 107
+        },
+        {
+          "name": "frame_1",
+          "x": 1861,
+          "y": 230,
+          "w": 135,
+          "h": 107,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 135,
+          "sourceH": 107
+        },
+        {
+          "name": "frame_2",
+          "x": 1861,
+          "y": 230,
+          "w": 135,
+          "h": 107,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 135,
+          "sourceH": 107
+        },
+        {
+          "name": "frame_3",
+          "x": 0,
+          "y": 360,
+          "w": 135,
+          "h": 99,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 135,
+          "sourceH": 107
+        },
+        {
+          "name": "frame_4",
+          "x": 0,
+          "y": 360,
+          "w": 135,
+          "h": 99,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 135,
+          "sourceH": 107
+        },
+        {
+          "name": "frame_5",
+          "x": 0,
+          "y": 360,
+          "w": 135,
+          "h": 99,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 135,
+          "sourceH": 107
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_025",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 135,
+          "y": 360,
+          "w": 133,
+          "h": 116,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 133,
+          "sourceH": 116
+        },
+        {
+          "name": "frame_1",
+          "x": 135,
+          "y": 360,
+          "w": 133,
+          "h": 116,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 133,
+          "sourceH": 116
+        },
+        {
+          "name": "frame_2",
+          "x": 135,
+          "y": 360,
+          "w": 133,
+          "h": 116,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 133,
+          "sourceH": 116
+        },
+        {
+          "name": "frame_3",
+          "x": 268,
+          "y": 360,
+          "w": 133,
+          "h": 101,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 133,
+          "sourceH": 116
+        },
+        {
+          "name": "frame_4",
+          "x": 268,
+          "y": 360,
+          "w": 133,
+          "h": 101,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 133,
+          "sourceH": 116
+        },
+        {
+          "name": "frame_5",
+          "x": 268,
+          "y": 360,
+          "w": 133,
+          "h": 101,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 133,
+          "sourceH": 116
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_026",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 401,
+          "y": 360,
+          "w": 159,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 159,
+          "sourceH": 115
+        },
+        {
+          "name": "frame_1",
+          "x": 401,
+          "y": 360,
+          "w": 159,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 159,
+          "sourceH": 115
+        },
+        {
+          "name": "frame_2",
+          "x": 401,
+          "y": 360,
+          "w": 159,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 159,
+          "sourceH": 115
+        },
+        {
+          "name": "frame_3",
+          "x": 560,
+          "y": 360,
+          "w": 159,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 159,
+          "sourceH": 115
+        },
+        {
+          "name": "frame_4",
+          "x": 560,
+          "y": 360,
+          "w": 159,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 159,
+          "sourceH": 115
+        },
+        {
+          "name": "frame_5",
+          "x": 560,
+          "y": 360,
+          "w": 159,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 159,
+          "sourceH": 115
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_027",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 719,
+          "y": 360,
+          "w": 75,
+          "h": 88,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 75,
+          "sourceH": 88
+        },
+        {
+          "name": "frame_1",
+          "x": 719,
+          "y": 360,
+          "w": 75,
+          "h": 88,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 75,
+          "sourceH": 88
+        },
+        {
+          "name": "frame_2",
+          "x": 719,
+          "y": 360,
+          "w": 75,
+          "h": 88,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 75,
+          "sourceH": 88
+        },
+        {
+          "name": "frame_3",
+          "x": 794,
+          "y": 360,
+          "w": 75,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 75,
+          "sourceH": 88
+        },
+        {
+          "name": "frame_4",
+          "x": 794,
+          "y": 360,
+          "w": 75,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 75,
+          "sourceH": 88
+        },
+        {
+          "name": "frame_5",
+          "x": 794,
+          "y": 360,
+          "w": 75,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 75,
+          "sourceH": 88
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_028",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 869,
+          "y": 360,
+          "w": 86,
+          "h": 76,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 76
+        },
+        {
+          "name": "frame_1",
+          "x": 869,
+          "y": 360,
+          "w": 86,
+          "h": 76,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 76
+        },
+        {
+          "name": "frame_2",
+          "x": 869,
+          "y": 360,
+          "w": 86,
+          "h": 76,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 76
+        },
+        {
+          "name": "frame_3",
+          "x": 955,
+          "y": 360,
+          "w": 86,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 76
+        },
+        {
+          "name": "frame_4",
+          "x": 955,
+          "y": 360,
+          "w": 86,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 76
+        },
+        {
+          "name": "frame_5",
+          "x": 955,
+          "y": 360,
+          "w": 86,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 76
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_029",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1041,
+          "y": 360,
+          "w": 89,
+          "h": 68,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 89,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_1",
+          "x": 1041,
+          "y": 360,
+          "w": 89,
+          "h": 68,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 89,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_2",
+          "x": 1130,
+          "y": 360,
+          "w": 89,
+          "h": 65,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 89,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_3",
+          "x": 1130,
+          "y": 360,
+          "w": 89,
+          "h": 65,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 89,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_4",
+          "x": 1130,
+          "y": 360,
+          "w": 89,
+          "h": 65,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 89,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_5",
+          "x": 1130,
+          "y": 360,
+          "w": 89,
+          "h": 65,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 89,
+          "sourceH": 68
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_030",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1219,
+          "y": 360,
+          "w": 87,
+          "h": 121,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 87,
+          "sourceH": 121
+        },
+        {
+          "name": "frame_1",
+          "x": 1219,
+          "y": 360,
+          "w": 87,
+          "h": 121,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 87,
+          "sourceH": 121
+        },
+        {
+          "name": "frame_2",
+          "x": 1306,
+          "y": 360,
+          "w": 87,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 87,
+          "sourceH": 121
+        },
+        {
+          "name": "frame_3",
+          "x": 1306,
+          "y": 360,
+          "w": 87,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 87,
+          "sourceH": 121
+        },
+        {
+          "name": "frame_4",
+          "x": 1306,
+          "y": 360,
+          "w": 87,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 87,
+          "sourceH": 121
+        },
+        {
+          "name": "frame_5",
+          "x": 1306,
+          "y": 360,
+          "w": 87,
+          "h": 115,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 87,
+          "sourceH": 121
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_031",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1393,
+          "y": 360,
+          "w": 84,
+          "h": 96,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 96
+        },
+        {
+          "name": "frame_1",
+          "x": 1393,
+          "y": 360,
+          "w": 84,
+          "h": 96,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 96
+        },
+        {
+          "name": "frame_2",
+          "x": 1477,
+          "y": 360,
+          "w": 84,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 96
+        },
+        {
+          "name": "frame_3",
+          "x": 1477,
+          "y": 360,
+          "w": 84,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 96
+        },
+        {
+          "name": "frame_4",
+          "x": 1477,
+          "y": 360,
+          "w": 84,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 96
+        },
+        {
+          "name": "frame_5",
+          "x": 1477,
+          "y": 360,
+          "w": 84,
+          "h": 64,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 96
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_032",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1561,
+          "y": 360,
+          "w": 86,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 72
+        },
+        {
+          "name": "frame_1",
+          "x": 1561,
+          "y": 360,
+          "w": 86,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 72
+        },
+        {
+          "name": "frame_2",
+          "x": 1647,
+          "y": 360,
+          "w": 86,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 72
+        },
+        {
+          "name": "frame_3",
+          "x": 1647,
+          "y": 360,
+          "w": 86,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 72
+        },
+        {
+          "name": "frame_4",
+          "x": 1647,
+          "y": 360,
+          "w": 86,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 72
+        },
+        {
+          "name": "frame_5",
+          "x": 1647,
+          "y": 360,
+          "w": 86,
+          "h": 71,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 72
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_033",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1733,
+          "y": 360,
+          "w": 79,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 79,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_1",
+          "x": 1733,
+          "y": 360,
+          "w": 79,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 79,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_2",
+          "x": 1812,
+          "y": 360,
+          "w": 79,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 79,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_3",
+          "x": 1812,
+          "y": 360,
+          "w": 79,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 79,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_4",
+          "x": 1812,
+          "y": 360,
+          "w": 79,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 79,
+          "sourceH": 85
+        },
+        {
+          "name": "frame_5",
+          "x": 1812,
+          "y": 360,
+          "w": 79,
+          "h": 72,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 79,
+          "sourceH": 85
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_034",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 0,
+          "y": 481,
+          "w": 168,
+          "h": 101,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 168,
+          "sourceH": 101
+        },
+        {
+          "name": "frame_1",
+          "x": 0,
+          "y": 481,
+          "w": 168,
+          "h": 101,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 168,
+          "sourceH": 101
+        },
+        {
+          "name": "frame_2",
+          "x": 0,
+          "y": 481,
+          "w": 168,
+          "h": 101,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 168,
+          "sourceH": 101
+        },
+        {
+          "name": "frame_3",
+          "x": 168,
+          "y": 481,
+          "w": 168,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 168,
+          "sourceH": 101
+        },
+        {
+          "name": "frame_4",
+          "x": 168,
+          "y": 481,
+          "w": 168,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 168,
+          "sourceH": 101
+        },
+        {
+          "name": "frame_5",
+          "x": 168,
+          "y": 481,
+          "w": 168,
+          "h": 95,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 168,
+          "sourceH": 101
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_035",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 336,
+          "y": 481,
+          "w": 113,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_1",
+          "x": 336,
+          "y": 481,
+          "w": 113,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_2",
+          "x": 449,
+          "y": 481,
+          "w": 113,
+          "h": 68,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_3",
+          "x": 449,
+          "y": 481,
+          "w": 113,
+          "h": 68,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_4",
+          "x": 449,
+          "y": 481,
+          "w": 113,
+          "h": 68,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 68
+        },
+        {
+          "name": "frame_5",
+          "x": 449,
+          "y": 481,
+          "w": 113,
+          "h": 68,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 68
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_036",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 562,
+          "y": 481,
+          "w": 88,
+          "h": 65,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 65
+        },
+        {
+          "name": "frame_1",
+          "x": 562,
+          "y": 481,
+          "w": 88,
+          "h": 65,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 65
+        },
+        {
+          "name": "frame_2",
+          "x": 650,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 65
+        },
+        {
+          "name": "frame_3",
+          "x": 650,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 65
+        },
+        {
+          "name": "frame_4",
+          "x": 650,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 65
+        },
+        {
+          "name": "frame_5",
+          "x": 650,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 65
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_037",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 738,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 62
+        },
+        {
+          "name": "frame_1",
+          "x": 738,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 62
+        },
+        {
+          "name": "frame_2",
+          "x": 826,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 62
+        },
+        {
+          "name": "frame_3",
+          "x": 826,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 62
+        },
+        {
+          "name": "frame_4",
+          "x": 826,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 62
+        },
+        {
+          "name": "frame_5",
+          "x": 826,
+          "y": 481,
+          "w": 88,
+          "h": 62,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 62
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_038",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 914,
+          "y": 481,
+          "w": 95,
+          "h": 51,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 95,
+          "sourceH": 51
+        },
+        {
+          "name": "frame_1",
+          "x": 914,
+          "y": 481,
+          "w": 95,
+          "h": 51,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 95,
+          "sourceH": 51
+        },
+        {
+          "name": "frame_2",
+          "x": 1009,
+          "y": 481,
+          "w": 95,
+          "h": 44,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 95,
+          "sourceH": 51
+        },
+        {
+          "name": "frame_3",
+          "x": 1009,
+          "y": 481,
+          "w": 95,
+          "h": 44,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 95,
+          "sourceH": 51
+        },
+        {
+          "name": "frame_4",
+          "x": 1009,
+          "y": 481,
+          "w": 95,
+          "h": 44,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 95,
+          "sourceH": 51
+        },
+        {
+          "name": "frame_5",
+          "x": 1009,
+          "y": 481,
+          "w": 95,
+          "h": 44,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 95,
+          "sourceH": 51
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_039",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1104,
+          "y": 481,
+          "w": 93,
+          "h": 70,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 93,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_1",
+          "x": 1104,
+          "y": 481,
+          "w": 93,
+          "h": 70,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 93,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_2",
+          "x": 1197,
+          "y": 481,
+          "w": 93,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 93,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_3",
+          "x": 1197,
+          "y": 481,
+          "w": 93,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 93,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_4",
+          "x": 1197,
+          "y": 481,
+          "w": 93,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 93,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_5",
+          "x": 1197,
+          "y": 481,
+          "w": 93,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 93,
+          "sourceH": 70
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_040",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1290,
+          "y": 481,
+          "w": 96,
+          "h": 94,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 96,
+          "sourceH": 94
+        },
+        {
+          "name": "frame_1",
+          "x": 1290,
+          "y": 481,
+          "w": 96,
+          "h": 94,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 96,
+          "sourceH": 94
+        },
+        {
+          "name": "frame_2",
+          "x": 1386,
+          "y": 481,
+          "w": 96,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 96,
+          "sourceH": 94
+        },
+        {
+          "name": "frame_3",
+          "x": 1386,
+          "y": 481,
+          "w": 96,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 96,
+          "sourceH": 94
+        },
+        {
+          "name": "frame_4",
+          "x": 1386,
+          "y": 481,
+          "w": 96,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 96,
+          "sourceH": 94
+        },
+        {
+          "name": "frame_5",
+          "x": 1386,
+          "y": 481,
+          "w": 96,
+          "h": 85,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 96,
+          "sourceH": 94
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_041",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1482,
+          "y": 481,
+          "w": 88,
+          "h": 83,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_1",
+          "x": 1482,
+          "y": 481,
+          "w": 88,
+          "h": 83,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_2",
+          "x": 1570,
+          "y": 481,
+          "w": 88,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_3",
+          "x": 1570,
+          "y": 481,
+          "w": 88,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_4",
+          "x": 1570,
+          "y": 481,
+          "w": 88,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_5",
+          "x": 1570,
+          "y": 481,
+          "w": 88,
+          "h": 66,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 88,
+          "sourceH": 83
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_042",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1658,
+          "y": 481,
+          "w": 112,
+          "h": 83,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_1",
+          "x": 1658,
+          "y": 481,
+          "w": 112,
+          "h": 83,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_2",
+          "x": 1770,
+          "y": 481,
+          "w": 112,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_3",
+          "x": 1770,
+          "y": 481,
+          "w": 112,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_4",
+          "x": 1770,
+          "y": 481,
+          "w": 112,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 83
+        },
+        {
+          "name": "frame_5",
+          "x": 1770,
+          "y": 481,
+          "w": 112,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 112,
+          "sourceH": 83
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_043",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1882,
+          "y": 481,
+          "w": 113,
+          "h": 84,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 84
+        },
+        {
+          "name": "frame_1",
+          "x": 1882,
+          "y": 481,
+          "w": 113,
+          "h": 84,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 84
+        },
+        {
+          "name": "frame_2",
+          "x": 0,
+          "y": 582,
+          "w": 113,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 84
+        },
+        {
+          "name": "frame_3",
+          "x": 0,
+          "y": 582,
+          "w": 113,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 84
+        },
+        {
+          "name": "frame_4",
+          "x": 0,
+          "y": 582,
+          "w": 113,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 84
+        },
+        {
+          "name": "frame_5",
+          "x": 0,
+          "y": 582,
+          "w": 113,
+          "h": 78,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 113,
+          "sourceH": 84
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_044",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 113,
+          "y": 582,
+          "w": 86,
+          "h": 70,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_1",
+          "x": 113,
+          "y": 582,
+          "w": 86,
+          "h": 70,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_2",
+          "x": 199,
+          "y": 582,
+          "w": 86,
+          "h": 56,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_3",
+          "x": 199,
+          "y": 582,
+          "w": 86,
+          "h": 56,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_4",
+          "x": 199,
+          "y": 582,
+          "w": 86,
+          "h": 56,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_5",
+          "x": 199,
+          "y": 582,
+          "w": 86,
+          "h": 56,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 86,
+          "sourceH": 70
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_045",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 285,
+          "y": 582,
+          "w": 146,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 146,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_1",
+          "x": 285,
+          "y": 582,
+          "w": 146,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 146,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_2",
+          "x": 285,
+          "y": 582,
+          "w": 146,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 146,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_3",
+          "x": 431,
+          "y": 582,
+          "w": 146,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 146,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_4",
+          "x": 431,
+          "y": 582,
+          "w": 146,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 146,
+          "sourceH": 98
+        },
+        {
+          "name": "frame_5",
+          "x": 431,
+          "y": 582,
+          "w": 146,
+          "h": 98,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 146,
+          "sourceH": 98
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_046",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 577,
+          "y": 582,
+          "w": 85,
+          "h": 74,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 85,
+          "sourceH": 74
+        },
+        {
+          "name": "frame_1",
+          "x": 577,
+          "y": 582,
+          "w": 85,
+          "h": 74,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 85,
+          "sourceH": 74
+        },
+        {
+          "name": "frame_2",
+          "x": 662,
+          "y": 582,
+          "w": 85,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 85,
+          "sourceH": 74
+        },
+        {
+          "name": "frame_3",
+          "x": 662,
+          "y": 582,
+          "w": 85,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 85,
+          "sourceH": 74
+        },
+        {
+          "name": "frame_4",
+          "x": 662,
+          "y": 582,
+          "w": 85,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 85,
+          "sourceH": 74
+        },
+        {
+          "name": "frame_5",
+          "x": 662,
+          "y": 582,
+          "w": 85,
+          "h": 69,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 85,
+          "sourceH": 74
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_047",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 747,
+          "y": 582,
+          "w": 120,
+          "h": 82,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 120,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_1",
+          "x": 747,
+          "y": 582,
+          "w": 120,
+          "h": 82,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 120,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_2",
+          "x": 867,
+          "y": 582,
+          "w": 120,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 120,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_3",
+          "x": 867,
+          "y": 582,
+          "w": 120,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 120,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_4",
+          "x": 867,
+          "y": 582,
+          "w": 120,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 120,
+          "sourceH": 82
+        },
+        {
+          "name": "frame_5",
+          "x": 867,
+          "y": 582,
+          "w": 120,
+          "h": 81,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 120,
+          "sourceH": 82
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_048",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 987,
+          "y": 582,
+          "w": 84,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_1",
+          "x": 987,
+          "y": 582,
+          "w": 84,
+          "h": 67,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_2",
+          "x": 1071,
+          "y": 582,
+          "w": 84,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_3",
+          "x": 1071,
+          "y": 582,
+          "w": 84,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_4",
+          "x": 1071,
+          "y": 582,
+          "w": 84,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 67
+        },
+        {
+          "name": "frame_5",
+          "x": 1071,
+          "y": 582,
+          "w": 84,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 84,
+          "sourceH": 67
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_049",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1155,
+          "y": 582,
+          "w": 103,
+          "h": 70,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_1",
+          "x": 1155,
+          "y": 582,
+          "w": 103,
+          "h": 70,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_2",
+          "x": 1258,
+          "y": 582,
+          "w": 103,
+          "h": 58,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_3",
+          "x": 1258,
+          "y": 582,
+          "w": 103,
+          "h": 58,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_4",
+          "x": 1258,
+          "y": 582,
+          "w": 103,
+          "h": 58,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 70
+        },
+        {
+          "name": "frame_5",
+          "x": 1258,
+          "y": 582,
+          "w": 103,
+          "h": 58,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 70
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_050",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1361,
+          "y": 582,
+          "w": 103,
+          "h": 77,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 77
+        },
+        {
+          "name": "frame_1",
+          "x": 1361,
+          "y": 582,
+          "w": 103,
+          "h": 77,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 77
+        },
+        {
+          "name": "frame_2",
+          "x": 1464,
+          "y": 582,
+          "w": 103,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 77
+        },
+        {
+          "name": "frame_3",
+          "x": 1464,
+          "y": 582,
+          "w": 103,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 77
+        },
+        {
+          "name": "frame_4",
+          "x": 1464,
+          "y": 582,
+          "w": 103,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 77
+        },
+        {
+          "name": "frame_5",
+          "x": 1464,
+          "y": 582,
+          "w": 103,
+          "h": 61,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 103,
+          "sourceH": 77
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_051",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1567,
+          "y": 582,
+          "w": 82,
+          "h": 59,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 82,
+          "sourceH": 59
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_052",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 1649,
+          "y": 582,
+          "w": 166,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 92
+        },
+        {
+          "name": "frame_1",
+          "x": 1649,
+          "y": 582,
+          "w": 166,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 92
+        },
+        {
+          "name": "frame_2",
+          "x": 1649,
+          "y": 582,
+          "w": 166,
+          "h": 92,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 92
+        },
+        {
+          "name": "frame_3",
+          "x": 1815,
+          "y": 582,
+          "w": 166,
+          "h": 73,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 92
+        },
+        {
+          "name": "frame_4",
+          "x": 1815,
+          "y": 582,
+          "w": 166,
+          "h": 73,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 92
+        },
+        {
+          "name": "frame_5",
+          "x": 1815,
+          "y": 582,
+          "w": 166,
+          "h": 73,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 92
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_053",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 0,
+          "y": 680,
+          "w": 151,
+          "h": 132,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 132
+        },
+        {
+          "name": "frame_1",
+          "x": 0,
+          "y": 680,
+          "w": 151,
+          "h": 132,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 132
+        },
+        {
+          "name": "frame_2",
+          "x": 0,
+          "y": 680,
+          "w": 151,
+          "h": 132,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 132
+        },
+        {
+          "name": "frame_3",
+          "x": 151,
+          "y": 680,
+          "w": 151,
+          "h": 104,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 132
+        },
+        {
+          "name": "frame_4",
+          "x": 151,
+          "y": 680,
+          "w": 151,
+          "h": 104,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 132
+        },
+        {
+          "name": "frame_5",
+          "x": 151,
+          "y": 680,
+          "w": 151,
+          "h": 104,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 151,
+          "sourceH": 132
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_054",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 302,
+          "y": 680,
+          "w": 166,
+          "h": 114,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 114
+        },
+        {
+          "name": "frame_1",
+          "x": 302,
+          "y": 680,
+          "w": 166,
+          "h": 114,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 114
+        },
+        {
+          "name": "frame_2",
+          "x": 302,
+          "y": 680,
+          "w": 166,
+          "h": 114,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 114
+        },
+        {
+          "name": "frame_3",
+          "x": 468,
+          "y": 680,
+          "w": 166,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 114
+        },
+        {
+          "name": "frame_4",
+          "x": 468,
+          "y": 680,
+          "w": 166,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 114
+        },
+        {
+          "name": "frame_5",
+          "x": 468,
+          "y": 680,
+          "w": 166,
+          "h": 111,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 166,
+          "sourceH": 114
+        }
+      ]
+    },
+    {
+      "asset_id": "exp_female_055",
+      "tags": [
+        "expression",
+        "female",
+        "auto_tagged"
+      ],
+      "description": "Auto-ingested expression asset.",
+      "sprites": [
+        {
+          "name": "frame_0",
+          "x": 634,
+          "y": 680,
+          "w": 145,
+          "h": 128,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 145,
+          "sourceH": 128
+        },
+        {
+          "name": "frame_1",
+          "x": 634,
+          "y": 680,
+          "w": 145,
+          "h": 128,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 145,
+          "sourceH": 128
+        },
+        {
+          "name": "frame_2",
+          "x": 634,
+          "y": 680,
+          "w": 145,
+          "h": 128,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 145,
+          "sourceH": 128
+        },
+        {
+          "name": "frame_3",
+          "x": 779,
+          "y": 680,
+          "w": 145,
+          "h": 116,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 145,
+          "sourceH": 128
+        },
+        {
+          "name": "frame_4",
+          "x": 779,
+          "y": 680,
+          "w": 145,
+          "h": 116,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 145,
+          "sourceH": 128
+        },
+        {
+          "name": "frame_5",
+          "x": 779,
+          "y": 680,
+          "w": 145,
+          "h": 116,
+          "offX": 0,
+          "offY": 0,
+          "sourceW": 145,
+          "sourceH": 128
+        }
+      ]
+    }
+  ]
+}

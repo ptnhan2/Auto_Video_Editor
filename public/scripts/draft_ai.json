@@ -1,0 +1,135 @@
+{
+  "title": "Trở Lại Kinh Thị Năm 1990",
+  "description": "Từ Mộng bất ngờ trọng sinh về mùa hè năm 1990 tại con ngõ nhỏ ở Kinh Thị, nơi cô bắt đầu khám phá ra những bí mật về cuộc đời mình và sự thành công bất thường của người chị họ Từ Giai.",
+  "scenes": [
+    {
+      "sceneId": "sc01_trong_sinh",
+      "backgroundId": "bg_city_day",
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "run_cycle",
+          "expressionId": "surprised",
+          "facing": "right",
+          "dialogue": "Mình... mình thực sự đã quay trở lại năm 1990 rồi sao? Cảm giác nóng rát này là thật!",
+          "movement": {
+            "from": "back_left",
+            "to": "mid_center"
+          },
+          "zIndex": 10,
+          "sfx": [
+            {
+              "assetId": "sfx_footsteps",
+              "startFrame": 0
+            },
+            {
+              "assetId": "sfx_gasp",
+              "startFrame": 30
+            }
+          ]
+        }
+      ],
+      "bgmId": "bgm_tense",
+      "camera": {
+        "type": "zoom_in",
+        "targetX": 50,
+        "intensity": 1.2
+      },
+      "vfxId": "vfx_flash_white"
+    },
+    {
+      "sceneId": "sc02_nhan_giay",
+      "backgroundId": "bg_city_day",
+      "durationSeconds": 5,
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "reach_out",
+          "expressionId": "neutral",
+          "facing": "left",
+          "dialogue": "Cảm ơn chị... Loại giấy từ vở bài tập này, đã bao lâu rồi mình không chạm vào nó.",
+          "zIndex": 1
+        }
+      ],
+      "bgmId": "bgm_sad",
+      "camera": {
+        "type": "static"
+      }
+    },
+    {
+      "sceneId": "sc03_nhin_con_ngo",
+      "backgroundId": "bg_city_day",
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "look_around",
+          "expressionId": "sad",
+          "facing": "right",
+          "dialogue": "Cây hòe già vẫn còn đây. Trước khi con ngõ này bị dỡ bỏ vào những năm hai ngàn linh mấy, nó vẫn đứng sừng sững như một cụ già.",
+          "zIndex": 10
+        }
+      ],
+      "camera": {
+        "type": "pan_right",
+        "targetX": 80
+      },
+      "requestedAssets": [
+        {
+          "type": "background",
+          "missingConcept": "Con ngõ nhỏ cổ kính ở Bắc Kinh năm 1990 với cây hòe lớn",
+          "reason": "Tạo bối cảnh chính xác cho câu chuyện trọng sinh"
+        }
+      ]
+    },
+    {
+      "sceneId": "sc04_ky_uc_giai_toa",
+      "backgroundId": "bg_city_day",
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "talk_angry",
+          "expressionId": "angry",
+          "facing": "left",
+          "dialogue": "Hồi đó ai cũng phẫn nộ. Những con kiến làm sao kiện nổi củ khoai? Mọi người đều phải ký vào thỏa thuận đền bù rẻ mạt đó.",
+          "zIndex": 10
+        }
+      ],
+      "vfxId": "vfx_screen_shake"
+    },
+    {
+      "sceneId": "sc05_bi_mat_tu_giai",
+      "backgroundId": "bg_room_indoor",
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "talk_sad",
+          "expressionId": "fear",
+          "facing": "right",
+          "dialogue": "Nhưng tại sao Từ Giai lại có thể trở thành phó giáo sư? Chị ta luôn gian lận cơ mà...",
+          "zIndex": 10
+        }
+      ],
+      "bgmId": "bgm_tense"
+    },
+    {
+      "sceneId": "sc06_su_that_bang_hoang",
+      "backgroundId": "bg_room_indoor",
+      "actors": [
+        {
+          "characterId": "char_001",
+          "actionId": "surprise_fear",
+          "expressionId": "surprised",
+          "facing": "left",
+          "dialogue": "Ngôi trường chị ta tốt nghiệp... đó chính là trường mình đã đăng ký! Từ Giai vốn không hề thi trường đó. Chuyện này là sao?!",
+          "zIndex": 10
+        }
+      ],
+      "sfxId": "sfx_gasp",
+      "camera": {
+        "type": "zoom_in",
+        "targetX": 30,
+        "intensity": 1.5
+      }
+    }
+  ]
+}

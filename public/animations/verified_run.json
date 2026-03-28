@@ -1,0 +1,347 @@
+{
+  "id": "run_cycle",
+  "name": "Run Cycle",
+  "durationFrames": 30,
+  "fps": 30,
+  "loop": true,
+  "tracks": {
+    "torso": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -20,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": -22,
+          "rotationY": 0,
+          "x": 0,
+          "y": -8,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": -20,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "head": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -20,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": -22,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": -20,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_thigh": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 45,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": -45,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": 45,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_calf": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 35,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 7,
+          "rotation": -10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": -55,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 22,
+          "rotation": -80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": 35,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_thigh": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -45,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": 45,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": -45,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_calf": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -55,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 7,
+          "rotation": -80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": 35,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 22,
+          "rotation": -10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": -55,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_upper_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": 40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": -40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_lower_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -25,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 7,
+          "rotation": 10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": 80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 22,
+          "rotation": 10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": -25,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_upper_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": -40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": 40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_lower_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 7,
+          "rotation": 10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 15,
+          "rotation": -25,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 22,
+          "rotation": 10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 30,
+          "rotation": 80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    }
+  }
+}

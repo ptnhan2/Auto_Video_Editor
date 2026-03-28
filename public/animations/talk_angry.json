@@ -1,0 +1,235 @@
+{
+  "id": "talk_angry",
+  "name": "Talk Angry",
+  "durationFrames": 40,
+  "fps": 30,
+  "loop": true,
+  "tracks": {
+    "torso": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 8,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 12,
+          "rotationY": 0,
+          "x": 0,
+          "y": 2,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 8,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "head": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 8,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 12,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 8,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_thigh": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_calf": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_thigh": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_calf": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_upper_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 0,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_lower_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 15,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 15,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_upper_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 70,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 90,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 70,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_lower_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 70,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 90,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 70,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    }
+  }
+}

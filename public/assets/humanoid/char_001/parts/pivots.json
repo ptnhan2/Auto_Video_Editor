@@ -1,0 +1,118 @@
+{
+  "left_upper_arm": {
+    "x": 0.7128,
+    "y": 0.2407,
+    "globalX": 363,
+    "globalY": 280,
+    "localX": 67,
+    "localY": 26,
+    "width": 94,
+    "height": 108,
+    "baseAngle": 29.64
+  },
+  "right_upper_arm": {
+    "x": 0.2828,
+    "y": 0.2328,
+    "globalX": 608,
+    "globalY": 270,
+    "localX": 28,
+    "localY": 27,
+    "width": 99,
+    "height": 116,
+    "baseAngle": -32.74
+  },
+  "left_lower_arm": {
+    "x": 0.8229,
+    "y": 0.1498,
+    "globalX": 250,
+    "globalY": 326,
+    "localX": 144,
+    "localY": 31,
+    "width": 175,
+    "height": 207,
+    "baseAngle": 38.23
+  },
+  "left_thigh": {
+    "x": 0.5664,
+    "y": 0.1929,
+    "globalX": 416,
+    "globalY": 487,
+    "localX": 64,
+    "localY": 49,
+    "width": 113,
+    "height": 254,
+    "baseAngle": 6.96
+  },
+  "right_thigh": {
+    "x": 0.418,
+    "y": 0.1946,
+    "globalX": 533,
+    "globalY": 485,
+    "localX": 51,
+    "localY": 50,
+    "width": 122,
+    "height": 257,
+    "baseAngle": -7.33
+  },
+  "left_calf": {
+    "x": 0.7073,
+    "y": 0.1553,
+    "globalX": 348,
+    "globalY": 645,
+    "localX": 116,
+    "localY": 48,
+    "width": 164,
+    "height": 309,
+    "baseAngle": 5.19
+  },
+  "head": {
+    "x": 0.4346,
+    "y": 1,
+    "globalX": 444,
+    "globalY": 42,
+    "localX": 83,
+    "localY": 165,
+    "width": 191,
+    "height": 165,
+    "baseAngle": 0,
+    "expressionAnchor": {
+      "x": 53,
+      "y": 61,
+      "width": 69,
+      "height": 84
+    }
+  },
+  "torso": {
+    "x": 0.4943,
+    "y": 0.7216,
+    "globalX": 402,
+    "globalY": 207,
+    "localX": 130,
+    "localY": 273.5,
+    "width": 263,
+    "height": 379,
+    "baseAngle": 0
+  },
+  "right_lower_arm": {
+    "x": 0.8229,
+    "y": 0.1498,
+    "globalX": 533,
+    "globalY": 325,
+    "localX": 144,
+    "localY": 31,
+    "width": 175,
+    "height": 207,
+    "baseAngle": 38.23
+  },
+  "right_calf": {
+    "x": 0.7073,
+    "y": 0.1553,
+    "globalX": 490,
+    "globalY": 645,
+    "localX": 116,
+    "localY": 48,
+    "width": 164,
+    "height": 309,
+    "baseAngle": 5.19
+  }
+}

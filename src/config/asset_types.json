@@ -1,0 +1,29 @@
+{
+  "asset_types": {
+    "expression": {
+      "prefix": "exp",
+      "description": "Facial expressions and emotions (e.g., happy, sad, angry)",
+      "output_folder": "expressions"
+    },
+    "character_part": {
+      "prefix": "part",
+      "description": "Body parts for character rigging (e.g., arm, torso, head)",
+      "output_folder": "humanoid"
+    },
+    "item": {
+      "prefix": "item",
+      "description": "Props, weapons, or equippable objects",
+      "output_folder": "items"
+    },
+    "background": {
+      "prefix": "bg",
+      "description": "Scene environments (e.g., forest, room)",
+      "output_folder": "backgrounds"
+    },
+    "effect": {
+      "prefix": "fx",
+      "description": "Visual effects (e.g., explosion, slash, magic)",
+      "output_folder": "effects"
+    }
+  }
+}

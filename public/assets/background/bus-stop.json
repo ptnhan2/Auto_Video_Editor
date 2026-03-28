@@ -1,0 +1,53 @@
+{
+  "pois": [
+    {
+      "id": "bus_stop_foreground",
+      "x": 85,
+      "y": 92,
+      "scale": 1,
+      "description": "Khu vực vỉa hè nhà chờ xe buýt gần ống kính nhất, nơi hành khách đi lại."
+    },
+    {
+      "id": "bus_stop_bench",
+      "x": 70,
+      "y": 85,
+      "scale": 0.95,
+      "description": "Dãy ghế ngồi chờ tại trạm xe buýt."
+    },
+    {
+      "id": "bus_lane_near",
+      "x": 35,
+      "y": 90,
+      "scale": 0.8,
+      "description": "Phần đường nhựa sát nhà chờ, nơi xe buýt dừng đỗ."
+    },
+    {
+      "id": "bus_stop_mid",
+      "x": 55,
+      "y": 80,
+      "scale": 0.75,
+      "description": "Phần giữa của trạm dừng xe buýt theo chiều sâu phối cảnh."
+    },
+    {
+      "id": "bus_stop_far",
+      "x": 42,
+      "y": 72,
+      "scale": 0.5,
+      "description": "Phần cuối của trạm xe buýt ở phía xa."
+    },
+    {
+      "id": "opposite_sidewalk",
+      "x": 10,
+      "y": 85,
+      "scale": 0.6,
+      "description": "Vỉa hè phía bên kia đường, khu vực có nhiều cây xanh."
+    },
+    {
+      "id": "distant_crosswalk",
+      "x": 33,
+      "y": 68,
+      "scale": 0.35,
+      "description": "Khu vực ngã tư và lối băng qua đường ở phía xa."
+    }
+  ]
+}

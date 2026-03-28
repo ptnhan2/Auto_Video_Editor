@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## 🚀 Auto Video Editor (AI-First Pipeline)
+
+Dự án này là một **Xưởng phim AI tự động** sử dụng Remotion 2D Puppet và Gemini Function Calling.
+
+👉 **Bạn mới tham gia dự án? Hãy đọc lộ trình phát triển cốt lõi tại:** [`docs/plans/ai_director_roadmap.md`](docs/plans/ai_director_roadmap.md)
+
 ## Getting Started
 
 First, run the development server:

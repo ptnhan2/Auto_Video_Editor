@@ -1,0 +1,283 @@
+{
+  "id": "combat_stance",
+  "name": "Combat Stance",
+  "durationFrames": 40,
+  "fps": 30,
+  "loop": true,
+  "tracks": {
+    "torso": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 5,
+          "rotationY": 0,
+          "x": 0,
+          "y": 15,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 8,
+          "rotationY": 0,
+          "x": 0,
+          "y": 18,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 5,
+          "rotationY": 0,
+          "x": 0,
+          "y": 15,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "head": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 5,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 8,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 5,
+          "rotationY": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_thigh": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 30,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 32,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 30,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_calf": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": -8,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": -10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_thigh": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -30,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": -32,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": -30,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_calf": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": -40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": -42,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": -40,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_upper_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 20,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 25,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 20,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "left_lower_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 90,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 95,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 90,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_upper_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 15,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 10,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    },
+    "right_lower_arm": {
+      "keyframes": [
+        {
+          "frame": 0,
+          "rotation": 80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 20,
+          "rotation": 85,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        },
+        {
+          "frame": 40,
+          "rotation": 80,
+          "rotationY": 0,
+          "x": 0,
+          "y": 0,
+          "easing": "ease-in-out"
+        }
+      ]
+    }
+  }
+}
