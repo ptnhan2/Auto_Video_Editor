@@ -1,4 +1,4 @@
-import { TripleScriptEngine } from "@/features/ai-orchestrator/triple-script-engine";
+import { TripleScriptEngine } from "@/services/ai-director/triple-script-engine";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {

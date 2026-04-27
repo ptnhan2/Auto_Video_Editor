@@ -12,7 +12,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "studio": "remotion studio remotion/index.ts",
-    "render:all": "tsx scripts/tools/render_all.ts"
+    "render:all": "tsx scripts/tools/render_all.ts",
+    "factory": "npx tsx scripts/core/asset_factory.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.22",

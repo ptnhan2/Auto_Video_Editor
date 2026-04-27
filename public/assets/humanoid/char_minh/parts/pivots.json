@@ -1,0 +1,112 @@
+{
+  "left_upper_arm": {
+    "x": 0.6465,
+    "y": 0.2756,
+    "globalX": 317,
+    "globalY": 316,
+    "localX": 64,
+    "localY": 35,
+    "width": 99,
+    "height": 127,
+    "baseAngle": 30.9
+  },
+  "right_upper_arm": {
+    "x": 0.3542,
+    "y": 0.2797,
+    "globalX": 616,
+    "globalY": 319,
+    "localX": 34,
+    "localY": 33,
+    "width": 96,
+    "height": 118,
+    "baseAngle": -29.65
+  },
+  "left_lower_arm": {
+    "x": 0.8208,
+    "y": 0.1342,
+    "globalX": 206,
+    "globalY": 381,
+    "localX": 142,
+    "localY": 31,
+    "width": 173,
+    "height": 231,
+    "baseAngle": 34.16
+  },
+  "left_thigh": {
+    "x": 0.6258,
+    "y": 0.2597,
+    "globalX": 349,
+    "globalY": 550,
+    "localX": 102,
+    "localY": 60,
+    "width": 163,
+    "height": 231,
+    "baseAngle": 22.4
+  },
+  "right_thigh": {
+    "x": 0.3771,
+    "y": 0.2766,
+    "globalX": 506,
+    "globalY": 542,
+    "localX": 66,
+    "localY": 65,
+    "width": 175,
+    "height": 235,
+    "baseAngle": -23.28
+  },
+  "left_calf": {
+    "x": 0.8553,
+    "y": 0.1328,
+    "globalX": 182,
+    "globalY": 713,
+    "localX": 201,
+    "localY": 34,
+    "width": 235,
+    "height": 256,
+    "baseAngle": 24.59
+  },
+  "head": {
+    "x": 0.4604,
+    "y": 1,
+    "globalX": 445,
+    "globalY": 55,
+    "localX": 64,
+    "localY": 172,
+    "width": 139,
+    "height": 172,
+    "baseAngle": 0
+  },
+  "torso": {
+    "x": 0.4912,
+    "y": 0.7483,
+    "globalX": 345,
+    "globalY": 227,
+    "localX": 167,
+    "localY": 334.5,
+    "width": 340,
+    "height": 447,
+    "baseAngle": 0
+  },
+  "right_lower_arm": {
+    "x": 0.8208,
+    "y": 0.1342,
+    "globalX": 540,
+    "globalY": 376,
+    "localX": 142,
+    "localY": 31,
+    "width": 173,
+    "height": 231,
+    "baseAngle": 34.16
+  },
+  "right_calf": {
+    "x": 0.8553,
+    "y": 0.1328,
+    "globalX": 445,
+    "globalY": 708,
+    "localX": 201,
+    "localY": 34,
+    "width": 235,
+    "height": 256,
+    "baseAngle": 24.59
+  }
+}

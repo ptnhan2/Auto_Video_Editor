@@ -1,0 +1,222 @@
+/**
+ * ASSET REGISTRY - TỪ ĐIỂN TÀI NGUYÊN CHO AI DIRECTOR (AUTO-GENERATED)
+ * 
+ * File này được sinh ra tự động bởi script scripts/core/sync_registry.ts.
+ * Xin ĐỪNG SỬA TAY file này. Mọi thay đổi sẽ bị ghi đè.
+ * Để thêm asset, hãy copy file vào thư mục public/ và chạy lệnh: npm run sync-assets
+ */
+
+export const CHARACTERS = [
+  {
+    "id": "char_001",
+    "name": "char_001",
+    "description": "Nhân vật: char_001"
+  },
+  {
+    "id": "char_minh",
+    "name": "char_minh",
+    "description": "Nhân vật: char_minh"
+  },
+  {
+    "id": "char_mysterious_person",
+    "name": "char_mysterious_person",
+    "description": "Nhân vật: char_mysterious_person"
+  },
+  {
+    "id": "char_phung_yen_van",
+    "name": "char_phung_yen_van",
+    "description": "Nhân vật: char_phung_yen_van"
+  },
+  {
+    "id": "char_tu_mong",
+    "name": "char_tu_mong",
+    "description": "Nhân vật: char_tu_mong"
+  }
+] as const;
+
+export const ACTIONS = [
+  {
+    "id": "combat_stance",
+    "category": "locomotion",
+    "description": "Hành động: combat_stance"
+  },
+  {
+    "id": "look_around",
+    "category": "locomotion",
+    "description": "Quay đầu nhìn ngang ngó dọc tìm kiếm."
+  },
+  {
+    "id": "reach_out",
+    "category": "locomotion",
+    "description": "Hành động: reach_out"
+  },
+  {
+    "id": "sneak_cycle",
+    "category": "locomotion",
+    "description": "Hành động: sneak"
+  },
+  {
+    "id": "strike",
+    "category": "locomotion",
+    "description": "Hành động: strike"
+  },
+  {
+    "id": "surprise_fear",
+    "category": "locomotion",
+    "description": "Hành động: surprise_fear"
+  },
+  {
+    "id": "talk_angry",
+    "category": "locomotion",
+    "description": "Đứng chỉ tay, chồm tới trước, mắng mỏ tức giận."
+  },
+  {
+    "id": "talk_sad",
+    "category": "locomotion",
+    "description": "Cúi gập người, buồn bã, thở dài, khóc."
+  },
+  {
+    "id": "run_cycle",
+    "category": "locomotion",
+    "description": "Hành động: verified_run"
+  },
+  {
+    "id": "walk_cycle",
+    "category": "locomotion",
+    "description": "Hành động: verified_walk"
+  }
+] as const;
+
+export const EXPRESSIONS = [
+  {
+    "id": "neutral",
+    "description": "Khuôn mặt bình thường, không biểu lộ cảm xúc rõ rệt."
+  },
+  {
+    "id": "happy",
+    "description": "Cười vui vẻ, rạng rỡ."
+  },
+  {
+    "id": "sad",
+    "description": "Buồn bã, ủ rũ hoặc rơm rớm nước mắt."
+  },
+  {
+    "id": "angry",
+    "description": "Tức giận, nhăn nhó, cau mày."
+  },
+  {
+    "id": "surprised",
+    "description": "Sốc, ngạc nhiên tột độ, há hốc mồm."
+  },
+  {
+    "id": "fear",
+    "description": "Sợ hãi, hoảng hốt."
+  }
+] as const;
+
+export const BACKGROUNDS = [
+  {
+    "id": "bg_transparent",
+    "description": "Phông nền trong suốt hoặc màu trơn."
+  },
+  {
+    "id": "bg_black_screen",
+    "description": "Background: bg_black_screen.jpg"
+  },
+  {
+    "id": "bg_dormitory_gate_night",
+    "description": "Background: bg_dormitory_gate_night.jpg"
+  },
+  {
+    "id": "bg_dorm_room_dark",
+    "description": "Background: bg_dorm_room_dark.jpg"
+  },
+  {
+    "id": "bus-stop",
+    "description": "Background: bus-stop.jpg"
+  },
+  {
+    "id": "dorm",
+    "description": "Background: dorm.jpg"
+  }
+] as const;
+
+export const AUDIO_TRACKS = [
+  {
+    "id": "bgm_happy",
+    "type": "bgm",
+    "description": "Nhạc nền vui tươi, nhẹ nhàng."
+  },
+  {
+    "id": "bgm_sad",
+    "type": "bgm",
+    "description": "Nhạc nền buồn, chậm, cảm động."
+  },
+  {
+    "id": "bgm_tense",
+    "type": "bgm",
+    "description": "Nhạc nền hồi hộp, kịch tính, đánh nhau."
+  },
+  {
+    "id": "sfx_punch",
+    "type": "sfx",
+    "description": "Tiếng đấm, đánh nhau vật lý."
+  },
+  {
+    "id": "sfx_footsteps",
+    "type": "sfx",
+    "description": "Tiếng bước chân đi bộ."
+  },
+  {
+    "id": "sfx_gasp",
+    "type": "sfx",
+    "description": "Tiếng giật mình thở dốc."
+  }
+] as const;
+
+export const EFFECTS = [
+  {
+    "id": "cam_wide",
+    "type": "camera",
+    "description": "Góc máy toàn cảnh nhìn thấy cả người."
+  },
+  {
+    "id": "cam_closeup",
+    "type": "camera",
+    "description": "Góc máy cận cảnh vào khuôn mặt nhân vật."
+  },
+  {
+    "id": "vfx_screen_shake",
+    "type": "vfx",
+    "description": "Hiệu ứng rung lắc màn hình (khi có va chạm hoặc tức giận)."
+  },
+  {
+    "id": "vfx_flash_white",
+    "type": "vfx",
+    "description": "Chớp trắng màn hình (sấm sét, phép thuật)."
+  }
+] as const;
+
+export const PROPS = [
+  {
+    "id": "prop_none",
+    "description": "Không cầm gì."
+  },
+  {
+    "id": "prop_sword",
+    "description": "Cầm một thanh kiếm."
+  },
+  {
+    "id": "prop_phone",
+    "description": "Cầm điện thoại."
+  }
+] as const;
+
+// Helper Types
+export type CharacterId = typeof CHARACTERS[number]["id"];
+export type ActionId = typeof ACTIONS[number]["id"];
+export type ExpressionId = typeof EXPRESSIONS[number]["id"];
+export type BackgroundId = typeof BACKGROUNDS[number]["id"];
+export type AudioId = typeof AUDIO_TRACKS[number]["id"];
+export type EffectId = typeof EFFECTS[number]["id"];
+export type PropId = typeof PROPS[number]["id"];

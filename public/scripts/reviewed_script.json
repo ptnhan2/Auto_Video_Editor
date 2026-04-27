@@ -1,0 +1,179 @@
+{
+  "metadata": {
+    "tone": "cinematic"
+  },
+  "scenes": [
+    {
+      "sceneId": "scene_01_outside_dorm",
+      "backgroundId": "bg_dorm_exterior_night",
+      "environment": {
+        "location": "Dormitory Hallway",
+        "time_of_day": "night",
+        "lighting": "dim"
+      },
+      "cameraWork": {
+        "type": "pan_left",
+        "durationSeconds": 5
+      },
+      "transitionToNext": {
+        "type": "fade",
+        "durationSeconds": 1
+      },
+      "shots": [
+        {
+          "dialogue": "Chương 2: Bí mật trong căn phòng cấm.",
+          "audioId": "ch2_s1_line_01",
+          "actors": [],
+          "environmentProps": [],
+          "overlays": [
+            {
+              "type": "text",
+              "content": "Chương 2: Bí mật trong căn phòng cấm",
+              "position": "center",
+              "animation": "typewriter"
+            }
+          ]
+        },
+        {
+          "dialogue": "Sau khi rời khỏi trạm xe buýt, Minh vội vã quay trở lại khu ký túc xá. Anh cảm thấy như có ai đó đang theo dõi mình từ xa.",
+          "audioId": "ch2_s1_line_02",
+          "actors": [
+            {
+              "characterId": "char_tu_mong",
+              "position": "mid_center",
+              "facing": "right",
+              "action": "walk_cycle",
+              "equippedProps": []
+            }
+          ],
+          "environmentProps": [],
+          "overlays": []
+        },
+        {
+          "dialogue": "Minh vừa đi vừa lẩm bẩm: \"Chắc chắn là mình đã bỏ quên thứ gì đó ở phòng rồi. Không thể nào mất được.\"",
+          "audioId": "ch2_s1_line_03",
+          "actors": [
+            {
+              "characterId": "char_tu_mong",
+              "position": "mid_right",
+              "facing": "camera",
+              "action": "talk_normal",
+              "equippedProps": []
+            }
+          ],
+          "environmentProps": [],
+          "overlays": []
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_02_inside_room",
+      "backgroundId": "bg_dorm_room_dark",
+      "environment": {
+        "location": "Dormitory Room",
+        "time_of_day": "night",
+        "lighting": "dramatic"
+      },
+      "cameraWork": {
+        "type": "zoom_in",
+        "durationSeconds": 4
+      },
+      "transitionToNext": {
+        "type": "cut",
+        "durationSeconds": 0.5
+      },
+      "shots": [
+        {
+          "dialogue": "Anh mở cửa phòng ký túc xá một cách mạnh bạo. Căn phòng tối om, chỉ có ánh trăng leo lét chiếu qua khe cửa sổ.",
+          "audioId": "ch2_s1_line_04",
+          "actors": [
+            {
+              "characterId": "char_tu_mong",
+              "position": "front_left",
+              "facing": "right",
+              "action": "idle",
+              "equippedProps": []
+            }
+          ],
+          "environmentProps": [
+            {
+              "itemId": "prop_window_moonlight",
+              "affordanceTag": "place_on_able",
+              "position": "mid_center"
+            }
+          ],
+          "overlays": []
+        },
+        {
+          "dialogue": "Bỗng nhiên, một giọng nói lạ vang lên từ góc tối: \"Anh đang tìm cái này phải không?\"",
+          "audioId": "ch2_s1_line_05",
+          "actors": [
+            {
+              "characterId": "char_tu_mong",
+              "position": "front_left",
+              "facing": "right",
+              "action": "idle",
+              "equippedProps": []
+            },
+            {
+              "characterId": "char_phung_yen_van",
+              "position": "back_right",
+              "facing": "left",
+              "action": "talk_normal",
+              "equippedProps": [
+                {
+                  "itemId": "prop_old_key",
+                  "boneAttachment": "hand_R"
+                }
+              ]
+            }
+          ],
+          "environmentProps": [],
+          "overlays": []
+        },
+        {
+          "dialogue": "Minh giật mình lùi lại: \"Ai đó? Tại sao lại ở trong phòng tôi?\"",
+          "audioId": "ch2_s1_line_06",
+          "actors": [
+            {
+              "characterId": "char_tu_mong",
+              "position": "mid_left",
+              "facing": "right",
+              "action": "talk_angry",
+              "equippedProps": []
+            }
+          ],
+          "environmentProps": [],
+          "overlays": []
+        },
+        {
+          "dialogue": "Một bóng người bí ẩn bước ra từ bóng tối, trên tay cầm một chiếc chìa khóa cổ. Đây chính là khởi đầu cho một bí mật mà Minh không bao giờ ngờ tới.",
+          "audioId": "ch2_s1_line_07",
+          "actors": [
+            {
+              "characterId": "char_phung_yen_van",
+              "position": "mid_center",
+              "facing": "camera",
+              "action": "walk_cycle",
+              "equippedProps": [
+                {
+                  "itemId": "prop_old_key",
+                  "boneAttachment": "hand_R"
+                }
+              ]
+            },
+            {
+              "characterId": "char_tu_mong",
+              "position": "mid_left",
+              "facing": "right",
+              "action": "idle",
+              "equippedProps": []
+            }
+          ],
+          "environmentProps": [],
+          "overlays": []
+        }
+      ]
+    }
+  ]
+}

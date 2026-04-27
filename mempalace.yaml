@@ -1,0 +1,42 @@
+wing: auto_video_editor
+rooms:
+  - name: chat_sessions
+    description: Files from chat-sessions/
+  - name: documentation
+    description: Files from docs/
+  - name: input
+    description: Files from input/
+  - name: output
+    description: Files from output/
+  - name: playwright_report
+    description: Files from playwright-report/
+  - name: public
+    description: Files from public/
+  - name: remotion
+    description: Files from remotion/
+  - name: screenshots
+    description: Files from screenshots/
+  - name: scripts
+    description: Files from scripts/
+  - name: src
+    description: Files from src/
+  - name: testing
+    description: Files from tests/
+  - name: design
+    description: Files from assets/
+  - name: frontend
+    description: Files from components/
+  - name: configuration
+    description: Files from config/
+  - name: general
+    description: Files that don't fit other rooms
+
+# SESSION KNOWLEDGE & ARCHITECTURAL DECISIONS:
+# - Auto-Asset Generation via Tool Deficiencies Feedback Loop implemented.
+# - Missing assets are logged into `missing_assets_backlog.json`.
+# - A continuous feedback loop was created using `process_assets_backlog.py` to auto-generate the missing assets.
+# - Migrated to `google-genai` SDK for stable LLM and asset generation operations.
+# - Refactored codebase to a Feature-Sliced/Domain-Driven Architecture.
+# - Moved all core business logic (Python & TS) into /src/services/ (ai-director, character, asset-manager, video-builder).
+# - /scripts now strictly contains thin CLI wrappers, NO business logic.
+# - Cleaned up garbage files and older scripts into /.archive.

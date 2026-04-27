@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, staticFile } from 'remotion';
 import { SceneCompiler } from './SceneCompiler';
-import { VideoScriptData } from '../../src/types/ai-schemas';
+import { VideoScriptSchema, SceneData, ActorData } from '../../src/types/ai-schemas';
+
+type FlexibleScript = { title: string; scenes: (SceneData & { shots?: ActorData[] })[] };
 
 export const DraftVideoPreview: React.FC<{
   scriptFile: string;
-}> = ({ scriptFile }) => {
+  syncOffset?: number;
+}> = ({ scriptFile, syncOffset = 0 }) => {
   const [handle] = useState(() => delayRender());
-  const [scriptData, setScriptData] = useState<VideoScriptData | null>(null);
+  const [scriptData, setScriptData] = useState<FlexibleScript | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -20,7 +23,33 @@ export const DraftVideoPreview: React.FC<{
         return res.json();
       })
       .then((data) => {
-        setScriptData(data);
+        // Validate dữ liệu: Chấp nhận cả định dạng VideoScript (Full) và TTSScript (Review)
+        const result = VideoScriptSchema.safeParse(data);
+        
+        if (!result.success) {
+          // Kiểm tra xem có phải định dạng TTS (có scenes và shots) không
+          const rawData = data as Record<string, unknown>;
+          const isTTSFormat = rawData &&
+            'scenes' in rawData &&
+            Array.isArray(rawData.scenes) &&
+            rawData.scenes.every((s: unknown) =>
+              s && typeof s === 'object' && ('shots' in s || 'actors' in s)
+            );
+          
+          if (!isTTSFormat) {
+            console.error("Lỗi cấu trúc kịch bản:", result.error.format());
+            throw new Error(`File kịch bản '${scriptFile}' bị lỗi cấu trúc nghiêm trọng (Thiếu 'scenes').`);
+          }
+          
+          console.warn(`[DraftVideoPreview] File '${scriptFile}' không khớp hoàn toàn với VideoScriptSchema, nhưng vẫn có cấu trúc cơ bản. Đang cố gắng render...`);
+          
+          const hasActors = (rawData.scenes as Record<string, unknown>[]).every((s) => s && 'actors' in s);
+          if (!hasActors) {
+            console.log("ℹ️ Chế độ: TTS Review Mode (Sequential)");
+          }
+        }
+
+        setScriptData(data as FlexibleScript);
         continueRender(handle);
       })
       .catch((err) => {
@@ -47,7 +76,7 @@ export const DraftVideoPreview: React.FC<{
 
   return (
     <AbsoluteFill>
-      <SceneCompiler script={scriptData} />
+      <SceneCompiler script={scriptData} syncOffset={syncOffset} />
     </AbsoluteFill>
   );
 };

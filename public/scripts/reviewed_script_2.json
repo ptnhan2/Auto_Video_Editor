@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "tone": "cinematic"
+  },
+  "new_assets_profiles": [
+    {
+      "assetId": "prop_ancient_key",
+      "type": "character",
+      "visualPrompt": "Một chiếc chìa khóa cổ làm bằng đồng thau xỉn màu, phần tay cầm có hình vòm được chạm khắc những hoa văn gờ nổi tinh xảo, phần lưỡi chìa có cấu tạo răng cưa phức tạp kiểu cổ điển."
+    }
+  ],
+  "scenes": [
+    {
+      "sceneId": "scene_001_journey_back",
+      "backgroundId": "bus-stop",
+      "environment": {
+        "location": "bus stop to dormitory path",
+        "time_of_day": "night",
+        "lighting": "dim"
+      },
+      "cameraWork": {
+        "type": "pan_right",
+        "durationSeconds": 6
+      },
+      "transitionToNext": {
+        "type": "fade",
+        "durationSeconds": 1
+      },
+      "shots": [
+        {
+          "dialogue": "Sau khi rời khỏi trạm xe buýt, Minh vội vã quay trở lại khu ký túc xá. Anh cảm thấy như có ai đó đang theo dõi mình từ xa.",
+          "audioId": "ch2_s1_line_01",
+          "actors": [
+            {
+              "characterId": "char_minh",
+              "expressionTag": "neutral",
+              "position": "mid_center",
+              "facing": "right",
+              "action": "walk_cycle"
+            },
+            {
+              "characterId": "narrator",
+              "expressionTag": "neutral",
+              "position": "back_center",
+              "facing": "camera",
+              "action": "idle"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_002_near_dorm",
+      "backgroundId": "bg_dormitory_gate_night",
+      "environment": {
+        "location": "outside dormitory gate",
+        "time_of_day": "night",
+        "lighting": "dim"
+      },
+      "cameraWork": {
+        "type": "static",
+        "durationSeconds": 5
+      },
+      "transitionToNext": {
+        "type": "cut",
+        "durationSeconds": 0.5
+      },
+      "shots": [
+        {
+          "dialogue": "Chắc chắn là mình đã bỏ quên thứ gì đó ở phòng rồi. Không thể nào mất được.",
+          "audioId": "ch2_s1_line_02",
+          "actors": [
+            {
+              "characterId": "char_minh",
+              "expressionTag": "talking_normal",
+              "position": "mid_left",
+              "facing": "right",
+              "action": "talk_normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_003_inside_dorm_room",
+      "backgroundId": "dorm",
+      "environment": {
+        "location": "dark dorm room",
+        "time_of_day": "night",
+        "lighting": "dramatic"
+      },
+      "cameraWork": {
+        "type": "zoom_in",
+        "durationSeconds": 10
+      },
+      "transitionToNext": {
+        "type": "fade",
+        "durationSeconds": 1.5
+      },
+      "shots": [
+        {
+          "dialogue": "Anh mở cửa phòng ký túc xá một cách mạnh bạo. Căn phòng tối om, chỉ có ánh trăng leo lét chiếu qua khe cửa sổ.",
+          "audioId": "ch2_s1_line_03",
+          "actors": [
+            {
+              "characterId": "char_minh",
+              "expressionTag": "neutral",
+              "position": "back_center",
+              "facing": "camera",
+              "action": "idle"
+            },
+            {
+              "characterId": "narrator",
+              "expressionTag": "neutral",
+              "position": "mid_center",
+              "facing": "camera",
+              "action": "idle"
+            }
+          ]
+        },
+        {
+          "dialogue": "Anh đang tìm cái này phải không?",
+          "audioId": "ch2_s1_line_04",
+          "actors": [
+            {
+              "characterId": "char_mysterious_person",
+              "expressionTag": "talking_normal",
+              "position": "mid_right",
+              "facing": "left",
+              "action": "talk_normal"
+            }
+          ]
+        },
+        {
+          "dialogue": "Ai đó? Tại sao lại ở trong phòng tôi?",
+          "audioId": "ch2_s1_line_05",
+          "actors": [
+            {
+              "characterId": "char_minh",
+              "expressionTag": "talking_angry",
+              "position": "mid_left",
+              "facing": "right",
+              "action": "talk_normal"
+            }
+          ]
+        },
+        {
+          "dialogue": "Một bóng người bí ẩn bước ra từ bóng tối, trên tay cầm một chiếc chìa khóa cổ. Đây chính là khởi đầu cho một bí mật mà Minh không bao giờ ngờ tới.",
+          "audioId": "ch2_s1_line_06",
+          "actors": [
+            {
+              "characterId": "char_mysterious_person",
+              "expressionTag": "neutral",
+              "position": "mid_center",
+              "facing": "camera",
+              "action": "idle",
+              "equippedProps": [
+                {
+                  "itemId": "prop_ancient_key",
+                  "boneAttachment": "hand_R"
+                }
+              ]
+            },
+            {
+              "characterId": "narrator",
+              "expressionTag": "neutral",
+              "position": "mid_center",
+              "facing": "camera",
+              "action": "idle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

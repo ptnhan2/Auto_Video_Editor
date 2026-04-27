@@ -11,6 +11,21 @@ export const CHARACTERS = [
     "id": "char_001",
     "name": "char_001",
     "description": "Nhân vật: char_001"
+  },
+  {
+    "id": "char_minh",
+    "name": "char_minh",
+    "description": "Nhân vật: char_minh"
+  },
+  {
+    "id": "char_mysterious_person",
+    "name": "char_mysterious_person",
+    "description": "Nhân vật: char_mysterious_person"
+  },
+  {
+    "id": "char_tu_mong",
+    "name": "char_tu_mong",
+    "description": "Nhân vật: char_tu_mong"
   }
 ] as const;
 
@@ -100,23 +115,23 @@ export const BACKGROUNDS = [
     "description": "Phông nền trong suốt hoặc màu trơn."
   },
   {
-    "id": "bg_city_day",
-    "description": "Cảnh đường phố thành phố ban ngày."
+    "id": "bg_black_screen",
+    "description": "Background: bg_black_screen.jpg"
   },
   {
-    "id": "bg_city_night",
-    "description": "Cảnh đường phố thành phố ban đêm."
+    "id": "bg_dormitory_gate_night",
+    "description": "Background: bg_dormitory_gate_night.jpg"
   },
   {
-    "id": "bg_room_indoor",
-    "description": "Cảnh trong phòng, trong nhà."
+    "id": "bg_dorm_room_dark",
+    "description": "Background: bg_dorm_room_dark.jpg"
   },
   {
-    "id": "bg_bus-stop",
+    "id": "bus-stop",
     "description": "Background: bus-stop.jpg"
   },
   {
-    "id": "bg_dorm",
+    "id": "dorm",
     "description": "Background: dorm.jpg"
   }
 ] as const;

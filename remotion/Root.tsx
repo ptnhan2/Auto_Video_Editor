@@ -1,12 +1,12 @@
-import { Composition } from 'remotion';
+import { Composition, staticFile } from 'remotion';
 import { Main } from './Main';
 import { PuppetPreview } from './compositions/PuppetPreview';
 import { ActionSequence } from './compositions/ActionSequence';
-import { SceneCompiler } from './compositions/SceneCompiler';
 import { DraftVideoPreview } from './compositions/DraftVideoPreview';
 import { ExpressionPlayer } from '../src/components/ExpressionPlayer';
-import { VideoScriptSchema } from '../src/types/ai-schemas';
+import { ActorData } from '../src/types/ai-schemas';
 import { COMPOSITION_ID, FPS, VIDEO_HEIGHT, VIDEO_WIDTH, DURATION_IN_FRAMES } from '../src/lib/remotion';
+import { calculateSceneDuration } from '../src/lib/audio-timing';
 import { z } from 'zod';
 
 // Automatically detect all JSON files in public/animations folder using Webpack require.context
@@ -124,15 +124,57 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="AIStoryCompiler"
         component={DraftVideoPreview}
-        durationInFrames={600} // Độ dài dự phòng, sẽ tự động thay đổi dựa trên nội dung thực tế
+        durationInFrames={600}
         fps={30}
         width={1920}
         height={1080}
         schema={z.object({
-          scriptFile: z.enum(scriptFiles as [string, ...string[]]).describe("Chọn file kịch bản JSON")
+          scriptFile: z.enum(scriptFiles as [string, ...string[]]).describe("Chọn file kịch bản JSON"),
+          syncOffset: z.number().default(0).describe("Độ trễ subtitle (frame)")
         })}
+        calculateMetadata={async ({ props, abortSignal }) => {
+          try {
+            const scriptFile = props.scriptFile || "draft.json";
+            
+            // Sử dụng staticFile để Remotion tự xử lý đường dẫn public
+            const url = staticFile(`scripts/${scriptFile}`);
+            
+            console.log(`[Root] Fetching script for duration: ${url}`);
+            
+            let scriptData: { scenes: unknown[] } | null = null;
+            
+            // Fetch dữ liệu kịch bản với abortSignal để tối ưu Studio performance
+            const targetUrl = url.startsWith('http') || url.startsWith('/') ? url : `/${url}`;
+            const response = await fetch(targetUrl, { signal: abortSignal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            scriptData = (await response.json()) as { scenes: unknown[] };
+            
+            let totalSeconds = 0;
+            if (scriptData && Array.isArray(scriptData.scenes)) {
+              scriptData.scenes.forEach((scene) => {
+                const s = scene as Record<string, unknown>;
+                const actors = (s.actors || s.shots || []) as ActorData[];
+                const isSequential = !s.actors && !!s.shots;
+                const sceneDuration = (s.durationSeconds as number) || calculateSceneDuration(actors, isSequential);
+                totalSeconds += sceneDuration;
+              });
+            }
+            
+            // Trả về duration thực tế (tối thiểu 1 giây để tránh lỗi)
+            return {
+              durationInFrames: Math.max(Math.ceil(totalSeconds * 30), 30),
+            };
+          } catch (e) {
+            console.warn("Could not calculate dynamic duration, falling back to 10 minutes", e);
+            return {
+              // Fallback về 10 phút (18000 frames) thay vì 20 giây để tránh bị cắt nửa chừng
+              durationInFrames: 18000,
+            };
+          }
+        }}
         defaultProps={{
-          scriptFile: "draft.json"
+          scriptFile: "draft.json",
+          syncOffset: 0
         }}
       />
     </>

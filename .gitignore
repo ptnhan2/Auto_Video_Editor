@@ -114,6 +114,8 @@ Thumbs.db
 
 .env
 
+.env.local
+
 .env*
 
 .vercel
@@ -164,3 +166,6 @@ verified_key.json
 
 # Hoặc chặn tất cả các file json có tên chứa "key"
 *key*.json
+
+# --- External References & Lab Code ---
+/.archive/

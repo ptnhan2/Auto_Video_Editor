@@ -14,9 +14,8 @@
     {
       "asset_id": "exp_female_001",
       "tags": [
-        "expression",
-        "female",
-        "auto_tagged"
+        "talking_normal",
+        "neutral"
       ],
       "description": "Auto-ingested expression asset.",
       "sprites": [
@@ -91,9 +90,8 @@
     {
       "asset_id": "exp_female_002",
       "tags": [
-        "expression",
-        "female",
-        "auto_tagged"
+        "talking_angry",
+        "angry"
       ],
       "description": "Auto-ingested expression asset.",
       "sprites": [
@@ -168,9 +166,8 @@
     {
       "asset_id": "exp_female_003",
       "tags": [
-        "expression",
-        "female",
-        "auto_tagged"
+        "talking_sad",
+        "sad"
       ],
       "description": "Auto-ingested expression asset.",
       "sprites": [

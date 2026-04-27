@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, staticFile } from 'remotion';
-import { Puppet } from '../components/Puppet';
-import { Action } from '../../src/types/animation';
+import { WaddleSprite } from '../components/WaddleSprite';
+import { Action } from '../../src/shared/types/animation';
 
 export const PuppetPreview: React.FC<{
   actionFile?: string,
@@ -47,7 +47,7 @@ export const PuppetPreview: React.FC<{
 
   return (
     <AbsoluteFill style={{ backgroundColor: 'white' }}>
-      <Puppet
+      <WaddleSprite
         characterId={characterId}
         action={action}
         overrideExpressionId={expressionId}

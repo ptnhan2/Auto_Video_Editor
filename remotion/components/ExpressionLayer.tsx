@@ -30,7 +30,9 @@ interface AtlasData {
 export const ExpressionLayer: React.FC<{
   anchor: { x: number, y: number, width: number, height: number };
   assetId?: string;
-}> = ({ anchor, assetId = "exp_female_001" }) => {
+  expressionTag?: string;
+  isTalking?: boolean;
+}> = ({ anchor, assetId = "exp_female_001", expressionTag, isTalking = false }) => {
   const frame = useCurrentFrame();
   const [atlasData, setAtlasData] = useState<AtlasData | null>(null);
   
@@ -41,8 +43,22 @@ export const ExpressionLayer: React.FC<{
     fetch(jsonDataUrl)
       .then(res => res.json())
       .then(data => {
-        // Find the right asset ID dynamically
-        const asset = data.assets.find((a: { asset_id: string }) => a.asset_id === assetId);
+        // First try to find by expressionTag in the tags array
+        let asset = undefined;
+        if (expressionTag && data.assets) {
+          asset = data.assets.find((a: { asset_id: string, tags?: string[] }) => a.tags && a.tags.includes(expressionTag));
+        }
+        
+        // Fallback to finding by exact assetId if not found by tag
+        if (!asset && data.assets) {
+          asset = data.assets.find((a: { asset_id: string }) => a.asset_id === assetId);
+        }
+
+        // If still not found, try to fallback to the default assetId
+        if (!asset && data.assets) {
+          asset = data.assets.find((a: { asset_id: string }) => a.asset_id === "exp_female_001");
+        }
+
         if (asset) {
           setAtlasData({
             imagePath: data.source_image,
@@ -56,8 +72,8 @@ export const ExpressionLayer: React.FC<{
 
   if (!atlasData || atlasData.frames.length === 0) return null;
 
-  // Let's assume frame rate mapping: 6 frames per sprite
-  const frameIndex = Math.floor(frame / 6) % atlasData.frames.length;
+  // If talking, animate at 1 frame per 3 render frames. Otherwise stay on idle frame 0.
+  const frameIndex = isTalking ? Math.floor(frame / 3) % atlasData.frames.length : 0;
   const currentFrame = atlasData.frames[frameIndex];
 
   // Use source dimensions for scaling if available to maintain consistency between frames
