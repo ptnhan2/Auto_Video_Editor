@@ -3,8 +3,9 @@ import { Main } from './Main';
 import { PuppetPreview } from './compositions/PuppetPreview';
 import { ActionSequence } from './compositions/ActionSequence';
 import { DraftVideoPreview } from './compositions/DraftVideoPreview';
+import { WaddleEngineTest } from './compositions/WaddleEngineTest';
 import { ExpressionPlayer } from '../src/components/ExpressionPlayer';
-import { ActorData } from '../src/types/ai-schemas';
+import { ActorData } from '../src/shared/types/ai-schemas';
 import { COMPOSITION_ID, FPS, VIDEO_HEIGHT, VIDEO_WIDTH, DURATION_IN_FRAMES } from '../src/lib/remotion';
 import { calculateSceneDuration } from '../src/lib/audio-timing';
 import { z } from 'zod';
@@ -176,6 +177,14 @@ export const RemotionRoot: React.FC = () => {
           scriptFile: "draft.json",
           syncOffset: 0
         }}
+      />
+      <Composition
+        id="WaddleEngineTest"
+        component={WaddleEngineTest}
+        durationInFrames={300}
+        fps={30}
+        width={1920}
+        height={1080}
       />
     </>
   );

@@ -13,6 +13,11 @@ export const CHARACTERS = [
     "description": "Nhân vật: char_001"
   },
   {
+    "id": "char_002",
+    "name": "char_002",
+    "description": "Nhân vật: char_002"
+  },
+  {
     "id": "char_minh",
     "name": "char_minh",
     "description": "Nhân vật: char_minh"

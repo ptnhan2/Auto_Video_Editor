@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { Action, Keyframe } from '../../../types/animation';
-import { ManualPose } from '../../../../remotion/components/Puppet';
+import { Action, Keyframe } from '../../../shared/types/animation';
+import { ManualPose } from '../../../../remotion/components/HumanoidSprite';
 
 interface ActionBuilderState {
   currentFrame: number;

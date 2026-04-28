@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, Sequence, Series, continueRender, delayRender, staticFile, interpolate, spring, useCurrentFrame, useVideoConfig, Audio, Img, Easing } from 'remotion';
-import { WaddleSprite } from '../components/WaddleSprite';
+import { HumanoidSprite as WaddleSprite } from '../components/HumanoidSprite';
 import { Subtitle } from '../components/Subtitle';
 import { InteractionEffect } from '../components/InteractionEffect';
 import { Action } from '../../src/shared/types/animation';

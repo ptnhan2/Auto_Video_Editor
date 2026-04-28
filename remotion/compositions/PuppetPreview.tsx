@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, staticFile } from 'remotion';
-import { WaddleSprite } from '../components/WaddleSprite';
+import { HumanoidSprite as WaddleSprite } from '../components/HumanoidSprite';
 import { Action } from '../../src/shared/types/animation';
 
 export const PuppetPreview: React.FC<{

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Player, PlayerRef } from '@remotion/player';
-import { Puppet } from '../../../../remotion/components/Puppet';
+import { HumanoidSprite as Puppet } from '../../../../remotion/components/HumanoidSprite';
 import { useActionStore } from '../store/useActionStore';
 
 const Preview: React.FC = () => {
