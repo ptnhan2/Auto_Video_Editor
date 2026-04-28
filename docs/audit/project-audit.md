@@ -145,14 +145,14 @@ Xác nhận giống như bạn xác định.
 
 | # | File | Trạng thái |
 |---|---|---|
-| 8.1 | `WaddleSprite.tsx` | 🔄 Đang làm |
-| 8.2 | `ExpressionLayer.tsx` | 🔄 Đang làm |
-| 8.3 | `InteractionEffect.tsx` | 🔄 Đang làm |
-| 8.4 | `Subtitle.tsx` | 🔄 Đang làm |
-| 8.5 | `SceneCompiler.tsx` | 🔄 Đang làm |
-| 8.6 | `DraftVideoPreview.tsx` | 🔄 Đang làm |
-| 8.7 | `PuppetPreview.tsx` | 🔄 Đang làm |
-| 8.8 | `ActionSequence.tsx` | 🔄 Đang làm |
+| 8.1 | `WaddleSprite.tsx` | ✅ Đã xây dựng Engine Waddle generic (Issue #35) | ✅ |
+| 8.2 | `ExpressionLayer.tsx` | ✅ Đã đồng bộ với Waddle Sprite | ✅ |
+| 8.3 | `InteractionEffect.tsx` | ✅ Hoạt động tốt | ✅ |
+| 8.4 | `Subtitle.tsx` | 🔄 Đang dọn dẹp | |
+| 8.5 | `SceneCompiler.tsx` | ✅ Đã cập nhật cho Waddle Engine | ✅ |
+| 8.6 | `DraftVideoPreview.tsx` | ✅ Đã cập nhật cho Waddle Engine | ✅ |
+| 8.7 | `PuppetPreview.tsx` | ✅ Đã cập nhật cho Waddle Engine | ✅ |
+| 8.8 | `ActionSequence.tsx` | 🔄 Đang làm | |
 
 Gần như là phải xây lại từ đầu hết vì những cái này dựa trên flow cũ. Và lúc đó tôi lạm dụng AI quá, không hiểu cấu trúc của nó gì cả.
 
@@ -218,7 +218,7 @@ Docs:                 Doc S5 là spec mong muốn, code chưa khớp
 | # | Module | Mô tả | Prio |
 |---|---|---|---|
 | G1 | **Station 7: Video Compiler** | Đọc storyboard từ DB → map visual params → JSON input cho Remotion | 🔴 |
-| G2 | **Waddle Animation Engine** | Xoá nền green screen → transparent PNG + engine rotate/bounce trong Remotion | 🔴 |
+| G2 | **Waddle Animation Engine** | ✅ Hoàn thành: Xoá nền green screen + engine rotate/bounce/squash&stretch (Issue #35) | ✅ |
 | G3 | **Rendering Orchestrator** | Nhận `episode_id` → gọi Remotion CLI → stitch chunks → output MP4 | 🔴 |
 | G4 | **Audio Mixing** | Trộn 3 track: voice TTS + BGM + SFX → 1 audio track | 🟡 |
 | G5 | **Word-Level Subtitle Sync** | Sync subtitle từ TTS timing (không dùng WhisperX đoán lại) | 🟡 |
@@ -237,3 +237,21 @@ CÒN THIẾU để ra MP4:
   G1[Compiler] → G2[Waddle] → G3[Render] → G4[Audio Mix]
   → G5[Subtitle] → G6[CLI] → G7[Test Data]
 ```
+
+## NHẬT KÝ PHIÊN LÀM VIỆC (WORKING SESSIONS)
+
+### Phiên làm việc thứ 2 (2026-04-28) - Waddle Engine Implementation
+**Nội dung:** Hoàn tất Issue #35 - Xây dựng cốt lõi cho hệ thống animation Waddle.
+
+- [x] **Xây dựng WaddleSprite.tsx**: Triển khai thuật toán nảy (Bounce) và xoay (Rotation) theo đúng spec Paper Mario.
+- [x] **Nâng cấp Squash & Stretch**: Thêm hiệu ứng co dãn cơ thể khi chuyển động để tăng độ mềm mại.
+- [x] **Chroma Key Integration**: Tích hợp bộ lọc SVG Matrix tách nền xanh trực tiếp cho asset AI.
+- [x] **Refactoring & Fix Imports**: 
+    - Đổi tên `WaddleSprite` cũ thành `HumanoidSprite`.
+    - Sửa toàn bộ lỗi import bể trong `Root.tsx`, `useActionStore.ts`, `DraftVideoPreview.tsx`.
+    - Fix version `zod@3.22.3` cho Remotion.
+- [x] **CLI Restoration**: Tạo hệ thống CLI Wrapper trong `scripts/core/` để khôi phục các lệnh `npm run studio`.
+- [x] **Visual Verification**: Tạo composition `WaddleEngineTest` để kiểm tra thị giác 3 cấp độ chuyển động.
+
+---
+**Tiếp theo:** Triển khai **G1 (Station 7: Video Compiler)** để kết nối dữ liệu từ Database vào Remotion.
