@@ -78,7 +78,7 @@ def search_animation_registry(query: str) -> list:
 def update_storyboard_visuals(
     storyboard_id: str,
     layout_style: str,
-    camera_motion: str,
+    camera_concept: str,
     asset_dynamics: str,
     visual_metaphor: str,
     transition_in: str,
@@ -101,7 +101,7 @@ def update_storyboard_visuals(
         
         update_data = {
             "layout_style": layout_style,
-            "camera_motion": camera_motion,
+            "camera_concept": camera_concept,
             "asset_dynamics": asset_dynamics,
             "visual_metaphor": visual_metaphor,
             "transition_in": transition_in,
@@ -114,7 +114,7 @@ def update_storyboard_visuals(
         
         log_db_operation(logger, "update", "Storyboard", {"id": storyboard_id}, update_data)
         shot.layout_style = layout_style
-        shot.camera_motion = camera_motion
+        shot.camera_concept = camera_concept
         shot.asset_dynamics = asset_dynamics
         shot.visual_metaphor = visual_metaphor
         shot.transition_in = transition_in
@@ -164,7 +164,7 @@ GIAI ĐOẠN 3: HOÀN THIỆN & KHỚP ASSET (Polish & Assets)
 
 CÁC TRỤC SÁNG TẠO:
 - Layout: diorama, scrapbook, split_screen, frame_in_frame, isometric, top_down, matchbox, continuous_scroll.
-- Camera Motion: endless_pan, micro_macro_zoom, whip_pan, camera_shake, crash_zoom, dutch_roll, dolly_zoom_2d.
+- Camera Concept: endless_pan, micro_macro_zoom, whip_pan, camera_shake, crash_zoom, dutch_roll, dolly_zoom_2d.
 - Asset Dynamics: stop_motion_stutter, spring_overshoot, wobble_jitter, float_drift, paper_fold, hinge_rigging, smear_2d.
 - Visual Metaphor: red_string, highlight_redact, kinetic_typography, magnifying_glass, blueprint_overlay, polaroid_frame.
 - Transition: paper_tear, ink_bleed, object_wipe, graphic_match_cut, page_flip, burn_reveal.
@@ -220,7 +220,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
                     data = json.loads(s.character_position)
                     pos_summary = ", ".join([f"{c['character_id'][:5]}: {c['position']}" for c in data])
                 except: pass
-            history_lines.append(f"Shot {s.storyboard_number}: [Layout: {s.layout_style}] [Cam: {s.camera_motion}] [FX: {s.visual_metaphor}] [Pos: {pos_summary}]")
+            history_lines.append(f"Shot {s.storyboard_number}: [Layout: {s.layout_style}] [Cam: {s.camera_concept}] [FX: {s.visual_metaphor}] [Pos: {pos_summary}]")
         
         compact_history = "\n".join(history_lines) # Gửi toàn bộ lịch sử rút gọn của tập phim để rắc-co tuyệt đối
         
