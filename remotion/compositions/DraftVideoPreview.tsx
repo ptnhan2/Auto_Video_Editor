@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, staticFile } from 'remotion';
 import { SceneCompiler } from './SceneCompiler';
-import { VideoScriptSchema, SceneData, ActorData } from '../../src/types/ai-schemas';
+import { VideoScriptSchema, SceneData, ActorData } from '../../src/shared/types/ai-schemas';
 
 type FlexibleScript = { title: string; scenes: (SceneData & { shots?: ActorData[] })[] };
 

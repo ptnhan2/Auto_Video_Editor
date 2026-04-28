@@ -114,5 +114,19 @@
     "width": 164,
     "height": 309,
     "baseAngle": 5.19
+  },
+  "body": {
+    "x": 0.5,
+    "y": 1.0,
+    "width": 1024,
+    "height": 1024,
+    "globalX": 0,
+    "globalY": 0,
+    "expressionAnchor": {
+      "x": 380,
+      "y": 150,
+      "width": 260,
+      "height": 200
+    }
   }
 }

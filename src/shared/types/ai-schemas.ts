@@ -7,7 +7,7 @@ import {
   AUDIO_TRACKS,
   EFFECTS,
   PROPS
-} from "../config/asset-registry";
+} from "../../config/asset-registry";
 
 // Helper để trích xuất mảng ID từ các mảng Object trong registry
 const getIds = (arr: readonly { id: string }[]) => arr.map(item => item.id) as [string, ...string[]];
