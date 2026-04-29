@@ -71,5 +71,10 @@ Khi code đã áp dụng lên `main`:
 ## 📊 CUỐI TUẦN — Retrospective (30 phút, thứ Sáu)
 
 1. Đếm số task đã hoàn thành trên Kanban.
-2. Viết Weekly Report tóm tắt và lưu vào comment của **Issue #47** (Issue được ghim chuyên dùng cho Retrospective tuần):
-   > `📅 Tuần [Ngày-Tháng]: Đã đóng 5 issues (#35, #40...). Tuần sau tập trung làm Video Compiler.`
+2. Vào **GitHub Discussions**, tìm Thread có tên **"📊 BÁO CÁO TỔNG KẾT TUẦN (WEEKLY RETROSPECTIVE)"**.
+3. Viết Weekly Report tóm tắt và comment vào đó theo định dạng:
+   > `📅 **Tuần [Ngày-Tháng]:**`
+   > `- ✅ **Đã đóng:** 5 issues (#35, #40...).`
+   > `- 🔄 **Đang làm dở:** ...`
+   > `- ⚠️ **Trở ngại:** ...`
+   > `- 🔜 **Tuần sau:** Tập trung làm Video Compiler.`
