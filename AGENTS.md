@@ -1,6 +1,6 @@
 # 🤖 AI AGENTS CONSTITUTION & PROJECT STRUCTURE
 
-**IMPORTANT:** All AI agents must read and adhere to this document before creating, modifying, or moving any files. Failure to comply with the directory structure will result in immediate rejection of the task.
+**IMPORTANT:** All AI agents must read and adhere to this document and `WORKFLOW.md` before creating, modifying, or moving any files. Failure to comply with the directory structure will result in immediate rejection of the task.
 
 ## 1. OFFICIAL PROJECT STRUCTURE (100% STRICT - DOMAIN DRIVEN)
 
