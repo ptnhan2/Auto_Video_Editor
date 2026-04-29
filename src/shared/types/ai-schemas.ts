@@ -77,6 +77,14 @@ export const SceneSchema = z.object({
   actors: z.array(ActorSchema).min(1).describe("Danh sách các nhân vật xuất hiện trong cảnh."),
   bgmId: BgmIdEnum.optional().describe("Nhạc nền (Background Music) cho cảnh này."),
   sfxId: SfxIdEnum.optional().describe("Hiệu ứng âm thanh chung của cảnh."),
+  
+  // Cinematic / Director Attributes (Generated from Station 5)
+  layoutStyle: z.string().nullable().optional().describe("Bố cục không gian kể chuyện (vd: diorama, scrapbook, split_screen)"),
+  visualMetaphor: z.string().nullable().optional().describe("Phép ẩn dụ thị giác (vd: red_string, blueprint_overlay)"),
+  transitionIn: z.string().nullable().optional().describe("Kỹ thuật chuyển cảnh đầu vào (vd: paper_tear, ink_bleed, object_wipe)"),
+  atmosphereFx: z.string().nullable().optional().describe("Xử lý chất liệu và khí quyển (vd: drop_shadows, halftone_filter)"),
+  assetDynamics: z.string().nullable().optional().describe("Vật lý của chất liệu giấy áp dụng cho scene (vd: stop_motion_stutter)"),
+
   camera: z.object({
     type: z.enum(["static", "pan_left", "pan_right", "zoom_in", "zoom_out"]).describe("Loại hiệu ứng camera"),
     targetX: z.number().optional().describe("Tọa độ X (%) mục tiêu (vd: 20 là front_left, 50 là giữa)"),

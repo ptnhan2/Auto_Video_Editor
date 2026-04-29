@@ -110,6 +110,13 @@ def compile_episode(episode_id):
                     "bgmId": _parse_bgm_id(sb.bgm_prompt),
                     "sfxId": _parse_sfx_id(sb.sound_effect),
                     "camera": _parse_camera(sb.camera_concept),
+                    
+                    # Cinematic Attributes Mapping
+                    "layoutStyle": sb.layout_style if sb.layout_style else None,
+                    "visualMetaphor": sb.visual_metaphor if sb.visual_metaphor else None,
+                    "transitionIn": sb.transition_in if sb.transition_in else None,
+                    "atmosphereFx": sb.atmosphere_fx if sb.atmosphere_fx else None,
+                    "assetDynamics": sb.asset_dynamics if sb.asset_dynamics else None,
                 }
 
             characters = list(sb.characters) if sb.characters else []
@@ -145,12 +152,24 @@ def compile_episode(episode_id):
                 current_scene["sfxId"] = _parse_sfx_id(sb.sound_effect)
             if not current_scene["camera"]:
                 current_scene["camera"] = _parse_camera(sb.camera_concept)
+            
+            # Map Cinematic Attributes over time within the same scene
+            if not current_scene["layoutStyle"] and sb.layout_style:
+                current_scene["layoutStyle"] = sb.layout_style
+            if not current_scene["visualMetaphor"] and sb.visual_metaphor:
+                current_scene["visualMetaphor"] = sb.visual_metaphor
+            if not current_scene["transitionIn"] and sb.transition_in:
+                current_scene["transitionIn"] = sb.transition_in
+            if not current_scene["atmosphereFx"] and sb.atmosphere_fx:
+                current_scene["atmosphereFx"] = sb.atmosphere_fx
+            if not current_scene["assetDynamics"] and sb.asset_dynamics:
+                current_scene["assetDynamics"] = sb.asset_dynamics
 
         if current_scene is not None:
             scenes.append(current_scene)
 
         for sc in scenes:
-            for key in ("bgmId", "sfxId", "camera"):
+            for key in ("bgmId", "sfxId", "camera", "layoutStyle", "visualMetaphor", "transitionIn", "atmosphereFx", "assetDynamics"):
                 if sc.get(key) is None:
                     del sc[key]
 
