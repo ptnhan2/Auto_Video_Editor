@@ -105,19 +105,24 @@ def compile_episode(episode_id):
                 current_scene = {
                     "sceneId": scene_id,
                     "backgroundId": sb.background_id or "bg_transparent",
-                    "durationSeconds": sb.duration or 5,
-                    "actors": [],
-                    "bgmId": _parse_bgm_id(sb.bgm_prompt),
-                    "sfxId": _parse_sfx_id(sb.sound_effect),
-                    "camera": _parse_camera(sb.camera_concept),
-                    
-                    # Cinematic Attributes Mapping
-                    "layoutStyle": sb.layout_style if sb.layout_style else None,
-                    "visualMetaphor": sb.visual_metaphor if sb.visual_metaphor else None,
-                    "transitionIn": sb.transition_in if sb.transition_in else None,
-                    "atmosphereFx": sb.atmosphere_fx if sb.atmosphere_fx else None,
-                    "assetDynamics": sb.asset_dynamics if sb.asset_dynamics else None,
+                    "totalDurationSeconds": 0,
+                    "shots": []
                 }
+
+            shot = {
+                "shotId": str(sb.id),
+                "durationSeconds": float(sb.duration) if sb.duration and sb.duration >= 0.5 else 5.0,
+                "actors": [],
+                "layoutStyle": sb.layout_style if sb.layout_style else None,
+                "visualMetaphor": sb.visual_metaphor if sb.visual_metaphor else None,
+                "transitionIn": sb.transition_in if sb.transition_in else None,
+                "atmosphereFx": sb.atmosphere_fx if sb.atmosphere_fx else None,
+                "assetDynamics": sb.asset_dynamics if sb.asset_dynamics else None,
+                "camera": _parse_camera(sb.camera_concept),
+                "bgmId": _parse_bgm_id(sb.bgm_prompt),
+                "sfxId": _parse_sfx_id(sb.sound_effect),
+                "vfxId": None  # Expand later if vfx is extracted
+            }
 
             characters = list(sb.characters) if sb.characters else []
             speaking_char_id = sb.speaker_id
@@ -141,37 +146,18 @@ def compile_episode(episode_id):
                 if audio_id and is_speaker:
                     actor["audioId"] = audio_id
 
-                current_scene["actors"].append(actor)
+                shot["actors"].append(actor)
 
-            if sb.duration and sb.duration > current_scene["durationSeconds"]:
-                current_scene["durationSeconds"] = sb.duration
+            # Cleanup None keys in shot to match Zod optional/nullable nicely
+            for key in ("layoutStyle", "visualMetaphor", "transitionIn", "atmosphereFx", "assetDynamics", "camera", "bgmId", "sfxId", "vfxId"):
+                if shot.get(key) is None:
+                    del shot[key]
 
-            if not current_scene["bgmId"]:
-                current_scene["bgmId"] = _parse_bgm_id(sb.bgm_prompt)
-            if not current_scene["sfxId"]:
-                current_scene["sfxId"] = _parse_sfx_id(sb.sound_effect)
-            if not current_scene["camera"]:
-                current_scene["camera"] = _parse_camera(sb.camera_concept)
-            
-            # Map Cinematic Attributes over time within the same scene
-            if not current_scene["layoutStyle"] and sb.layout_style:
-                current_scene["layoutStyle"] = sb.layout_style
-            if not current_scene["visualMetaphor"] and sb.visual_metaphor:
-                current_scene["visualMetaphor"] = sb.visual_metaphor
-            if not current_scene["transitionIn"] and sb.transition_in:
-                current_scene["transitionIn"] = sb.transition_in
-            if not current_scene["atmosphereFx"] and sb.atmosphere_fx:
-                current_scene["atmosphereFx"] = sb.atmosphere_fx
-            if not current_scene["assetDynamics"] and sb.asset_dynamics:
-                current_scene["assetDynamics"] = sb.asset_dynamics
+            current_scene["shots"].append(shot)
+            current_scene["totalDurationSeconds"] += shot["durationSeconds"]
 
         if current_scene is not None:
             scenes.append(current_scene)
-
-        for sc in scenes:
-            for key in ("bgmId", "sfxId", "camera", "layoutStyle", "visualMetaphor", "transitionIn", "atmosphereFx", "assetDynamics"):
-                if sc.get(key) is None:
-                    del sc[key]
 
         result = {
             "title": title,

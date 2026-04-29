@@ -69,36 +69,48 @@ export const ActorSchema = z.object({
   })).optional().describe("Dữ liệu timing chính xác cho từng từ (Word-level timestamps)")
 });
 
-// 3. Định nghĩa Schema cấu trúc cho một Cảnh quay (Scene)
-export const SceneSchema = z.object({
-  sceneId: z.string().describe("Tên ngắn gọn cho cảnh quay, dùng để nhận diện (vd: sc01_trong_rung)"),
-  backgroundId: BackgroundIdEnum.describe("Bối cảnh nền của cảnh quay."),
-  durationSeconds: z.number().min(1).optional().describe("Thời lượng dự kiến của cảnh quay (tính bằng giây). Có thể để trống để tự động tính dựa trên thoại."),
-  actors: z.array(ActorSchema).min(1).describe("Danh sách các nhân vật xuất hiện trong cảnh."),
-  bgmId: BgmIdEnum.optional().describe("Nhạc nền (Background Music) cho cảnh này."),
-  sfxId: SfxIdEnum.optional().describe("Hiệu ứng âm thanh chung của cảnh."),
+// 3. Định nghĩa Schema cấu trúc cho một Cú máy (Shot / Storyboard)
+export const ShotSchema = z.object({
+  shotId: z.string().describe("ID của storyboard"),
+  durationSeconds: z.number().min(0.5).describe("Thời lượng của riêng cú máy này"),
+  
+  // Thông tin diễn xuất
+  actors: z.array(ActorSchema).min(1).describe("Danh sách các nhân vật xuất hiện trong shot."),
   
   // Cinematic / Director Attributes (Generated from Station 5)
   layoutStyle: z.string().nullable().optional().describe("Bố cục không gian kể chuyện (vd: diorama, scrapbook, split_screen)"),
   visualMetaphor: z.string().nullable().optional().describe("Phép ẩn dụ thị giác (vd: red_string, blueprint_overlay)"),
   transitionIn: z.string().nullable().optional().describe("Kỹ thuật chuyển cảnh đầu vào (vd: paper_tear, ink_bleed, object_wipe)"),
   atmosphereFx: z.string().nullable().optional().describe("Xử lý chất liệu và khí quyển (vd: drop_shadows, halftone_filter)"),
-  assetDynamics: z.string().nullable().optional().describe("Vật lý của chất liệu giấy áp dụng cho scene (vd: stop_motion_stutter)"),
+  assetDynamics: z.string().nullable().optional().describe("Vật lý của chất liệu giấy áp dụng cho shot (vd: stop_motion_stutter)"),
 
   camera: z.object({
     type: z.enum(["static", "pan_left", "pan_right", "zoom_in", "zoom_out"]).describe("Loại hiệu ứng camera"),
     targetX: z.number().optional().describe("Tọa độ X (%) mục tiêu (vd: 20 là front_left, 50 là giữa)"),
     intensity: z.number().optional().describe("Độ zoom (vd: 1.2 là zoom in 120%)")
-  }).optional().describe("Chuyển động của camera (Zoom/Pan) trong cảnh"),
-  vfxId: VfxIdEnum.optional().describe("Kỹ xảo hình ảnh (VFX) xuất hiện trên màn hình."),
+  }).nullable().optional().describe("Chuyển động của camera (Zoom/Pan) trong cảnh"),
+  
+  // Âm thanh riêng của góc quay (SFX va chạm, BGM thay đổi giữa chừng)
+  bgmId: BgmIdEnum.nullable().optional().describe("Nhạc nền (Background Music) cho shot này."),
+  sfxId: SfxIdEnum.nullable().optional().describe("Hiệu ứng âm thanh chung của shot."),
+  
+  vfxId: VfxIdEnum.nullable().optional().describe("Kỹ xảo hình ảnh (VFX) xuất hiện trên màn hình."),
   requestedAssets: z.array(z.object({
     type: z.enum(["background", "prop", "action", "sfx"]).describe("Loại tài nguyên còn thiếu"),
     missingConcept: z.string().describe("Mô tả chi tiết thứ mà kịch bản yêu cầu (vd: Quán bar Cyberpunk, Thanh kiếm Lazer, hành động nhào lộn)"),
     reason: z.string().optional().describe("Lý do tại sao cần thiết")
-  })).optional().describe("Danh sách các Asset KHÔNG có sẵn trong thư viện nhưng kịch bản lại rất cần. AI điền vào đây để hệ thống báo lại cho họa sĩ vẽ thêm (Fallback mechanism).")
+  })).optional().describe("Danh sách các Asset KHÔNG có sẵn trong thư viện nhưng kịch bản lại rất cần.")
 });
 
-// 4. Định nghĩa Schema cấu trúc Kịch bản Tổng thể (Video Script)
+// 4. Định nghĩa Schema cấu trúc cho một Cảnh quay (Scene)
+export const SceneSchema = z.object({
+  sceneId: z.string().describe("ID của Scene, dùng để load background chung"),
+  backgroundId: BackgroundIdEnum.describe("Background không thay đổi xuyên suốt các Shots trong Scene"),
+  totalDurationSeconds: z.number().describe("Tổng thời gian hiển thị background"),
+  shots: z.array(ShotSchema).min(1).describe("Danh sách các góc máy nối tiếp nhau trong cùng 1 bối cảnh")
+});
+
+// 5. Định nghĩa Schema cấu trúc Kịch bản Tổng thể (Video Script)
 export const VideoScriptSchema = z.object({
   title: z.string().describe("Tiêu đề của đoạn video."),
   description: z.string().describe("Tóm tắt nội dung câu chuyện."),
@@ -107,5 +119,6 @@ export const VideoScriptSchema = z.object({
 
 // Xuất các kiểu TypeScript (Types) tương ứng từ Zod Schema để dùng trong code React
 export type ActorData = z.infer<typeof ActorSchema>;
+export type ShotData = z.infer<typeof ShotSchema>;
 export type SceneData = z.infer<typeof SceneSchema>;
 export type VideoScriptData = z.infer<typeof VideoScriptSchema>;
