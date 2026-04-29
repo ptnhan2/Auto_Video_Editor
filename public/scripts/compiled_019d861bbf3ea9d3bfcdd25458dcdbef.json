@@ -1,0 +1,421 @@
+{
+  "title": "chuong_1.txt",
+  "scenes": [
+    {
+      "sceneId": "019d861defd9f3e7c5ba7323b8066205",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 13,
+      "actors": []
+    },
+    {
+      "sceneId": "019d861deff812a8d66d1d032a7e49b4",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 8,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "surprise_fear",
+          "expressionId": "fear",
+          "expressionTag": "fear",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "talk_sad",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439dd2be243fa61f444a5ebd59",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 8,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "reach_out",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "reach_out",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d86439d192c545aaca0eea3ad87b3",
+          "actionId": "idle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d86439d192c545aaca0eea3ad87b3",
+          "actionId": "reach_out",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d86439d192c545aaca0eea3ad87b3",
+          "actionId": "reach_out",
+          "expressionId": "happy",
+          "expressionTag": "happy",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Này cháu, cầm lấy mà dùng. Đứng đây nắng nôi quá.",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d87800e89947399e47ac31c34a368"
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "reach_out",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Cháu... cháu cảm ơn bác.",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d87800e8a4d0157e78e03301d7962"
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "walk_cycle",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439df60d8a460147004c7f429f",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 14,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "walk_cycle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "surprise_fear",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Là thật... mình thực sự đã trở lại rồi.",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780a421708031ae50d3aa3792d3"
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439e11f0ac6b94e50d726819c0",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 8,
+      "actors": [
+        {
+          "characterId": "019d86439d3c307bb501d71de58c0020",
+          "actionId": "talk_angry",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d86439d3c307bb501d71de58c0020",
+          "actionId": "talk_angry",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Vài chục vạn thì mua được nhà ở đâu? Chúng tôi đã sống ở đây cả đời rồi!",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780a42526cd063e87609c87ebed"
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439e2b57beed0d16458a5d4635",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 11,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "talk_sad",
+          "expressionId": "sad",
+          "expressionTag": "sad",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439e47e441d97c799848509bf8",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 6,
+      "actors": [
+        {
+          "characterId": "019d86439d5a6b0209db084d20bc775a",
+          "actionId": "idle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "sneak_cycle",
+          "expressionId": "sad",
+          "expressionTag": "sad",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439e61156647086947eece2605",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 19,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "talk_angry",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Phó giáo sư... Từ Giai, làm sao một kẻ luôn phải gian lận để giữ điểm số như cô lại có thể trở thành phó giáo sư?",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780ef4f5e114003ea644d27885b"
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439e792026f5989e2ffe86d8bb",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 9,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "talk_angry",
+          "expressionId": "angry, fear",
+          "expressionTag": "angry, fear",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d86439d756fc1e3bc53a2bfd64ff3",
+          "actionId": "talk_angry",
+          "expressionId": "angry, fear",
+          "expressionTag": "angry, fear",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Mẹ mày chết rồi, nhà này không nuôi không loại con nuôi như mày. Tao đã tìm cho mày một đám tốt, gả đi cho rảnh nợ!",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780ef515a3b6b966aed2d885b78"
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "talk_sad",
+          "expressionId": "sad",
+          "expressionTag": "sad",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Bà nội, cháu muốn đi học tiếp, cháu muốn thi đại học...",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780ef51949f395e980f65565a49"
+        },
+        {
+          "characterId": "019d86439d756fc1e3bc53a2bfd64ff3",
+          "actionId": "talk_angry",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Học hành gì? Mày trượt rồi! Đừng có nằm mơ nữa!",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780ef5268b14e236e64d26bf133"
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439e94727802389a851a24e58c",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 8,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "look_around",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    },
+    {
+      "sceneId": "019d86439eae8899ff0a6c05733812b7",
+      "backgroundId": "bg_transparent",
+      "durationSeconds": 10,
+      "actors": [
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "talk_sad",
+          "expressionId": "sad",
+          "expressionTag": "sad",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "surprised",
+          "expressionTag": "surprised",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Ngôi trường cô ta tốt nghiệp... chính là trường mình đã đăng ký. Nhưng rõ ràng lúc đó cô ta đâu có nộp hồ sơ vào trường đó...",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780ef57d04c517f531bc4277855"
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "idle",
+          "expressionId": "angry",
+          "expressionTag": "angry",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": "Từ Giai, nếu cô đã đánh cắp cuộc đời tôi một lần... thì kiếp này, tôi sẽ bắt cô phải trả lại tất cả.",
+          "isSpeaking": true,
+          "audioId": "aud_sb019d8780ef5abea1b88f062f80c57c61"
+        },
+        {
+          "characterId": "019d861defb412d4daffaff36ddbd6fb",
+          "actionId": "walk_cycle",
+          "expressionId": "neutral",
+          "expressionTag": "neutral",
+          "facing": "left",
+          "position": "mid_center",
+          "dialogue": null,
+          "isSpeaking": false
+        }
+      ]
+    }
+  ]
+}
