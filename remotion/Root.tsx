@@ -154,9 +154,19 @@ export const RemotionRoot: React.FC = () => {
             if (scriptData && Array.isArray(scriptData.scenes)) {
               scriptData.scenes.forEach((scene) => {
                 const s = scene as Record<string, unknown>;
-                const actors = (s.actors || s.shots || []) as ActorData[];
-                const isSequential = !s.actors && !!s.shots;
-                const sceneDuration = (s.durationSeconds as number) || calculateSceneDuration(actors, isSequential);
+                
+                let sceneDuration = 0;
+                if (typeof s.totalDurationSeconds === 'number') {
+                  sceneDuration = s.totalDurationSeconds;
+                } else if (Array.isArray(s.shots)) {
+                  // Fallback: sum duration of shots
+                  sceneDuration = s.shots.reduce((acc, shot: any) => acc + (shot.durationSeconds || 5), 0);
+                } else {
+                  // Old fallback for TTS review mode
+                  const actors = (s.actors || []) as ActorData[];
+                  sceneDuration = (s.durationSeconds as number) || calculateSceneDuration(actors, false);
+                }
+                
                 totalSeconds += sceneDuration;
               });
             }

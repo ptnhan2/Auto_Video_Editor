@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { AbsoluteFill, Sequence, Series, continueRender, delayRender, staticFile, interpolate, spring, useCurrentFrame, useVideoConfig, Audio, Img, Easing } from 'remotion';
+import { AbsoluteFill, Sequence, Series, continueRender, delayRender, staticFile, interpolate, useCurrentFrame, useVideoConfig, Audio, Img, Easing } from 'remotion';
 import { HumanoidSprite as WaddleSprite } from '../components/HumanoidSprite';
-import { Subtitle } from '../components/Subtitle';
 import { InteractionEffect } from '../components/InteractionEffect';
 import { Action } from '../../src/shared/types/animation';
-import { ActorData, SceneData } from '../../src/shared/types/ai-schemas';
-import { calculateSceneDuration } from '../../src/lib/audio-timing';
+import { ActorData, SceneData, ShotData } from '../../src/shared/types/ai-schemas';
 import { getActorPositionStyle } from '../../src/lib/visual-grid';
 
 /**
@@ -33,7 +31,7 @@ const SingleActor: React.FC<{
   const [action, setAction] = useState<Action | null>(null);
   const [hasError, setHasError] = useState(false);
   const frame = useCurrentFrame();
-  const { durationInFrames, fps } = useVideoConfig();
+  const { durationInFrames } = useVideoConfig();
 
   useEffect(() => {
     const fileName = actionId.endsWith('.json') ? actionId : `${actionId}.json`;
@@ -108,14 +106,10 @@ const SingleActor: React.FC<{
   );
 
   // 🚪 HIỆU ỨNG ENTER/EXIT (TH1: Walking in/out)
-  // TH2: Nếu không có isEnteringFrom / isExitingTo, nhân vật xuất hiện instant, opacity luôn là 1.
-  const walkDuration = Math.min(45, durationInFrames / 2); // 45 frames cho một walk cycle mượt mà
+  const walkDuration = Math.min(45, durationInFrames / 2);
   const exitStart = durationInFrames - walkDuration;
 
-  let currentTranslateX = 0; // Relative to the computed percentage grid position
-
-  // 1. Tính toán điểm bắt đầu/kết thúc nếu đi vào/đi ra
-  // Assuming full screen is roughly 100vw, -100 to +100 gives plenty of off-screen room
+  let currentTranslateX = 0;
   const offScreenLeft = -100;
   const offScreenRight = 100;
 
@@ -127,19 +121,14 @@ const SingleActor: React.FC<{
     currentTranslateX = interpolate(frame, [exitStart, durationInFrames], [0, endX], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   }
 
-  // Xử lý hướng mặt: Mặc định asset hướng phải, nên facing="left" thì scaleX(-1)
-  // Lưu ý: startGridStyle đã có transform: translate(-50%, 0)
   const flip = facing === 'left' ? 'scaleX(-1)' : 'scaleX(1)';
-  // Kết hợp translateX của walk in/out với transform gốc
   const combinedTransform = `${startGridStyle.transform} translateX(${currentTranslateX}vw) ${flip} scale(${breathing})`;
-  const opacity = 1; // Luôn luôn instant theo TH2 nếu không đi bộ (hoặc giữ 1 khi đang đi bộ TH1)
+  const opacity = 1;
 
   // Logic hiệu ứng cầm nắm (Visual workaround cho 'grab')
   const isGrabbing = actionId === 'grab' && propId && propId !== 'prop_none';
   const grabCloudDuration = 15;
-  const grabFlyDuration = 15; // Thời gian item bay từ xa tới tay
-  
-  const isPropEquipped = !isGrabbing || frame >= grabCloudDuration + grabFlyDuration;
+  const grabFlyDuration = 15; 
   
   const flyProgress = isGrabbing ? interpolate(
     frame,
@@ -170,7 +159,6 @@ const SingleActor: React.FC<{
           position: 'absolute',
           left: '50%',
           top: '50%',
-          // Item bay từ dưới góc lên tay
           transform: `translate(-50%, -50%) translate(${interpolate(flyProgress, [0, 1], [150, 0])}px, ${interpolate(flyProgress, [0, 1], [150, 0])}px) scale(0.3)`,
           zIndex: 100,
         }}>
@@ -256,12 +244,10 @@ const BackgroundLayer: React.FC<{
 }> = ({ backgroundId, environment }) => {
   const [errorCount, setErrorCount] = useState(0);
   
-  // Kiểm tra an toàn nếu backgroundId bị rỗng
   if (!backgroundId) {
     return <VisualPlaceholder type="background" label="EMPTY_ID" />;
   }
   
-  // Thử các biến thể của tên file (có hoặc không có tiền tố bg_)
   const cleanId = backgroundId.startsWith('bg_') ? backgroundId.replace('bg_', '') : backgroundId;
   const variants = [backgroundId, cleanId, `bg_${backgroundId}`];
   
@@ -314,278 +300,96 @@ const BackgroundLayer: React.FC<{
 };
 
 /**
- * COMPONENT: ShotVisual
- * Render hình ảnh diễn viên.
+ * COMPONENT: SceneCompiler
+ * Parses SceneData -> Shots -> Actors.
  */
-const ShotVisual: React.FC<{
-  actor: Partial<ActorData> & { actors?: Partial<ActorData>[] };
-  actorIndex: number;
-  totalActors: number;
-}> = ({ actor, actorIndex, totalActors }) => {
-  const actorsList = Array.isArray(actor.actors) ? actor.actors : [actor];
-
-  return (
-    <AbsoluteFill>
-      {/* Visual Actor (Skip if narrator) */}
-      {actorsList.map((a: Partial<ActorData>, idx: number) => {
-        if (!a.characterId || a.characterId === 'narrator') return null;
-        return (
-          <SingleActor
-            key={idx}
-            characterId={a.characterId}
-            actionId={a.actionId || 'verified_walk'}
-            expressionId={a.expressionId || 'neutral'}
-            expressionTag={a.expressionTag}
-            facing={a.facing || 'left'}
-            position={a.position || 'mid_center'}
-            moveToPosition={a.moveToPosition}
-            index={idx}
-            totalActors={actorsList.length}
-            movement={a.movement}
-            isEnteringFrom={a.isEnteringFrom}
-            isExitingTo={a.isExitingTo}
-            zIndex={a.zIndex}
-            propId={a.propId}
-            isSpeaking={!!a.dialogue || !!a.isSpeaking}
-          />
-        );
-      })}
-    </AbsoluteFill>
-  );
-};
-
-/**
- * COMPONENT: ShotAudioSub
- * Render Subtitle, Audio, và SFX.
- */
-const ShotAudioSub: React.FC<{
-  actor: ActorData;
-  syncOffset: number;
-  isLeft: boolean;
-}> = ({ actor, syncOffset, isLeft }) => {
-  const { fps } = useVideoConfig();
-  const durationInFrames = actor.audioDuration ? Math.ceil(actor.audioDuration * fps) : undefined;
-
-  return (
-    <AbsoluteFill>
-      {/* 2. Subtitle */}
-      {actor.dialogue && (
-        <Subtitle
-          dialogue={actor.dialogue}
-          characterId={actor.characterId || 'narrator'}
-          audioDurationInFrames={durationInFrames}
-          wordTimings={actor.wordTimings}
-          syncOffset={syncOffset}
-          style={{
-            bottom: 50,
-            left: isLeft ? '10%' : '50%',
-            width: '40%'
-          }}
-        />
-      )}
-
-      {/* 3. Voice Audio */}
-      {actor.audioId && (
-        <Audio
-          src={staticFile(`assets/audio/tts/${actor.audioId}.mp3`)}
-        />
-      )}
-
-      {/* 4. Actor SFX (Nếu có) */}
-      {actor.sfx?.map((effect, i) => (
-        <Sequence key={`sfx-${i}`} from={effect.startFrame} name={`🔊 SFX: ${effect.assetId}`}>
-          <div style={{ position: 'absolute', top: 20, right: 20, padding: 10, background: 'orange', color: 'white', fontWeight: 'bold', zIndex: 1000, borderRadius: 5 }}>
-            🔊 SFX: {effect.assetId}
-          </div>
-        </Sequence>
-      ))}
-    </AbsoluteFill>
-  );
-};
-
-/**
- * COMPONENT: CameraWrapper
- * Xử lý chuyển động Camera cho Background và Actors.
- */
-const CameraWrapper: React.FC<{
-  cameraWork?: { type: string; intensity?: number; targetX?: number };
-  durationFrames: number;
-  children: React.ReactNode;
-}> = ({ cameraWork, durationFrames, children }) => {
-  const frame = useCurrentFrame();
-
-  let scale = 1;
-  let translateX = 0;
-
-  const cameraType = cameraWork?.type || 'static';
-  const intensity = cameraWork?.intensity || 1.15;
-  const targetX = cameraWork?.targetX || 50;
-
-  if (cameraType === 'zoom_in') {
-    scale = interpolate(frame, [0, durationFrames], [1, intensity], {
-      extrapolateRight: 'clamp',
-      easing: Easing.bezier(0.33, 1, 0.68, 1) // Smooth ease-out
-    });
-    translateX = interpolate(frame, [0, durationFrames], [0, 50 - targetX], {
-      extrapolateRight: 'clamp'
-    });
-  } else if (cameraType === 'zoom_out') {
-    scale = interpolate(frame, [0, durationFrames], [intensity, 1], {
-      extrapolateRight: 'clamp',
-      easing: Easing.bezier(0.33, 1, 0.68, 1)
-    });
-    translateX = interpolate(frame, [0, durationFrames], [50 - targetX, 0], {
-      extrapolateRight: 'clamp'
-    });
-  } else if (cameraType === 'pan_left') {
-    translateX = interpolate(frame, [0, durationFrames], [-5, 5], {
-      extrapolateRight: 'clamp',
-      easing: Easing.inOut(Easing.quad)
-    });
-  } else if (cameraType === 'pan_right') {
-    translateX = interpolate(frame, [0, durationFrames], [5, -5], {
-      extrapolateRight: 'clamp',
-      easing: Easing.inOut(Easing.quad)
-    });
-  }
-
-  return (
-    <AbsoluteFill style={{
-      transform: `scale(${scale}) translateX(${translateX}%)`,
-      transformOrigin: 'center center',
-    }}>
-      {children}
-    </AbsoluteFill>
-  );
-};
-
-/**
- * COMPONENT: SceneRenderer
- */
-const SceneRenderer: React.FC<{
-  scene: SceneData & { 
-    shots?: ActorData[]; 
-    cameraWork?: { type: string; intensity?: number; targetX?: number };
-    environment?: { time_of_day?: string; lighting?: string };
-  };
-  durationFrames: number;
+export const SceneCompiler: React.FC<{
+  scene: SceneData;
   syncOffset?: number;
-}> = ({ scene, durationFrames, syncOffset = 0 }) => {
+}> = ({ scene, syncOffset = 0 }) => {
   const { fps } = useVideoConfig();
-  
-  const rawActors = scene.actors || scene.shots || [];
-  const normalizedActors = rawActors.map((item: Partial<ActorData> & { actors?: Partial<ActorData>[] }) => {
-    const inferredCharId = item.characterId || (item.actors && item.actors.length > 0 ? item.actors[0].characterId : 'narrator');
-    return {
-      ...item,
-      characterId: inferredCharId,
-      actionId: item.actionId || 'verified_walk',
-    };
-  }) as ActorData[];
 
-  const isSequential = !scene.actors && !!scene.shots;
-
-  const cameraWork = scene.cameraWork || scene.camera;
+  // Normalize structure: if it's legacy without shots, treat the whole scene as one shot
+  const shots: ShotData[] = scene.shots && scene.shots.length > 0
+    ? scene.shots
+    : [
+        {
+          shotId: scene.sceneId + "_fallback_shot",
+          durationSeconds: scene.totalDurationSeconds || (scene as any).durationSeconds || 5,
+          actors: (scene as any).actors || [],
+          camera: (scene as any).camera || null,
+        }
+      ];
 
   return (
-    <AbsoluteFill style={{
-      backgroundColor: '#0f172a', // Deep slate background
-      overflow: 'hidden'
-    }}>
-      {/* --- PHẦN 1: CAMERA (CHỈ BỌC BACKGROUND VÀ ACTORS) --- */}
-      <CameraWrapper cameraWork={cameraWork} durationFrames={durationFrames}>
-        {/* Background Layer */}
-        <Sequence from={0} durationInFrames={durationFrames} name={`🖼️ Background: ${scene.backgroundId}`}>
-          <BackgroundLayer backgroundId={scene.backgroundId} environment={scene.environment} />
-        </Sequence>
+    <AbsoluteFill style={{ backgroundColor: '#0f172a', overflow: 'hidden' }}>
+      
+      {/* Background is stable throughout the Scene */}
+      <BackgroundLayer 
+        backgroundId={scene.backgroundId} 
+        environment={(scene as any).environment} 
+      />
 
-        {/* Visual Actors */}
-        {isSequential ? (
-          <Sequence from={0} durationInFrames={durationFrames} name="👥 Sequential Visuals">
-            <Series>
-              {normalizedActors.map((actor, idx) => (
-                <Series.Sequence
-                  key={`visual-${idx}`}
-                  durationInFrames={Math.max(Math.ceil((actor.audioDuration || 2) * fps), 30)}
-                  name={`🎬 [${actor.characterId}] Visual`}
-                >
-                  <ShotVisual
-                    actor={actor}
-                    actorIndex={idx}
-                    totalActors={1}
-                  />
-                </Series.Sequence>
-              ))}
-            </Series>
-          </Sequence>
-        ) : (
-          <Sequence from={0} durationInFrames={durationFrames} name="👥 Parallel Visuals">
-            {normalizedActors.map((actor, idx) => (
-              <Sequence
-                key={`visual-${idx}`}
-                from={0}
-                durationInFrames={durationFrames}
-                name={`🎬 [${actor.characterId}] Visual`}
-              >
-                <ShotVisual
-                  actor={actor}
-                  actorIndex={idx}
-                  totalActors={normalizedActors.length}
-                />
-              </Sequence>
-            ))}
-          </Sequence>
-        )}
-      </CameraWrapper>
-
-      {/* --- PHẦN 2: NGOÀI CAMERA (SUBTITLE, AUDIO, UI OVERLAYS) --- */}
-      {isSequential ? (
-        <Sequence from={0} durationInFrames={durationFrames} name="🗣️ Sequential Audio/Sub">
-          <Series>
-            {normalizedActors.map((actor, idx) => (
-              <Series.Sequence
-                key={`audio-sub-${idx}`}
-                durationInFrames={Math.max(Math.ceil((actor.audioDuration || 2) * fps), 30)}
-                name={`🔊 [${actor.characterId}] ${actor.dialogue?.substring(0, 30) || 'Audio'}...`}
-              >
-                <ShotAudioSub
-                  actor={actor}
-                  syncOffset={syncOffset}
-                  isLeft={true}
-                />
-              </Series.Sequence>
-            ))}
-          </Series>
-        </Sequence>
-      ) : (
-        <Sequence from={0} durationInFrames={durationFrames} name="🗣️ Parallel Audio/Sub">
-          {normalizedActors.map((actor, idx) => (
-            <Sequence
-              key={`audio-sub-${idx}`}
-              from={0}
+      <Series>
+        {shots.map((shot, shotIndex) => {
+          const durationFrames = Math.max(Math.ceil((shot.durationSeconds || 5) * fps), 30);
+          
+          return (
+            <Series.Sequence
+              key={`shot-${shot.shotId || shotIndex}`}
               durationInFrames={durationFrames}
-              name={`🔊 [${actor.characterId}] Audio`}
+              name={`🎥 Shot: ${shot.shotId || shotIndex}`}
             >
-              <ShotAudioSub
-                actor={actor}
-                syncOffset={syncOffset}
-                isLeft={idx === 0}
-              />
-            </Sequence>
-          ))}
-        </Sequence>
-      )}
+              <AbsoluteFill>
+                {/* Visual Actors */}
+                {shot.actors && shot.actors.map((actor, idx) => {
+                  if (!actor.characterId || actor.characterId === 'narrator') return null;
+                  return (
+                    <SingleActor
+                      key={`actor-${idx}`}
+                      characterId={actor.characterId}
+                      actionId={actor.actionId || 'verified_walk'}
+                      expressionId={actor.expressionId || 'neutral'}
+                      expressionTag={actor.expressionTag}
+                      facing={actor.facing || 'left'}
+                      position={actor.position || 'mid_center'}
+                      moveToPosition={actor.moveToPosition}
+                      index={idx}
+                      totalActors={shot.actors.length}
+                      movement={actor.movement}
+                      isEnteringFrom={actor.isEnteringFrom}
+                      isExitingTo={actor.isExitingTo}
+                      zIndex={actor.zIndex}
+                      propId={actor.propId}
+                      isSpeaking={!!actor.dialogue || !!actor.isSpeaking}
+                    />
+                  );
+                })}
 
-      {/* Overlay info for TTS mode */}
-      {isSequential && (
-        <div style={{ position: 'absolute', top: 40, left: '50%', transform: 'translateX(-50%)', padding: '5px 15px', background: 'rgba(59, 130, 246, 0.8)', color: 'white', zIndex: 1000, textAlign: 'center', borderRadius: 20, fontSize: 12 }}>
-          ℹ️ Chế độ xem trước thoại (Sequential Mode)
-        </div>
-      )}
-
-      {/* Cảnh báo Thiếu Asset (Graceful Fallback Mechanism) */}
-      {scene.requestedAssets && (scene.requestedAssets as { type: string, missingConcept: string }[]).map((req, i) => (
-        <Sequence key={`req-${i}`} from={0} durationInFrames={durationFrames} name={`⚠️ Missing: ${req.missingConcept}`}>
+                {/* Audio/SFX */}
+                {shot.actors && shot.actors.map((actor, idx) => (
+                  <AbsoluteFill key={`audio-${idx}`}>
+                    {actor.audioId && (
+                      <Audio src={staticFile(`assets/audio/tts/${actor.audioId}.mp3`)} />
+                    )}
+                    {actor.sfx?.map((effect, i) => (
+                      <Sequence key={`sfx-${i}`} from={effect.startFrame || 0} name={`🔊 SFX: ${effect.assetId}`}>
+                        <div style={{ position: 'absolute', top: 20 + i*30, right: 20, padding: 10, background: 'orange', color: 'white', fontWeight: 'bold', zIndex: 1000, borderRadius: 5 }}>
+                          🔊 SFX: {effect.assetId}
+                        </div>
+                      </Sequence>
+                    ))}
+                  </AbsoluteFill>
+                ))}
+              </AbsoluteFill>
+            </Series.Sequence>
+          );
+        })}
+      </Series>
+      
+      {/* Cảnh báo Thiếu Asset */}
+      {(scene as any).requestedAssets && ((scene as any).requestedAssets as { type: string, missingConcept: string }[]).map((req, i) => (
+        <Sequence key={`req-${i}`} from={0} name={`⚠️ Missing: ${req.missingConcept}`}>
           <div style={{
             position: 'absolute',
             top: 80 + i * 50,
@@ -603,52 +407,6 @@ const SceneRenderer: React.FC<{
           </div>
         </Sequence>
       ))}
-    </AbsoluteFill>
-  );
-};
-
-/**
- * COMPONENT: SceneCompiler
- */
-interface FlexibleScene extends SceneData {
-  shots?: ActorData[];
-  environment?: { time_of_day?: string; lighting?: string };
-}
-
-export const SceneCompiler: React.FC<{
-  script: { title: string; scenes: FlexibleScene[] };
-  syncOffset?: number;
-}> = ({ script, syncOffset = 0 }) => {
-  const { fps } = useVideoConfig();
-
-  return (
-    <AbsoluteFill style={{ backgroundColor: '#f0f0f0' }}>
-      <div style={{ position: 'absolute', padding: 20, zIndex: 999, fontSize: 24, fontWeight: 'bold', color: '#1e293b' }}>
-        🎬 {script.title}
-      </div>
-
-      <Series>
-        {script.scenes.map((scene, index) => {
-          const actors = (scene.actors || scene.shots || []) as ActorData[];
-          const isSequential = !scene.actors && !!scene.shots;
-          const durationSecs = scene.durationSeconds || calculateSceneDuration(actors, isSequential);
-          const durationInFrames = Math.max(Math.ceil(durationSecs * fps), 30);
-
-          return (
-            <Series.Sequence
-              key={`${index}-${scene.sceneId}`}
-              durationInFrames={durationInFrames}
-              name={`🎞️ Cảnh: ${scene.sceneId}`}
-            >
-              <SceneRenderer
-                scene={scene as FlexibleScene}
-                durationFrames={durationInFrames}
-                syncOffset={syncOffset}
-              />
-            </Series.Sequence>
-          );
-        })}
-      </Series>
     </AbsoluteFill>
   );
 };

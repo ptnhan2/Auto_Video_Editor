@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { AbsoluteFill, continueRender, delayRender, staticFile } from 'remotion';
+import { AbsoluteFill, Series, continueRender, delayRender, staticFile } from 'remotion';
 import { SceneCompiler } from './SceneCompiler';
-import { VideoScriptSchema, SceneData, ActorData } from '../../src/shared/types/ai-schemas';
+import { VideoScriptSchema, SceneData, ActorData, ShotData } from '../../src/shared/types/ai-schemas';
 
-type FlexibleScript = { title: string; scenes: (SceneData & { shots?: ActorData[] })[] };
+type FlexibleScript = { title: string; scenes: (SceneData & { shots?: ShotData[] | ActorData[] })[] };
 
 export const DraftVideoPreview: React.FC<{
   scriptFile: string;
@@ -74,9 +74,36 @@ export const DraftVideoPreview: React.FC<{
     return null; // Đang load file
   }
 
+  const fps = 30;
+
   return (
     <AbsoluteFill>
-      <SceneCompiler script={scriptData} syncOffset={syncOffset} />
+      <Series>
+        {scriptData.scenes.map((scene, index) => {
+          let sceneDurationSecs = 0;
+          if (typeof (scene as any).totalDurationSeconds === 'number') {
+            sceneDurationSecs = (scene as any).totalDurationSeconds;
+          } else if (Array.isArray(scene.shots)) {
+            // Fallback calculating from shots
+            sceneDurationSecs = scene.shots.reduce((acc, shot: any) => acc + (shot.durationSeconds || 5), 0);
+          } else {
+            // Old fallback
+            sceneDurationSecs = (scene as any).durationSeconds || 5;
+          }
+
+          const durationInFrames = Math.max(Math.ceil(sceneDurationSecs * fps), 30);
+
+          return (
+            <Series.Sequence
+              key={`${index}-${scene.sceneId || 'scene'}`}
+              durationInFrames={durationInFrames}
+              name={`🎞️ Cảnh: ${scene.sceneId || index}`}
+            >
+              <SceneCompiler scene={scene as any} syncOffset={syncOffset} />
+            </Series.Sequence>
+          );
+        })}
+      </Series>
     </AbsoluteFill>
   );
 };
