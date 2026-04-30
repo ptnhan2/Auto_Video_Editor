@@ -1,0 +1,145 @@
+{
+  "title": "Tết Đoàn Viên",
+  "scenes": [
+    {
+      "sceneId": "019dd95fa7c677c79fa4ea00c10c81b2",
+      "backgroundId": "bg_transparent",
+      "totalDurationSeconds": 15.0,
+      "shots": [
+        {
+          "shotId": "019dd95fa7d84d299554d1238d0b3bcc",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019dd95fa7a2c7782476347be262484c",
+              "actionId": "idle",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Ngoại ơi, con về rồi đây!",
+              "isSpeaking": true
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "halftone_filter",
+          "assetDynamics": "stop_motion_stutter"
+        },
+        {
+          "shotId": "019dd95fa7db36e2360873b75c4ca9c5",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019dd95fa7a273654455cf931fe33849",
+              "actionId": "idle",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Bố khỉ cái thằng này, làm bà giật mình!",
+              "isSpeaking": true
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "halftone_filter",
+          "assetDynamics": "stop_motion_stutter"
+        },
+        {
+          "shotId": "019dd95fa7de7834271c4da6863f65ea",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019dd95fa7a2c7782476347be262484c",
+              "actionId": "idle",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Con nhớ ngoại quá, năm nay con về ăn Tết với ngoại luôn.",
+              "isSpeaking": true
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "halftone_filter",
+          "assetDynamics": "stop_motion_stutter"
+        }
+      ]
+    },
+    {
+      "sceneId": "019dd95fa7c6222675bea64ec462daff",
+      "backgroundId": "bg_transparent",
+      "totalDurationSeconds": 15.0,
+      "shots": [
+        {
+          "shotId": "019dd95fa7e11e3059f8e06a7aa53aaf",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019dd95fa7a273654455cf931fe33849",
+              "actionId": "idle",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Ăn cơm đi con, cá kho tộ món con thích đây.",
+              "isSpeaking": true
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "halftone_filter",
+          "assetDynamics": "stop_motion_stutter"
+        },
+        {
+          "shotId": "019dd95fa7e22d26da2afb2f4741ad00",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019dd95fa7a2c7782476347be262484c",
+              "actionId": "idle",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Vẫn là vị của ngoại, con đi xa thèm mãi.",
+              "isSpeaking": true
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "halftone_filter",
+          "assetDynamics": "stop_motion_stutter"
+        },
+        {
+          "shotId": "019dd95fa7e408ce33d5df27e000cc3b",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019dd95fa7a273654455cf931fe33849",
+              "actionId": "idle",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Thèm thì ở lại đây luôn, đi chi cho xa xôi.",
+              "isSpeaking": true
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "halftone_filter",
+          "assetDynamics": "stop_motion_stutter"
+        }
+      ]
+    }
+  ]
+}

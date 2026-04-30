@@ -7,15 +7,15 @@ Tài liệu này hướng dẫn quy trình làm việc chuẩn xác để quản
 ## 🔗 Các Link Quan Trọng
 
 - **Bảng Kanban (Project Board):** [Auto Video Editor - Kanban](https://github.com/users/ptnhan2/projects/3)
-- **Danh sách Issues:** [GitHub Issues](https://github.com/ptnhan2/Auto_Video_Editor/issues)
+- **Danh sách Issues:** [GitHub Issues](https://github.com/ptnhan2/Auto_Video_Editor/issues) ← **Nguồn chân lý duy nhất để lập kế hoạch công việc**
 - **Nhật ký dự án (Discussions):** [GitHub Discussions](https://github.com/ptnhan2/Auto_Video_Editor/discussions)
-- **Bảng Audit Tổng Thể:** [docs/audit/project-audit.md](audit/project-audit.md)
+- **Bảng Audit Tổng Thể:** [docs/audit/project-audit.md](audit/project-audit.md) *(chỉ là ảnh chụp lịch sử, không dùng để lập kế hoạch)*
 
 ---
 
 ## 🌅 BUỔI SÁNG — Mở Máy & Lập Kế Hoạch (15 phút)
 
-1. **Mở Kanban Board.**
+1. **Mở Kanban Board** và **Danh sách GitHub Issues** — đây là nguồn chân lý duy nhất. **Tuyệt đối không dùng audit hay docs cũ để xác định công việc.** Audit chỉ là ảnh chụp quá khứ, đã lỗi thời.
 2. **Chọn task:** Chọn từ 1-3 task theo thứ tự ưu tiên (🔴 P0 → 🟡 P1 → 🟢 P2). Có thể chọn các task không phụ thuộc nhau để làm song song.
 3. **Chuyển trạng thái:** Kéo task sang cột **In Progress**.
 4. **Khai báo trên Issue:** Comment ngắn gọn vào từng issue:
