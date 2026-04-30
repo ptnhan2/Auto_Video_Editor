@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AbsoluteFill, Sequence, Series, continueRender, delayRender, staticFile, interpolate, useCurrentFrame, useVideoConfig, Audio, Img, Easing } from 'remotion';
+import { AbsoluteFill, Sequence, Series, continueRender, delayRender, staticFile, interpolate, useCurrentFrame, useVideoConfig, Audio, Img, Easing, spring } from 'remotion';
 import { HumanoidSprite as WaddleSprite } from '../components/HumanoidSprite';
 import { InteractionEffect } from '../components/InteractionEffect';
 import { Action } from '../../src/shared/types/animation';
@@ -300,6 +300,92 @@ const BackgroundLayer: React.FC<{
 };
 
 /**
+ * COMPONENT: CameraWrapper
+ * Bao bọc BackgroundLayer và Shots timeline để áp dụng chuyển động Camera (zoom, pan)
+ */
+const CameraWrapper: React.FC<{ shots: ShotData[], children: React.ReactNode }> = ({ shots, children }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  
+  let accumulatedFrames = 0;
+  let activeShot = shots[0];
+  let shotStartFrame = 0;
+  let shotDuration = 30;
+
+  for (let i = 0; i < shots.length; i++) {
+    const shot = shots[i];
+    const durationFrames = Math.max(Math.ceil((shot.durationSeconds || 5) * fps), 30);
+    if (frame >= accumulatedFrames && frame < accumulatedFrames + durationFrames) {
+      activeShot = shot;
+      shotStartFrame = accumulatedFrames;
+      shotDuration = durationFrames;
+      break;
+    }
+    accumulatedFrames += durationFrames;
+    if (i === shots.length - 1 && frame >= accumulatedFrames) {
+      activeShot = shot;
+      shotStartFrame = accumulatedFrames - durationFrames;
+      shotDuration = durationFrames;
+    }
+  }
+
+  const relativeFrame = frame - shotStartFrame;
+  const camera = activeShot?.camera;
+  
+  let scale = 1;
+  let translateX = 0;
+  let transformOrigin = '50% 50%';
+
+  if (camera) {
+    const intensity = camera.intensity || 1.2;
+    const isCrashZoom = (camera as any).crash_zoom || (camera as any).easing === 'spring';
+    
+    // Zoom logic with easeInOut spring-like feel using interpolate or spring
+    if (camera.type === 'zoom_in') {
+      if (isCrashZoom) {
+        const spr = spring({ frame: relativeFrame, fps, config: { damping: 10, stiffness: 100 } });
+        scale = interpolate(spr, [0, 1], [1, intensity]);
+      } else {
+        scale = interpolate(relativeFrame, [0, shotDuration], [1, intensity], { 
+          extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) 
+        });
+      }
+    } else if (camera.type === 'zoom_out') {
+      if (isCrashZoom) {
+        const spr = spring({ frame: relativeFrame, fps, config: { damping: 10, stiffness: 100 } });
+        scale = interpolate(spr, [0, 1], [intensity, 1]);
+      } else {
+        scale = interpolate(relativeFrame, [0, shotDuration], [intensity, 1], { 
+          extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) 
+        });
+      }
+    } else if (camera.type === 'pan_left') {
+      translateX = interpolate(relativeFrame, [0, shotDuration], [0, 10], { 
+        extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) 
+      });
+    } else if (camera.type === 'pan_right') {
+      translateX = interpolate(relativeFrame, [0, shotDuration], [0, -10], { 
+        extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) 
+      });
+    }
+
+    if (camera.targetX !== undefined) {
+      transformOrigin = `${camera.targetX}% 50%`;
+    }
+  }
+
+  return (
+    <AbsoluteFill style={{
+      transform: `scale(${scale}) translateX(${translateX}vw)`,
+      transformOrigin,
+      willChange: 'transform'
+    }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
+
+/**
  * COMPONENT: SceneCompiler
  * Parses SceneData -> Shots -> Actors.
  */
@@ -323,90 +409,113 @@ export const SceneCompiler: React.FC<{
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#0f172a', overflow: 'hidden' }}>
-      
-      {/* Background is stable throughout the Scene */}
-      <BackgroundLayer 
-        backgroundId={scene.backgroundId} 
-        environment={(scene as any).environment} 
-      />
+      <CameraWrapper shots={shots}>
+        {/* Background is stable throughout the Scene */}
+        <BackgroundLayer 
+          backgroundId={scene.backgroundId} 
+          environment={(scene as any).environment} 
+        />
 
-      <Series>
-        {shots.map((shot, shotIndex) => {
-          const durationFrames = Math.max(Math.ceil((shot.durationSeconds || 5) * fps), 30);
-          
-          return (
-            <Series.Sequence
-              key={`shot-${shot.shotId || shotIndex}`}
-              durationInFrames={durationFrames}
-              name={`🎥 Shot: ${shot.shotId || shotIndex}`}
-            >
-              <AbsoluteFill>
-                {/* Visual Actors */}
-                {shot.actors && shot.actors.map((actor, idx) => {
-                  if (!actor.characterId || actor.characterId === 'narrator') return null;
-                  return (
-                    <SingleActor
-                      key={`actor-${idx}`}
-                      characterId={actor.characterId}
-                      actionId={actor.actionId || 'verified_walk'}
-                      expressionId={actor.expressionId || 'neutral'}
-                      expressionTag={actor.expressionTag}
-                      facing={actor.facing || 'left'}
-                      position={actor.position || 'mid_center'}
-                      moveToPosition={actor.moveToPosition}
-                      index={idx}
-                      totalActors={shot.actors.length}
-                      movement={actor.movement}
-                      isEnteringFrom={actor.isEnteringFrom}
-                      isExitingTo={actor.isExitingTo}
-                      zIndex={actor.zIndex}
-                      propId={actor.propId}
-                      isSpeaking={!!actor.dialogue || !!actor.isSpeaking}
-                    />
-                  );
-                })}
+        <Series>
+          {shots.map((shot, shotIndex) => {
+            const durationFrames = Math.max(Math.ceil((shot.durationSeconds || 5) * fps), 30);
+            
+            return (
+              <Series.Sequence
+                key={`shot-${shot.shotId || shotIndex}`}
+                durationInFrames={durationFrames}
+                name={`🎥 Shot: ${shot.shotId || shotIndex}`}
+              >
+                <AbsoluteFill>
+                  {/* Cinematic Under-Actors Overlays */}
+                  <InteractionEffect 
+                    layerType="under_actors"
+                    layoutStyle={shot.layoutStyle}
+                    visualMetaphor={shot.visualMetaphor}
+                    transitionIn={shot.transitionIn}
+                    atmosphereFx={shot.atmosphereFx}
+                    assetDynamics={shot.assetDynamics}
+                    durationFrames={durationFrames}
+                  />
 
-                {/* Audio/SFX */}
-                {shot.actors && shot.actors.map((actor, idx) => (
-                  <AbsoluteFill key={`audio-${idx}`}>
-                    {actor.audioId && (
-                      <Audio src={staticFile(`assets/audio/tts/${actor.audioId}.mp3`)} />
-                    )}
-                    {actor.sfx?.map((effect, i) => (
-                      <Sequence key={`sfx-${i}`} from={effect.startFrame || 0} name={`🔊 SFX: ${effect.assetId}`}>
-                        <div style={{ position: 'absolute', top: 20 + i*30, right: 20, padding: 10, background: 'orange', color: 'white', fontWeight: 'bold', zIndex: 1000, borderRadius: 5 }}>
-                          🔊 SFX: {effect.assetId}
-                        </div>
-                      </Sequence>
-                    ))}
-                  </AbsoluteFill>
-                ))}
-              </AbsoluteFill>
-            </Series.Sequence>
-          );
-        })}
-      </Series>
-      
-      {/* Cảnh báo Thiếu Asset */}
-      {(scene as any).requestedAssets && ((scene as any).requestedAssets as { type: string, missingConcept: string }[]).map((req, i) => (
-        <Sequence key={`req-${i}`} from={0} name={`⚠️ Missing: ${req.missingConcept}`}>
-          <div style={{
-            position: 'absolute',
-            top: 80 + i * 50,
-            left: 20,
-            padding: 10,
-            backgroundColor: 'rgba(220, 38, 38, 0.9)',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: 8,
-            zIndex: 1000,
-            border: '2px solid white',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
-          }}>
-            ⚠️ CẦN VẼ THÊM [{req.type.toUpperCase()}]: {req.missingConcept}
-          </div>
-        </Sequence>
-      ))}
+                  {/* Visual Actors */}
+                  {shot.actors && shot.actors.map((actor, idx) => {
+                    if (!actor.characterId || actor.characterId === 'narrator') return null;
+                    return (
+                      <SingleActor
+                        key={`actor-${idx}`}
+                        characterId={actor.characterId}
+                        actionId={actor.actionId || 'verified_walk'}
+                        expressionId={actor.expressionId || 'neutral'}
+                        expressionTag={actor.expressionTag}
+                        facing={actor.facing || 'left'}
+                        position={actor.position || 'mid_center'}
+                        moveToPosition={actor.moveToPosition}
+                        index={idx}
+                        totalActors={shot.actors.length}
+                        movement={actor.movement}
+                        isEnteringFrom={actor.isEnteringFrom}
+                        isExitingTo={actor.isExitingTo}
+                        zIndex={actor.zIndex}
+                        propId={actor.propId}
+                        isSpeaking={!!actor.dialogue || !!actor.isSpeaking}
+                      />
+                    );
+                  })}
+
+                  {/* Cinematic Over-Actors Overlays */}
+                  <InteractionEffect 
+                    layerType="over_actors"
+                    layoutStyle={shot.layoutStyle}
+                    visualMetaphor={shot.visualMetaphor}
+                    transitionIn={shot.transitionIn}
+                    atmosphereFx={shot.atmosphereFx}
+                    assetDynamics={shot.assetDynamics}
+                    durationFrames={durationFrames}
+                  />
+
+                  {/* Audio/SFX */}
+                  {shot.actors && shot.actors.map((actor, idx) => (
+                    <AbsoluteFill key={`audio-${idx}`}>
+                      {actor.audioId && (
+                        <Audio src={staticFile(`assets/audio/tts/${actor.audioId}.mp3`)} />
+                      )}
+                      {actor.sfx?.map((effect, i) => (
+                        <Sequence key={`sfx-${i}`} from={effect.startFrame || 0} name={`🔊 SFX: ${effect.assetId}`}>
+                          <div style={{ position: 'absolute', top: 20 + i*30, right: 20, padding: 10, background: 'orange', color: 'white', fontWeight: 'bold', zIndex: 1000, borderRadius: 5 }}>
+                            🔊 SFX: {effect.assetId}
+                          </div>
+                        </Sequence>
+                      ))}
+                    </AbsoluteFill>
+                  ))}
+                </AbsoluteFill>
+              </Series.Sequence>
+            );
+          })}
+        </Series>
+        
+        {/* Cảnh báo Thiếu Asset */}
+        {(scene as any).requestedAssets && ((scene as any).requestedAssets as { type: string, missingConcept: string }[]).map((req, i) => (
+          <Sequence key={`req-${i}`} from={0} name={`⚠️ Missing: ${req.missingConcept}`}>
+            <div style={{
+              position: 'absolute',
+              top: 80 + i * 50,
+              left: 20,
+              padding: 10,
+              backgroundColor: 'rgba(220, 38, 38, 0.9)',
+              color: 'white',
+              fontWeight: 'bold',
+              borderRadius: 8,
+              zIndex: 1000,
+              border: '2px solid white',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+            }}>
+              ⚠️ CẦN VẼ THÊM [{req.type.toUpperCase()}]: {req.missingConcept}
+            </div>
+          </Sequence>
+        ))}
+      </CameraWrapper>
     </AbsoluteFill>
   );
 };

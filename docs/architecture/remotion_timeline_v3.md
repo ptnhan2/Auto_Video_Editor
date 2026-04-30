@@ -38,9 +38,8 @@ Mỗi Shot có khung thời gian cố định. Mọi đối tượng bên trong 
 - Mọi giá trị render Frame được kẹp `Math.max(..., 30)` để đảm bảo mọi sequence dù hỏng data vẫn có tối thiểu 1 giây tồn tại (chống vỡ layout Remotion root).
 - `<Composition>` tại `remotion/Root.tsx` tính tổng `durationInFrames` dựa trên tổng duration của toàn bộ các Scene cộng lại (cơ chế tính Metadata).
 
-## 4. Ràng buộc Tương lai (Phase 2 & Camera)
-- Hiện tại Phase 1 **bỏ qua `CameraWrapper`** để đơn giản hoá gốc.
-- Ở Phase 2 (Cinematic Camera), CameraWrapper sẽ cần được lồng bên ngoài Shot hoặc Scene. 
-  - Nếu lồng Camera quanh Scene: Chuyển động panning chậm xuyên suốt.
-  - Nếu lồng Camera quanh Shot: Cú máy giật/zoom in bám theo nhân vật.
-- Khi triển khai, cần cẩn thận gắn lại `CameraWrapper` mà không làm vỡ `BackgroundLayer` hiện tại (Background cần nằm trong Camera để có cảm giác Parallax/Zoom thực).
+## 4. Kiến trúc Camera và Cinematic Effects (Phase 2 - Hoàn thiện)
+- **CameraWrapper**: Được lồng bên ngoài bọc lấy cả `BackgroundLayer` và toàn bộ Timeline `Series` của các Shots. Camera sẽ tự động tính toán Shot nào đang active dựa trên số frame hiện tại để apply chuyển động (zoom_in, zoom_out, pan_left, pan_right) thông qua CSS Transform. Cách lồng này đảm bảo hiệu ứng di chuyển Camera có tác dụng lên cả Background và toàn bộ các Actors, tạo ra độ Parallax đồng bộ.
+- **InteractionEffect (Cinematic Overlays)**: Được nhúng trực tiếp vào trong từng `Series.Sequence` của mỗi Shot. Hiệu ứng chia làm 2 lớp:
+  - `under_actors`: Chèn dưới nhân vật (nhưng trên Background) để tạo không gian layout (ví dụ: chia cắt bằng layout diorama).
+  - `over_actors`: Chèn đè trên nhân vật để áp dụng các Metaphor (đường chỉ đỏ), Transition, và Atmosphere (như film_grain hay halftone). Mọi hiệu ứng được render bằng CSS/SVG kết hợp Animation Math thuần của Remotion để tối ưu performance.
