@@ -1,5 +1,5 @@
 import { generateText } from 'ai';
-import { primaryModel, fallbackModel } from '@/lib/vercel-ai';
+import { primaryModel, fallbackModel } from '@/shared/api_clients/vercel-ai';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

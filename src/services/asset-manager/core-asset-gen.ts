@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { generateAssetWithBlueprint, ASSET_BLUEPRINTS } from '../../shared/api-clients/nano-banana-v3';
+import { generateAssetWithBlueprint, ASSET_BLUEPRINTS } from '../../shared/api_clients/nano-banana-v3';
 
 // Load env from .env.local
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });

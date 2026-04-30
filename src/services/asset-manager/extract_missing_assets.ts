@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { VideoScriptData } from '../../src/types/ai-schemas';
+import { VideoScriptData } from '../../shared/types/ai-schemas';
 
 function extractMissingAssets(inputFile: string, outputFile: string) {
   try {
@@ -15,14 +15,17 @@ function extractMissingAssets(inputFile: string, outputFile: string) {
     const missingAssets: any[] = [];
 
     script.scenes.forEach(scene => {
-      if (scene.requestedAssets && scene.requestedAssets.length > 0) {
-        scene.requestedAssets.forEach(asset => {
-          missingAssets.push({
-            sceneId: scene.sceneId,
-            ...asset
+      scene.shots.forEach((shot) => {
+        if (shot.requestedAssets && shot.requestedAssets.length > 0) {
+          shot.requestedAssets.forEach((asset: any) => {
+            missingAssets.push({
+              sceneId: scene.sceneId,
+              shotId: shot.shotId,
+              ...asset
+            });
           });
-        });
-      }
+        }
+      });
     });
 
     if (missingAssets.length === 0) {
@@ -36,11 +39,11 @@ function extractMissingAssets(inputFile: string, outputFile: string) {
     const dateStr = new Date().toISOString().split('T')[0];
     let markdown = `\n## Báo cáo thiếu Asset (${dateStr})\n`;
     markdown += `**Nguồn:** ${script.title}\n\n`;
-    markdown += `| Loại (Type) | Yêu cầu (Missing Concept) | Lý do (Reason) | Cảnh (Scene) |\n`;
+    markdown += `| Loại (Type) | Yêu cầu (Missing Concept) | Lý do (Reason) | Cảnh/Góc máy |\n`;
     markdown += `|---|---|---|---|\n`;
 
     missingAssets.forEach(a => {
-      markdown += `| \`${a.type}\` | ${a.missingConcept} | ${a.reason || '-'} | \`${a.sceneId}\` |\n`;
+      markdown += `| \`${a.type}\` | ${a.missingConcept} | ${a.reason || '-'} | \`${a.sceneId} / ${a.shotId}\` |\n`;
     });
 
     const outDir = path.dirname(outputFile);

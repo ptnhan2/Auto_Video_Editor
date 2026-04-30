@@ -10,7 +10,7 @@ import { getActorPositionStyle } from '../../src/lib/visual-grid';
  * COMPONENT: SingleActor
  * Chịu trách nhiệm load file action JSON và render 1 nhân vật trên màn hình.
  */
-const SingleActor: React.FC<{
+export const SingleActor: React.FC<{
   characterId: string;
   actionId: string;
   expressionId: string;

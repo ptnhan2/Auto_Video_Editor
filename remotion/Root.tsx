@@ -85,7 +85,7 @@ export const RemotionRoot: React.FC = () => {
           actionFile: actionFileEnum,
           characterId: characterEnum,
           expressionId: expressionEnum.optional(),
-        })}
+        }) as any}
         defaultProps={{
           actionFile: animationFiles[0] || 'verified_walk.json',
           characterId: characterFolders[0] || 'char_001',
@@ -105,7 +105,7 @@ export const RemotionRoot: React.FC = () => {
             actionFile: actionFileEnum,
             durationInFrames: z.number().min(1)
           }))
-        })}
+        }) as any}
         defaultProps={{
           characterId: characterFolders[0] || 'char_001',
           sequence: [
@@ -132,7 +132,7 @@ export const RemotionRoot: React.FC = () => {
         schema={z.object({
           scriptFile: z.enum(scriptFiles as [string, ...string[]]).describe("Chọn file kịch bản JSON"),
           syncOffset: z.number().default(0).describe("Độ trễ subtitle (frame)")
-        })}
+        }) as any}
         calculateMetadata={async ({ props, abortSignal }) => {
           try {
             const scriptFile = props.scriptFile || "draft.json";

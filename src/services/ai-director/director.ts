@@ -1,6 +1,6 @@
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
-import { VideoScriptSchema, VideoScriptData } from "../../types/ai-schemas";
+import { VideoScriptSchema, VideoScriptData } from "../../shared/types/ai-schemas";
 import { CHARACTERS, ACTIONS, EXPRESSIONS, BACKGROUNDS, AUDIO_TRACKS, EFFECTS } from "../../config/asset-registry";
 
 /**

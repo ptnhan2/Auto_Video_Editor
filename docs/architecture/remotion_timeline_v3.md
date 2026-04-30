@@ -43,3 +43,11 @@ Mỗi Shot có khung thời gian cố định. Mọi đối tượng bên trong 
 - **InteractionEffect (Cinematic Overlays)**: Được nhúng trực tiếp vào trong từng `Series.Sequence` của mỗi Shot. Hiệu ứng chia làm 2 lớp:
   - `under_actors`: Chèn dưới nhân vật (nhưng trên Background) để tạo không gian layout (ví dụ: chia cắt bằng layout diorama).
   - `over_actors`: Chèn đè trên nhân vật để áp dụng các Metaphor (đường chỉ đỏ), Transition, và Atmosphere (như film_grain hay halftone). Mọi hiệu ứng được render bằng CSS/SVG kết hợp Animation Math thuần của Remotion để tối ưu performance.
+
+## 5. Đồng bộ Vi mô (Micro-syncing) & Cải tiến Biểu cảm (Phase 3)
+- **Subtitle Sync**: Component `Subtitle` hiện tại hỗ trợ đồng bộ hiển thị từng từ (word-level timing) dựa trên thuộc tính `wordTimings` trong `ActorSchema`. 
+  - Thay vì hiện toàn bộ câu thoại hoặc ngắt cục bộ, phụ đề sử dụng `interpolateColors` của Remotion để đổi màu highlight liên tục khớp với âm thanh (chính xác đến từng frame theo startFrame và endFrame của mỗi từ). 
+  - Nếu `wordTimings` không khả dụng, hệ thống tự động Fallback về phương pháp nội suy tuyến tính (tính theo độ dài chuỗi và fps) kèm khoảng offset nhỏ để bù trừ độ trễ của tts.
+- **ExpressionLayer**: Cải thiện thuật toán nhép miệng và chớp mắt đồng bộ chặt chẽ với Base FPS (30fps) bằng cách sử dụng toán tử modulo (`%`).
+  - Khi nhân vật không nói (`isSpeaking = false`), mắt chớp định kỳ (ví dụ mỗi 3 giây sẽ hiển thị frame chớp mắt ngắn).
+  - Khi nhân vật nói (`isSpeaking = true`), nhịp miệng mở sẽ tự động lặp mượt mà dựa trên frame (chu kỳ ~10fps) và chỉ chạy khi có thoại thực tế. Khung miệng được neo chính xác tại vị trí `anchor` từ Atlas data.

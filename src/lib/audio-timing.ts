@@ -1,4 +1,4 @@
-import { ActorData } from '../types/ai-schemas';
+import { ActorData } from '../shared/types/ai-schemas';
 
 /**
  * Tính toán thời lượng scene tự động dựa trên độ dài thoại của tất cả diễn viên trong scene.

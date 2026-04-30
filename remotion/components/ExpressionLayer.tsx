@@ -72,8 +72,19 @@ export const ExpressionLayer: React.FC<{
 
   if (!atlasData || atlasData.frames.length === 0) return null;
 
-  // If talking, animate at 1 frame per 3 render frames. Otherwise stay on idle frame 0.
-  const frameIndex = isTalking ? Math.floor(frame / 3) % atlasData.frames.length : 0;
+  // 30fps base sync
+  // Chớp mắt (Blink) mỗi 90 frames (~3 giây), kéo dài 4 frames
+  const isBlinking = frame % 90 >= 86;
+  
+  // Nhép miệng (Talking) update mỗi 3 frames (~10fps)
+  let frameIndex = 0;
+  if (isTalking) {
+    frameIndex = Math.floor(frame / 3) % atlasData.frames.length;
+  } else if (isBlinking && atlasData.frames.length > 1) {
+    // Dùng frame 1 làm blink frame khi đang idle
+    frameIndex = 1;
+  }
+
   const currentFrame = atlasData.frames[frameIndex];
 
   // Use source dimensions for scaling if available to maintain consistency between frames
@@ -86,13 +97,6 @@ export const ExpressionLayer: React.FC<{
   const scaleX = (anchor.width * 1.5) / sourceW;
   const scaleY = (anchor.height * 1.5) / sourceH;
   const scale = Math.min(scaleX, scaleY);
-
-  // Calculate position:
-  // 1. Start at anchor center
-  // 2. Adjust for symbol-to-sprite offset (frameX, frameY in XML are typically negative in Starling/Animate)
-  // 3. Center the whole symbol box on the anchor
-  const visualX = anchor.x + (anchor.width - sourceW * scale) / 2 + (Math.abs(offX) * scale);
-  const visualY = anchor.y + (anchor.height - sourceH * scale) / 2 + (Math.abs(offY) * scale);
 
   return (
     <div style={{

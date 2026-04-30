@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { VideoScriptData } from '../../src/types/ai-schemas';
+import { VideoScriptData } from '../../shared/types/ai-schemas';
 
 const MAX_SCENES_PER_CHUNK = 2; // Số lượng scene tối đa mỗi chunk để test nhanh
 

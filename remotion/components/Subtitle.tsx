@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCurrentFrame, useVideoConfig } from 'remotion';
+import { useCurrentFrame, useVideoConfig, interpolateColors } from 'remotion';
 
 export const Subtitle: React.FC<{
   dialogue: string;
@@ -68,24 +68,30 @@ export const Subtitle: React.FC<{
       {characterId !== 'narrator' && (
         <span style={{ fontSize: 28, color: '#fbbf24', marginBottom: 8 }}>{characterId}</span>
       )}
-      <div style={{ display: 'flex', justifyContent: 'center', minHeight: '60px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', minHeight: '60px', alignItems: 'center', gap: '15px' }}>
         {finalWordTimings.map((w, i) => {
           // Bắt chữ hiện ra sớm hơn 0.25 giây để mắt phản xạ kịp với âm thanh
           const VISUAL_OFFSET_FRAMES = 0.25 * fps;
           const currentAdjustedFrame = frame + VISUAL_OFFSET_FRAMES;
           
+          // Sử dụng interpolateColors để highlight trơn tru
+          const color = interpolateColors(
+            currentAdjustedFrame,
+            [w.startFrame - 3, w.startFrame, w.endFrame, w.endFrame + 3],
+            ['#ffffff', '#fbbf24', '#fbbf24', '#ffffff']
+          );
+
           const isActive = currentAdjustedFrame >= w.startFrame && currentAdjustedFrame < (w.endFrame || w.startFrame + 15);
-          
-          if (!isActive) return null;
 
           return (
             <span
               key={i}
               style={{
-                color: '#fbbf24',
+                color: color,
                 fontWeight: 'bold',
-                textShadow: '0 0 15px rgba(251, 191, 36, 1), 2px 2px 4px #000',
-                fontSize: '60px' // Chữ to rõ để dễ test
+                textShadow: isActive ? '0 0 15px rgba(251, 191, 36, 1), 2px 2px 4px #000' : '2px 2px 4px #000',
+                fontSize: isActive ? '64px' : '60px',
+                transition: 'font-size 0.1s ease-out'
               }}
             >
               {w.text}

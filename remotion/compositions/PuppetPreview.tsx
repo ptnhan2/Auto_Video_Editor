@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { AbsoluteFill, continueRender, delayRender, staticFile } from 'remotion';
-import { HumanoidSprite as WaddleSprite } from '../components/HumanoidSprite';
-import { Action } from '../../src/shared/types/animation';
+import React from 'react';
+import { AbsoluteFill } from 'remotion';
+import { SingleActor } from './SceneCompiler';
 
 export const PuppetPreview: React.FC<{
   actionFile?: string,
@@ -10,47 +9,18 @@ export const PuppetPreview: React.FC<{
 }> = ({
   actionFile = 'verified_walk.json',
   characterId = 'char_001',
-  expressionId
+  expressionId = 'exp_female_001'
 }) => {
-  const [handle] = useState(() => delayRender());
-  const [action, setAction] = useState<Action | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch(staticFile(`animations/${actionFile}`))
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load ${actionFile}`);
-        return res.json();
-      })
-      .then((data) => {
-        setAction(data);
-        continueRender(handle);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(err.message);
-        continueRender(handle);
-      });
-  }, [actionFile, handle]);
-
-  if (error) {
-    return (
-      <AbsoluteFill style={{ backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <h1 style={{ color: 'red', fontSize: '24px' }}>Error loading action: {error}</h1>
-      </AbsoluteFill>
-    );
-  }
-
-  if (!action) {
-    return null; // Or a loading spinner
-  }
-
   return (
     <AbsoluteFill style={{ backgroundColor: 'white' }}>
-      <WaddleSprite
+      <SingleActor
         characterId={characterId}
-        action={action}
-        overrideExpressionId={expressionId}
+        actionId={actionFile}
+        expressionId={expressionId}
+        facing="left"
+        position="mid_center"
+        index={0}
+        totalActors={1}
       />
     </AbsoluteFill>
   );
