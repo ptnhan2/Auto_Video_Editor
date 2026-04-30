@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("run_pipeline")
 
-STATION_SEQUENCE = ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7"]
+STATION_SEQUENCE = ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
 
 STATION_META = {
     "S0": {"index": 0, "script": "src/pipeline/station_0_indexer.py", "name": "Indexer"},
@@ -25,6 +25,7 @@ STATION_META = {
     "S5": {"index": 5, "script": "src/pipeline/station_5_visual_director.py", "name": "Visual Director"},
     "S6": {"index": 6, "script": "src/pipeline/station_6_sound_vfx_engineer.py", "name": "Sound & VFX Engineer"},
     "S7": {"index": 7, "script": "src/pipeline/station_7_video_compiler.py", "name": "Video Compiler"},
+    "S8": {"index": 8, "script": "src/services/video-builder/render_all.ts", "name": "Render MP4"},
 }
 
 def build_station_args(station_key, episode_id):
@@ -41,7 +42,12 @@ def run_station(station_key, episode_id):
         return True
 
     station_args = build_station_args(station_key, episode_id)
-    cmd = [sys.executable, script_path] + station_args
+    
+    if meta["script"].endswith(".ts"):
+        npx_cmd = "npx.cmd" if sys.platform == "win32" else "npx"
+        cmd = [npx_cmd, "tsx", script_path] + station_args
+    else:
+        cmd = [sys.executable, script_path] + station_args
 
     logger.info("  Running: %s", " ".join(cmd))
 
