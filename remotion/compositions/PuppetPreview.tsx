@@ -3,13 +3,17 @@ import { AbsoluteFill } from 'remotion';
 import { SingleActor } from './SceneCompiler';
 
 export const PuppetPreview: React.FC<{
-  actionFile?: string,
-  characterId?: string,
-  expressionId?: string
+  actionFile?: string;
+  characterId?: string;
+  expressionId?: string;
+  facing?: "left" | "right" | "camera";
+  isSpeaking?: boolean;
 }> = ({
-  actionFile = 'verified_walk.json',
-  characterId = 'char_001',
-  expressionId = 'exp_female_001'
+  actionFile = "idle",
+  characterId = "char_001",
+  expressionId = "neutral",
+  facing = "left",
+  isSpeaking = false,
 }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: 'white' }}>
@@ -17,10 +21,11 @@ export const PuppetPreview: React.FC<{
         characterId={characterId}
         actionId={actionFile}
         expressionId={expressionId}
-        facing="left"
+        facing={facing}
         position="mid_center"
         index={0}
         totalActors={1}
+        isSpeaking={isSpeaking}
       />
     </AbsoluteFill>
   );
