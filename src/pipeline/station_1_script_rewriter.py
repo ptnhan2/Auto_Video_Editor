@@ -184,43 +184,50 @@ if __name__ == "__main__":
     log_environment_info(logger)
     log_logic_transition(logger, "STARTUP", "Initializing Station 1")
     
-    init_db() 
-    input_dir = "input"
-    db = SessionLocal()
+    init_db()
     
-    log_logic_transition(logger, "INGESTION", "Scanning input folder")
-    txt_files = glob.glob(os.path.join(input_dir, "*.txt"))
-    
-    if not txt_files:
-        logger.warning(f"⚠️ No .txt files found in {input_dir}")
+    if len(sys.argv) > 1:
+        episode_id = sys.argv[1]
+        log_logic_transition(logger, "PIPELINE_MODE", f"Processing episode: {episode_id}")
+        run_station_1_agent(episode_id)
     else:
-        log_logic_transition(logger, "INGESTION", f"Found {len(txt_files)} files")
-        drama = db.query(Drama).first()
-        if not drama:
-            drama = Drama(title="Default Drama")
-            db.add(drama)
-            db.commit()
-            db.refresh(drama)
-            
-        for file_path in txt_files:
-            filename = os.path.basename(file_path)
-            log_logic_transition(logger, "FILE_PROCESSING", f"Processing: {filename}")
-            
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-            
-            existing = db.query(Episode).filter(Episode.title == filename).first()
-            if existing:
-                existing.content = content
+        input_dir = "input"
+        db = SessionLocal()
+        
+        log_logic_transition(logger, "INGESTION", "Scanning input folder")
+        txt_files = glob.glob(os.path.join(input_dir, "*.txt"))
+        
+        if not txt_files:
+            logger.warning(f"⚠️ No .txt files found in {input_dir}")
+        else:
+            log_logic_transition(logger, "INGESTION", f"Found {len(txt_files)} files")
+            drama = db.query(Drama).first()
+            if not drama:
+                drama = Drama(title="Default Drama")
+                db.add(drama)
                 db.commit()
-                run_station_1_agent(existing.id)
-            else:
-                count = db.query(Episode).filter(Episode.drama_id == drama.id).count()
-                new_ep = Episode(drama_id=drama.id, episode_number=count + 1, title=filename, content=content)
-                db.add(new_ep)
-                db.commit()
-                db.refresh(new_ep)
-                run_station_1_agent(new_ep.id)
+                db.refresh(drama)
+                
+            for file_path in txt_files:
+                filename = os.path.basename(file_path)
+                log_logic_transition(logger, "FILE_PROCESSING", f"Processing: {filename}")
+                
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read().strip()
+                
+                existing = db.query(Episode).filter(Episode.title == filename).first()
+                if existing:
+                    existing.content = content
+                    db.commit()
+                    run_station_1_agent(existing.id)
+                else:
+                    count = db.query(Episode).filter(Episode.drama_id == drama.id).count()
+                    new_ep = Episode(drama_id=drama.id, episode_number=count + 1, title=filename, content=content)
+                    db.add(new_ep)
+                    db.commit()
+                    db.refresh(new_ep)
+                    run_station_1_agent(new_ep.id)
+        
+        db.close()
     
-    db.close()
     log_logic_transition(logger, "SHUTDOWN", "Station 1 execution finished")
