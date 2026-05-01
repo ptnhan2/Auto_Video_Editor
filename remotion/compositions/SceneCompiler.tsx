@@ -238,7 +238,7 @@ const VisualPlaceholder: React.FC<{
 /**
  * COMPONENT: BackgroundLayer
  */
-const BackgroundLayer: React.FC<{ 
+export const BackgroundLayer: React.FC<{ 
   backgroundId: string;
   environment?: { time_of_day?: string; lighting?: string };
 }> = ({ backgroundId, environment }) => {
