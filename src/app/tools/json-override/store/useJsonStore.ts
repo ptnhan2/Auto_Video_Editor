@@ -12,10 +12,10 @@ interface JsonStore {
   loadScript: (filename: string) => Promise<void>;
   saveScript: () => Promise<void>;
   
-  // Update functions
-  updateScene: (sceneIndex: number, field: keyof SceneData, value: any) => void;
-  updateShot: (sceneIndex: number, shotIndex: number, field: keyof ShotData, value: any) => void;
-  updateActor: (sceneIndex: number, shotIndex: number, actorIndex: number, field: keyof ActorData, value: any) => void;
+  // Update functions using Generics for Type Safety
+  updateScene: <K extends keyof SceneData>(sceneIndex: number, field: K, value: SceneData[K]) => void;
+  updateShot: <K extends keyof ShotData>(sceneIndex: number, shotIndex: number, field: K, value: ShotData[K]) => void;
+  updateActor: <K extends keyof ActorData>(sceneIndex: number, shotIndex: number, actorIndex: number, field: K, value: ActorData[K]) => void;
 }
 
 export const useJsonStore = create<JsonStore>((set, get) => ({
@@ -73,39 +73,44 @@ export const useJsonStore = create<JsonStore>((set, get) => ({
   updateScene: (sceneIndex, field, value) => {
     set((state) => {
       if (!state.scriptData) return state;
-      const newData = { ...state.scriptData };
-      // @ts-ignore
-      newData.scenes[sceneIndex][field] = value;
-      return { scriptData: newData };
+      const newScenes = [...state.scriptData.scenes];
+      newScenes[sceneIndex] = { ...newScenes[sceneIndex], [field]: value };
+      
+      return { 
+        scriptData: { ...state.scriptData, scenes: newScenes } 
+      };
     });
   },
 
   updateShot: (sceneIndex, shotIndex, field, value) => {
     set((state) => {
       if (!state.scriptData) return state;
-      const newData = { ...state.scriptData };
-      const scene = newData.scenes[sceneIndex];
-      if (scene.shots && scene.shots[shotIndex]) {
-        // @ts-ignore
-        scene.shots[shotIndex][field] = value;
-      }
-      return { scriptData: newData };
+      const newScenes = [...state.scriptData.scenes];
+      const newShots = [...(newScenes[sceneIndex].shots || [])];
+      
+      newShots[shotIndex] = { ...newShots[shotIndex], [field]: value };
+      newScenes[sceneIndex] = { ...newScenes[sceneIndex], shots: newShots };
+
+      return { 
+        scriptData: { ...state.scriptData, scenes: newScenes } 
+      };
     });
   },
 
   updateActor: (sceneIndex, shotIndex, actorIndex, field, value) => {
     set((state) => {
       if (!state.scriptData) return state;
-      const newData = { ...state.scriptData };
-      const scene = newData.scenes[sceneIndex];
-      if (scene.shots && scene.shots[shotIndex]) {
-        const actor = scene.shots[shotIndex].actors[actorIndex];
-        if (actor) {
-          // @ts-ignore
-          actor[field] = value;
-        }
-      }
-      return { scriptData: newData };
+      const newScenes = [...state.scriptData.scenes];
+      const newShots = [...(newScenes[sceneIndex].shots || [])];
+      const newActors = [...(newShots[shotIndex].actors || [])];
+
+      newActors[actorIndex] = { ...newActors[actorIndex], [field]: value };
+      newShots[shotIndex] = { ...newShots[shotIndex], actors: newActors };
+      newScenes[sceneIndex] = { ...newScenes[sceneIndex], shots: newShots };
+
+      return { 
+        scriptData: { ...state.scriptData, scenes: newScenes } 
+      };
     });
   }
 }));

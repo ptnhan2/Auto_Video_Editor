@@ -30,8 +30,13 @@ export async function POST(req: Request) {
   try {
     const { filename, data } = await req.json();
     
-    if (!filename || !filename.startsWith('compiled_') || !filename.endsWith('.json')) {
-      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
+    // Validate an toàn: Đảm bảo filename chỉ là tên file, không chứa đường dẫn
+    if (!filename || typeof filename !== 'string' || filename !== path.basename(filename)) {
+      return NextResponse.json({ error: 'Invalid filename format' }, { status: 400 });
+    }
+
+    if (!filename.startsWith('compiled_') || !filename.endsWith('.json')) {
+      return NextResponse.json({ error: 'Invalid filename prefix/suffix' }, { status: 400 });
     }
 
     const scriptsDir = path.join(process.cwd(), 'public', 'scripts');

@@ -155,14 +155,14 @@ export default function JsonOverridePage() {
                                       </div>
                                       <div>
                                         <label className={LABEL_CLASS}>Facing</label>
-                                        <select value={actor.facing} onChange={e => updateActor(sIndex, shotIndex, aIndex, 'facing', e.target.value)} className={INPUT_CLASS}>
+                                        <select value={actor.facing} onChange={e => updateActor(sIndex, shotIndex, aIndex, 'facing', e.target.value as "left" | "right")} className={INPUT_CLASS}>
                                           <option value="left">left</option>
                                           <option value="right">right</option>
                                         </select>
                                       </div>
                                       <div>
                                         <label className={LABEL_CLASS}>Position</label>
-                                        <select value={actor.position || 'mid_center'} onChange={e => updateActor(sIndex, shotIndex, aIndex, 'position', e.target.value)} className={INPUT_CLASS}>
+                                        <select value={actor.position || 'mid_center'} onChange={e => updateActor(sIndex, shotIndex, aIndex, 'position', e.target.value as any)} className={INPUT_CLASS}>
                                           {['back_left', 'back_center', 'back_right', 'mid_left', 'mid_center', 'mid_right', 'front_left', 'front_center', 'front_right'].map(p => (
                                             <option key={p} value={p}>{p}</option>
                                           ))}
