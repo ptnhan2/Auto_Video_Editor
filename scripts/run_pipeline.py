@@ -1,5 +1,6 @@
 import sys
 import os
+import shutil
 import subprocess
 import time
 import logging
@@ -45,7 +46,12 @@ def run_station(station_key, episode_id):
     
     if meta["script"].endswith(".ts"):
         npx_cmd = "npx.cmd" if sys.platform == "win32" else "npx"
-        cmd = [npx_cmd, "tsx", script_path] + station_args
+        npx_path = shutil.which(npx_cmd)
+        if not npx_path:
+            logger.warning("  [SKIP] npx not found in PATH. Skipping %s.", meta["name"])
+            logger.warning("         Install Node.js to enable this station.")
+            return True
+        cmd = [npx_path, "tsx", script_path] + station_args
     else:
         cmd = [sys.executable, script_path] + station_args
 
