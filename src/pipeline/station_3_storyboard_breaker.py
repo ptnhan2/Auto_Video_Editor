@@ -178,6 +178,8 @@ def run_station_3_agent(episode_id: str):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        run_station_3_agent(sys.argv[1])
+        success = run_station_3_agent(sys.argv[1])
+        sys.exit(0 if success else 1)
     else:
         logger.error("Vui lòng cung cấp episode_id.")
+        sys.exit(1)

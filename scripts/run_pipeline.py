@@ -14,6 +14,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("run_pipeline")
 
+MAX_RETRIES = 3
+RETRY_DELAYS = [5, 10, 20]
+
 STATION_SEQUENCE = ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
 
 STATION_META = {
@@ -51,16 +54,28 @@ def run_station(station_key, episode_id):
 
     logger.info("  Running: %s", " ".join(cmd))
 
-    start = time.time()
-    try:
-        subprocess.run(cmd, check=True, capture_output=False)
-        elapsed = time.time() - start
-        logger.info("  OK (%.0fs)", elapsed)
-        return True
-    except subprocess.CalledProcessError as e:
-        elapsed = time.time() - start
-        logger.error("  FAILED after %.0fs (exit code %d)", elapsed, e.returncode)
-        return False
+    for attempt in range(1, MAX_RETRIES + 2):
+        start = time.time()
+        try:
+            subprocess.run(cmd, check=True, capture_output=False)
+            elapsed = time.time() - start
+            if attempt > 1:
+                logger.info("  OK after %d retries (%.0fs)", attempt - 1, elapsed)
+            else:
+                logger.info("  OK (%.0fs)", elapsed)
+            return True
+        except subprocess.CalledProcessError as e:
+            elapsed = time.time() - start
+            if attempt <= MAX_RETRIES:
+                delay = RETRY_DELAYS[attempt - 1]
+                logger.warning("  FAILED (attempt %d/%d) after %.0fs (exit code %d) — retrying in %ds...",
+                              attempt, MAX_RETRIES + 1, elapsed, e.returncode, delay)
+                time.sleep(delay)
+            else:
+                logger.error("  FAILED (attempt %d/%d) after %.0fs (exit code %d) — no more retries",
+                            attempt, MAX_RETRIES + 1, elapsed, e.returncode)
+
+    return False
 
 def main():
     if sys.platform == "win32":
