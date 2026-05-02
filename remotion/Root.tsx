@@ -133,7 +133,7 @@ export const RemotionRoot: React.FC = () => {
           scriptFile: z.enum(scriptFiles as [string, ...string[]]).describe("Chọn file kịch bản JSON"),
           syncOffset: z.number().default(0).describe("Độ trễ subtitle (frame)")
         }) as any}
-        calculateMetadata={async ({ props, abortSignal }) => {
+        calculateMetadata={async ({ props, abortSignal }: any) => {
           try {
             const scriptFile = props.scriptFile || "draft.json";
             
