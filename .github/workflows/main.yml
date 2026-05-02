@@ -37,7 +37,7 @@ jobs:
           cache: 'npm'
           
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps --no-fund --no-audit
+        run: npm ci --legacy-peer-deps
 
       # Sync assets là bước predev/prebuild cần thiết của project
       - name: Sync Asset Registry
