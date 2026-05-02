@@ -51,16 +51,29 @@ def run_station(station_key, episode_id):
 
     logger.info("  Running: %s", " ".join(cmd))
 
-    start = time.time()
-    try:
-        subprocess.run(cmd, check=True, capture_output=False)
-        elapsed = time.time() - start
-        logger.info("  OK (%.0fs)", elapsed)
-        return True
-    except subprocess.CalledProcessError as e:
-        elapsed = time.time() - start
-        logger.error("  FAILED after %.0fs (exit code %d)", elapsed, e.returncode)
-        return False
+    max_retries = 3
+    base_delay = 10  # seconds
+
+    for attempt in range(1, max_retries + 1):
+        start = time.time()
+        try:
+            subprocess.run(cmd, check=True, capture_output=False)
+            elapsed = time.time() - start
+            logger.info("  OK (%.0fs)", elapsed)
+            return True
+        except subprocess.CalledProcessError as e:
+            elapsed = time.time() - start
+            logger.error("  FAILED after %.0fs (exit code %d)", elapsed, e.returncode)
+            
+            if attempt < max_retries:
+                delay = base_delay * attempt
+                logger.warning("  [RETRY] %s fail. Attempt %d/%d. Retrying in %ds...", meta["name"], attempt, max_retries, delay)
+                time.sleep(delay)
+            else:
+                logger.error("  [FATAL] %s failed after %d retries.", meta["name"], max_retries)
+                return False
+
+    return False
 
 def main():
     if sys.platform == "win32":
