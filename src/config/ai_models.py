@@ -12,9 +12,16 @@ AI_MODEL_CONFIG = {
     "station_6_vfx": "gemini-2.5-flash"
 }
 
+EMBEDDING_MODEL = "gemini-embedding-2"
+
+
 def get_model_for_station(station_key: str) -> str:
     """
     Trả về model_id tương ứng cho từng trạm.
     Nếu không tìm thấy, mặc định trả về gemini-2.5-flash.
     """
     return AI_MODEL_CONFIG.get(station_key, "gemini-2.5-flash")
+
+
+def get_embedding_model() -> str:
+    return EMBEDDING_MODEL

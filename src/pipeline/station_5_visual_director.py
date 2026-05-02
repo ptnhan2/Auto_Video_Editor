@@ -7,7 +7,6 @@ import json
 import math
 from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
 from typing import List, Dict, Any
-from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy.orm import joinedload
@@ -15,6 +14,7 @@ from sqlalchemy.orm import joinedload
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard, Episode, Character
 from src.config import get_model_for_station
+from src.shared.api_clients.llm_client import get_llm_client, embed_texts
 
 load_dotenv(".env.local")
 
@@ -22,9 +22,6 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 logger = setup_logger("station_5_visual_director")
-
-api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
-client = genai.Client(api_key=api_key)
 
 # Global Registry State
 available_actions = []
@@ -39,14 +36,6 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
     magnitude_b = math.sqrt(sum(x * x for x in b))
     if magnitude_a == 0 or magnitude_b == 0: return 0.0
     return dot_product / (magnitude_a * magnitude_b)
-
-def embed_texts(texts: List[str]) -> List[List[float]]:
-    try:
-        result = client.models.embed_content(model='gemini-embedding-2-preview', contents=texts)
-        return [e.values for e in result.embeddings] if hasattr(result, "embeddings") else []
-    except Exception as e:
-        logger.error(f"Embedding error: {e}")
-        return []
 
 def search_animation_registry(query: str) -> list:
     """Tìm kiếm Action, Expression và Background trong kho."""
@@ -240,7 +229,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         p1 += f"Nội dung: {sb.action}\nNhân vật: {char_names}\n"
         p1 += "GIAI ĐOẠN 1: Hãy chọn `layout_style` và `camera_concept` phù hợp nhất."
         
-        res1 = client.models.generate_content(
+        res1 = get_llm_client().models.generate_content(
             model=model_name,
             config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
             contents=p1
@@ -254,7 +243,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         p2 += f"--- QUYẾT ĐỊNH GĐ1 ---\n{stage_1_decision}\n\n"
         p2 += f"GIAI ĐOẠN 2: Hãy xếp vị trí 9-grid cho các nhân vật ({char_names}) và chọn `asset_dynamics` cho họ."
         
-        res2 = client.models.generate_content(
+        res2 = get_llm_client().models.generate_content(
             model=model_name,
             config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
             contents=p2
@@ -269,7 +258,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         p3 += f"Shot ID: {sb.id}\nAction thô: {sb.action}\n"
         p3 += "GIAI ĐOẠN 3: Hãy thêm `visual_metaphor`, `atmosphere_fx`, tìm asset IDs và gọi tool `update_storyboard_visuals`."
         
-        res3 = client.models.generate_content(
+        res3 = get_llm_client().models.generate_content(
             model=model_name,
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM_PROMPT,
