@@ -1,6 +1,7 @@
 import os
 import subprocess
 import logging
+import shutil
 
 # Logging configuration
 logger = logging.getLogger("indexer")
@@ -14,9 +15,16 @@ def run_indexer():
     logger.info("⏳ Đang quét tài nguyên và đồng bộ hóa Asset Registry...")
     
     try:
+        # Tìm đường dẫn đầy đủ của npx (đặc biệt quan trọng trên Windows)
+        npx_path = shutil.which("npx")
+        
+        if not npx_path:
+            logger.warning("⚠️ Cảnh báo: Không tìm thấy lệnh 'npx'. Bỏ qua đồng bộ Asset Registry.")
+            return True
+
         # Gọi script TypeScript để thực hiện quét file thực tế
         result = subprocess.run(
-            ["npx", "tsx", "src/services/asset-manager/sync_registry.ts"],
+            [npx_path, "tsx", "src/services/asset-manager/sync_registry.ts"],
             capture_output=True,
             text=True,
             check=True
@@ -30,8 +38,8 @@ def run_indexer():
     except subprocess.CalledProcessError as e:
         logger.error(f"❌ Lỗi khi chạy Indexer: {e.stderr}")
         return False
-    except FileNotFoundError:
-        logger.error("❌ Lỗi: Không tìm thấy lệnh 'npx'. Vui lòng cài đặt Node.js.")
+    except Exception as e:
+        logger.error(f"❌ Lỗi không xác định khi chạy Indexer: {e}")
         return False
 
 if __name__ == "__main__":
