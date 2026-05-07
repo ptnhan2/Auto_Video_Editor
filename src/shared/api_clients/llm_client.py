@@ -1,6 +1,7 @@
 import os
 from typing import List
 from google import genai
+from google.genai import types
 from src.config.ai_models import get_model_for_station, EMBEDDING_MODEL
 
 _client = None
@@ -16,7 +17,7 @@ def get_llm_client() -> genai.Client:
     return _client
 
 
-def start_chat(station_id: str, config):
+def start_chat(station_id: str, config: types.GenerateContentConfig):
     client = get_llm_client()
     model_name = get_model_for_station(station_id)
     return client.chats.create(model=model_name, config=config)

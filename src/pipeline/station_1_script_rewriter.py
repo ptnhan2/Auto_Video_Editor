@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from src.db.database import SessionLocal
 from src.db.schema import Episode, Drama
-from src.shared.api_clients.llm_client import get_llm_client, start_chat
+from src.shared.api_clients.llm_client import start_chat
 
 load_dotenv(".env.local")
 

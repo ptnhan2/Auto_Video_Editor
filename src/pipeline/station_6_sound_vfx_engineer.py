@@ -13,8 +13,7 @@ from dotenv import load_dotenv
 
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard, Episode
-from src.config import get_model_for_station
-from src.shared.api_clients.llm_client import get_llm_client, start_chat, embed_texts
+from src.shared.api_clients.llm_client import start_chat, embed_texts
 
 load_dotenv(".env.local")
 
@@ -142,7 +141,6 @@ def run_station_6_sound_vfx_engineer(episode_id: str, registry_path: str):
     storyboards = db.query(Storyboard).filter(Storyboard.episode_id == episode_id).order_by(Storyboard.storyboard_number).all()
     db.close()
 
-    model_name = get_model_for_station("station_6_vfx")
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_PROMPT,
         tools=[search_audio_vfx_registry, update_storyboard_audio, report_missing_asset],
