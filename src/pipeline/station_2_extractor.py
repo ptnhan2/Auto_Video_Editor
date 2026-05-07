@@ -6,14 +6,13 @@ sys.path.append(os.getcwd())
 
 from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
 from typing import List, Dict, Any, Optional
-from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy import and_
 
 from src.db.database import SessionLocal
 from src.db.schema import Episode, Character, Scene, EpisodeCharacter, EpisodeScene, Drama
-from src.config import get_model_for_station
+from src.shared.api_clients.llm_client import start_chat
 
 load_dotenv(".env.local")
 
@@ -266,10 +265,6 @@ def run_station_2_agent(episode_id: str):
     finally:
         db.close()
         
-    api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
-    client = genai.Client(api_key=api_key)
-    model_name = get_model_for_station("station_2_extractor")
-
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_PROMPT,
         temperature=0.2,
@@ -278,9 +273,9 @@ def run_station_2_agent(episode_id: str):
 
     initial_message = f"Thực hiện bóc tách nhân vật và bối cảnh cho episode_id='{episode_id}' (drama_id='{drama_id}'). Hãy cung cấp thông tin cực kỳ chi tiết."
     
-    log_logic_transition(logger, "AGENT_RUN", f"Sending request to {model_name}")
+    log_logic_transition(logger, "AGENT_RUN", f"Sending request to model")
     try:
-        chat = client.chats.create(model=model_name, config=config)
+        chat = start_chat("station_2_extractor", config)
         response = chat.send_message(initial_message)
         log_ai_interaction(logger, SYSTEM_PROMPT, initial_message, response)
         log_logic_transition(logger, "AGENT_COMPLETE", f"Finished station 2 for {episode_id}")

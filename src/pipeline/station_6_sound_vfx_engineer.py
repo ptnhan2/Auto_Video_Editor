@@ -8,13 +8,12 @@ import math
 from datetime import datetime
 from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
 from typing import List, Dict, Any
-from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard, Episode
-from src.config import get_model_for_station
+from src.shared.api_clients.llm_client import start_chat, embed_texts
 
 load_dotenv(".env.local")
 
@@ -22,9 +21,6 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 logger = setup_logger("station_6_sound_vfx_engineer")
-
-api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
-client = genai.Client(api_key=api_key)
 
 # Global Registry State
 available_sfx = []
@@ -37,14 +33,6 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
     magnitude_b = math.sqrt(sum(x * x for x in b))
     if magnitude_a == 0 or magnitude_b == 0: return 0.0
     return dot_product / (magnitude_a * magnitude_b)
-
-def embed_texts(texts: List[str]) -> List[List[float]]:
-    try:
-        result = client.models.embed_content(model='gemini-embedding-2-preview', contents=texts)
-        return [e.values for e in result.embeddings] if hasattr(result, "embeddings") else []
-    except Exception as e:
-        logger.error(f"Embedding error: {e}")
-        return []
 
 def search_audio_vfx_registry(query: str) -> list:
     """Tìm kiếm SFX, VFX và BGM trong kho."""
@@ -153,12 +141,11 @@ def run_station_6_sound_vfx_engineer(episode_id: str, registry_path: str):
     storyboards = db.query(Storyboard).filter(Storyboard.episode_id == episode_id).order_by(Storyboard.storyboard_number).all()
     db.close()
 
-    model_name = get_model_for_station("station_6_vfx")
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_PROMPT,
         tools=[search_audio_vfx_registry, update_storyboard_audio, report_missing_asset],
     )
-    chat = client.chats.create(model=model_name, config=config)
+    chat = start_chat("station_6_vfx", config)
     for sb in storyboards:
         prompt = f"Storyboard ID: {sb.id}\nShot {sb.storyboard_number}\nAction: {sb.action}\nDialogue: {sb.dialogue}\nAtmosphere: {sb.atmosphere}\nVisual Metaphor: {sb.visual_metaphor}"
         response = chat.send_message(prompt)
