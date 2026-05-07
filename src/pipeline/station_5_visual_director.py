@@ -6,13 +6,13 @@ sys.path.append(os.getcwd())
 import json
 import math
 from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from typing import List, Dict, Any
+from typing import List
 from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy.orm import joinedload
 
 from src.db.database import SessionLocal
-from src.db.schema import Storyboard, Episode, Character
+from src.db.schema import Storyboard
 from src.config import get_model_for_station
 from src.shared.api_clients.llm_client import get_llm_client, embed_texts
 
@@ -34,7 +34,8 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
     dot_product = sum(x * y for x, y in zip(a, b))
     magnitude_a = math.sqrt(sum(x * x for x in a))
     magnitude_b = math.sqrt(sum(x * x for x in b))
-    if magnitude_a == 0 or magnitude_b == 0: return 0.0
+    if magnitude_a == 0 or magnitude_b == 0:
+        return 0.0
     return dot_product / (magnitude_a * magnitude_b)
 
 def search_animation_registry(query: str) -> list:
@@ -46,11 +47,13 @@ def search_animation_registry(query: str) -> list:
         [{"type": "Expression", **e} for e in available_expressions] +
         [{"type": "Background", **b} for b in available_backgrounds]
     )
-    if not all_items: return []
+    if not all_items:
+        return []
     
     docs = [f"{item.get('id')} {item.get('description')}" for item in all_items]
     q_emb = embed_texts([query])
-    if not q_emb: return all_items[:5]
+    if not q_emb:
+        return all_items[:5]
     
     doc_embs = embed_texts(docs)
     scored = []
@@ -208,14 +211,14 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
                 try:
                     data = json.loads(s.character_position)
                     pos_summary = ", ".join([f"{c['character_id'][:5]}: {c['position']}" for c in data])
-                except: pass
+                except Exception:
+                    pass
             history_lines.append(f"Shot {s.storyboard_number}: [Layout: {s.layout_style}] [Cam: {s.camera_concept}] [FX: {s.visual_metaphor}] [Pos: {pos_summary}]")
         
         compact_history = "\n".join(history_lines) # Gửi toàn bộ lịch sử rút gọn của tập phim để rắc-co tuyệt đối
         
         # 2. Lấy danh sách nhân vật hiện tại
         char_names = ", ".join([c.name for c in sb.characters])
-        char_ids = ", ".join([c.id for c in sb.characters])
         
         log_logic_transition(logger, "SHOT_START", f"Processing Shot {sb.storyboard_number} (ID: {sb.id})", {
             "action": sb.action[:50] + "...",
@@ -223,7 +226,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         })
 
         # GIAI ĐOẠN 1: THIẾT KẾ KHUNG HÌNH (Stateless)
-        log_logic_transition(logger, "PHASE_1_LAYOUT", f"Determining cinematic base (Stateless)")
+        log_logic_transition(logger, "PHASE_1_LAYOUT", "Determining cinematic base (Stateless)")
         p1 = f"--- LỊCH SỬ TIẾN TRÌNH ---\n{compact_history}\n\n"
         p1 += f"--- SHOT HIỆN TẠI {sb.storyboard_number} ---\n"
         p1 += f"Nội dung: {sb.action}\nNhân vật: {char_names}\n"
@@ -238,7 +241,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         stage_1_decision = res1.text
 
         # GIAI ĐOẠN 2: DÀN CẢNH NHÂN VẬT (Stateless)
-        log_logic_transition(logger, "PHASE_2_STAGING", f"Positioning characters (Stateless)")
+        log_logic_transition(logger, "PHASE_2_STAGING", "Positioning characters (Stateless)")
         p2 = f"--- LỊCH SỬ TIẾN TRÌNH ---\n{compact_history}\n\n"
         p2 += f"--- QUYẾT ĐỊNH GĐ1 ---\n{stage_1_decision}\n\n"
         p2 += f"GIAI ĐOẠN 2: Hãy xếp vị trí 9-grid cho các nhân vật ({char_names}) và chọn `asset_dynamics` cho họ."
@@ -252,7 +255,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         stage_2_decision = res2.text
 
         # GIAI ĐOẠN 3: HOÀN THIỆN & KHỚP ASSET (Stateless)
-        log_logic_transition(logger, "PHASE_3_POLISH", f"Matching assets and saving (Stateless)")
+        log_logic_transition(logger, "PHASE_3_POLISH", "Matching assets and saving (Stateless)")
         p3 = f"--- LỊCH SỬ TIẾN TRÌNH ---\n{compact_history}\n\n"
         p3 += f"--- QUYẾT ĐỊNH GĐ1&2 ---\n{stage_1_decision}\n{stage_2_decision}\n\n"
         p3 += f"Shot ID: {sb.id}\nAction thô: {sb.action}\n"
@@ -275,5 +278,6 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
     return True
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2: sys.exit(1)
+    if len(sys.argv) < 2:
+        sys.exit(1)
     run_station_5_visual_director(sys.argv[1], "public/asset_registry.json")

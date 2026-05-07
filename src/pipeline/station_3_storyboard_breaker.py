@@ -5,13 +5,12 @@ import sys
 sys.path.append(os.getcwd())
 
 from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from typing import List, Dict, Any, Optional
 from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy import and_
 
 from src.db.database import SessionLocal
-from src.db.schema import Episode, Character, Scene, EpisodeCharacter, EpisodeScene, Drama, Storyboard, StoryboardCharacter
+from src.db.schema import Episode, Character, Scene, EpisodeCharacter, Storyboard, StoryboardCharacter
 from src.shared.api_clients.llm_client import start_chat
 
 load_dotenv(".env.local")
@@ -33,7 +32,8 @@ def read_storyboard_context(episode_id: str, drama_id: str) -> dict:
     try:
         log_db_operation(logger, "query", "Episode", {"id": episode_id})
         ep = db.query(Episode).filter(Episode.id == episode_id).first()
-        if not ep: return {"error": "Episode not found"}
+        if not ep:
+            return {"error": "Episode not found"}
         
         script = ep.script_content or ep.content
         
@@ -128,7 +128,8 @@ def run_station_3_agent(episode_id: str):
     try:
         log_db_operation(logger, "query", "Episode", {"id": episode_id})
         ep = db.query(Episode).filter(Episode.id == episode_id).first()
-        if not ep: return False
+        if not ep:
+            return False
         drama_id = ep.drama_id
         
         # 1. Dọn dẹp dữ liệu cũ TRƯỚC khi AI bắt đầu làm việc
@@ -158,7 +159,7 @@ def run_station_3_agent(episode_id: str):
 
     initial_message = f"Phân rã kịch bản cho episode_id='{episode_id}' (drama_id='{drama_id}'). Hãy chia thành các shots nhỏ, chi tiết và lưu lại toàn bộ."
     
-    log_logic_transition(logger, "AGENT_RUN", f"Sending request to model")
+    log_logic_transition(logger, "AGENT_RUN", "Sending request to model")
     try:
         chat = start_chat("station_3_breaker", config)
         response = chat.send_message(initial_message)

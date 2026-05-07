@@ -4,7 +4,7 @@ import sys
 # Ensure the parent directory is in the path
 sys.path.append(os.getcwd())
 
-from src.shared.logger import setup_logger, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
+from src.shared.logger import setup_logger, log_logic_transition, log_db_operation, log_environment_info
 import asyncio
 from src.shared.api_clients.tts_manager import TTSManager
 
@@ -35,7 +35,7 @@ async def process_shot(shot_data, tts_manager, semaphore):
                     from mutagen.mp3 import MP3
                     audio = MP3(filepath)
                     duration = int(audio.info.length) + 1
-                except:
+                except Exception:
                     duration = len(shot_data["dialogue"]) // 10 + 1
             
             return {"id": shot_data["id"], "duration": duration, "audio_url": f"/assets/audio/tts/{audio_id}.mp3"}
@@ -52,7 +52,8 @@ async def run_audio_generator(episode_id: str):
     try:
         log_db_operation(logger, "query", "Episode", {"id": episode_id})
         episode_record = db.query(Episode).filter(Episode.id == episode_id).first()
-        if not episode_record: return False
+        if not episode_record:
+            return False
 
         log_db_operation(logger, "query", "Storyboard", {"episode_id": episode_id})
         storyboards = db.query(Storyboard).filter(Storyboard.episode_id == episode_id).order_by(Storyboard.storyboard_number).all()
@@ -63,7 +64,8 @@ async def run_audio_generator(episode_id: str):
             voice_id = "vi-VN-HoaiMyNeural"
             if sb.speaker_id:
                 char = db.query(Character).filter(Character.id == sb.speaker_id).first()
-                if char and char.voice_style: voice_id = char.voice_style
+                if char and char.voice_style:
+                    voice_id = char.voice_style
             
             shots_to_process.append({
                 "id": sb.id,

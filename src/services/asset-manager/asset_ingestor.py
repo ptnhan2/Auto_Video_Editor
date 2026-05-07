@@ -4,7 +4,6 @@ import json
 import re
 import sys
 import hashlib
-from pathlib import Path
 from PIL import Image
 
 # Set encoding for console output (Windows fix)
@@ -76,10 +75,8 @@ class AssetIngestor:
             
             if match:
                 raw_prefix = match.group(0)[:-4].strip()
-                frame_num = match.group(0)[-4:]
             else:
                 raw_prefix = raw_name.strip()
-                frame_num = "0000"
 
             if raw_prefix not in grouped_assets:
                 grouped_assets[raw_prefix] = []
@@ -115,7 +112,7 @@ class AssetIngestor:
         }
 
     def process(self):
-        print(f"\n🚀 Starting Ingestion Pipeline")
+        print("\n🚀 Starting Ingestion Pipeline")
         print(f"   • Asset Type: {self.asset_type}")
         print(f"   • Category:   {self.category_prefix}")
         
@@ -257,17 +254,17 @@ def run_interactive_menu():
             print("⚠️ Vui lòng nhập một số.")
             
     # 2. Ask for Category Prefix
-    print(f"\n❓ Bước 2: Nhập phân loại cụ thể / tên biến thể (Ví dụ: female, male, sword_iron, forest_day)")
+    print("\n❓ Bước 2: Nhập phân loại cụ thể / tên biến thể (Ví dụ: female, male, sword_iron, forest_day)")
     print("   (Hệ thống sẽ ghép lại thành: [prefix_trong_config]_[phân_loại_của_bạn]_001)")
     category_prefix = input("Tên phân loại (Category): ").strip().lower().replace(" ", "_")
     if not category_prefix:
         category_prefix = "unknown"
 
     # 3. Ask for File Paths
-    print(f"\n❓ Bước 3: Nhập đường dẫn tới file XML thô (Kéo thả file vào terminal)")
+    print("\n❓ Bước 3: Nhập đường dẫn tới file XML thô (Kéo thả file vào terminal)")
     raw_xml_path = input("Path XML: ").strip().strip('"').strip("'")
     
-    print(f"❓ Bước 4: Nhập đường dẫn tới file PNG thô (Kéo thả file vào terminal)")
+    print("❓ Bước 4: Nhập đường dẫn tới file PNG thô (Kéo thả file vào terminal)")
     raw_png_path = input("Path PNG: ").strip().strip('"').strip("'")
 
     # Confirmation

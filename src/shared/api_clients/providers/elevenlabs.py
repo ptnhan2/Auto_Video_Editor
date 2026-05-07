@@ -87,7 +87,7 @@ def fetch_voices(key):
         if res.status_code == 200:
             return res.json().get("voices", [])
         return []
-    except:
+    except Exception:
         return []
 
 def fetch_shared_voices(key):
@@ -99,5 +99,5 @@ def fetch_shared_voices(key):
         if res.status_code == 200:
             return res.json().get("voices", [])
         return []
-    except:
+    except Exception:
         return []

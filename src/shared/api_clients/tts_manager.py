@@ -1,8 +1,6 @@
 import os
-import asyncio
 from dotenv import load_dotenv
 from mutagen.mp3 import MP3
-from .providers.edge import run_edge
 from .providers.tiktok import run_tiktok
 from .providers.elevenlabs import run_elevenlabs
 import json

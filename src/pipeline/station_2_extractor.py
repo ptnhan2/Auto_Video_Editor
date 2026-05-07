@@ -5,13 +5,12 @@ import sys
 sys.path.append(os.getcwd())
 
 from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from typing import List, Dict, Any, Optional
 from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy import and_
 
 from src.db.database import SessionLocal
-from src.db.schema import Episode, Character, Scene, EpisodeCharacter, EpisodeScene, Drama
+from src.db.schema import Episode, Character, Scene, EpisodeCharacter, EpisodeScene
 from src.shared.api_clients.llm_client import start_chat
 
 load_dotenv(".env.local")
@@ -94,7 +93,8 @@ def save_dedup_characters(episode_id: str, drama_id: str, characters: list[dict]
         results = {"created": 0, "updated": 0}
         for char in characters:
             name = char.get("name")
-            if not name: continue
+            if not name:
+                continue
             
             log_db_operation(logger, "query", "Character", {"name": name, "drama_id": drama_id})
             existing = db.query(Character).filter(
@@ -157,7 +157,8 @@ def save_dedup_scenes(episode_id: str, drama_id: str, scenes: list[dict]) -> dic
         results = {"created": 0, "reused": 0}
         for scene in scenes:
             location = scene.get("location")
-            if not location: continue
+            if not location:
+                continue
             time_val = scene.get("time", "")
             
             log_db_operation(logger, "query", "Scene", {"location": location, "time": time_val})
@@ -273,7 +274,7 @@ def run_station_2_agent(episode_id: str):
 
     initial_message = f"Thực hiện bóc tách nhân vật và bối cảnh cho episode_id='{episode_id}' (drama_id='{drama_id}'). Hãy cung cấp thông tin cực kỳ chi tiết."
     
-    log_logic_transition(logger, "AGENT_RUN", f"Sending request to model")
+    log_logic_transition(logger, "AGENT_RUN", "Sending request to model")
     try:
         chat = start_chat("station_2_extractor", config)
         response = chat.send_message(initial_message)

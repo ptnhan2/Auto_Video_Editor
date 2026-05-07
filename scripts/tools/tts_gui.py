@@ -3,10 +3,7 @@ from tkinter import ttk, messagebox
 import os
 import asyncio
 import threading
-import requests
-import base64
 import ctypes
-import json
 import sys
 
 # Thêm đường dẫn để import từ scripts/core/tts
@@ -179,10 +176,12 @@ class TTSApp:
             
         voices = list(VOICE_MAPPING.get(engine, {}).keys())
         self.voice_combo['values'] = voices
-        if voices: self.voice_combo.current(0)
+        if voices:
+            self.voice_combo.current(0)
 
     def refresh_elevenlabs_voices(self):
-        if not ELEVENLABS_KEYS: return
+        if not ELEVENLABS_KEYS:
+            return
         threading.Thread(target=self._fetch_voices_task, daemon=True).start()
 
     def _fetch_voices_task(self):
@@ -215,7 +214,8 @@ class TTSApp:
         engine = self.engine_var.get()
         voice_id = VOICE_MAPPING[engine].get(self.voice_var.get())
         filename = self.filename_entry.get().strip() or "output"
-        if not filename.endswith(".mp3"): filename += ".mp3"
+        if not filename.endswith(".mp3"):
+            filename += ".mp3"
         filepath = os.path.join(ASSET_DIR, filename)
         
         self.render_btn.config(state="disabled")
@@ -252,17 +252,20 @@ class TTSApp:
         self.status_var.set(msg)
         self.render_btn.config(state="normal")
         self.refresh_files()
-        if "Thành công" in msg: messagebox.showinfo("Kết quả", "Đã tạo xong file audio!")
+        if "Thành công" in msg:
+            messagebox.showinfo("Kết quả", "Đã tạo xong file audio!")
 
     def refresh_files(self):
         self.file_listbox.delete(0, tk.END)
         if os.path.exists(ASSET_DIR):
             for f in os.listdir(ASSET_DIR):
-                if f.endswith(".mp3"): self.file_listbox.insert(tk.END, f)
+                if f.endswith(".mp3"):
+                    self.file_listbox.insert(tk.END, f)
 
     def play_audio(self):
         sel = self.file_listbox.curselection()
-        if not sel: return
+        if not sel:
+            return
         self.stop_audio()
         path = os.path.abspath(os.path.join(ASSET_DIR, self.file_listbox.get(sel[0])))
         ctypes.windll.winmm.mciSendStringW(f'open "{path}" type mpegvideo alias MyAudio', None, 0, None)
