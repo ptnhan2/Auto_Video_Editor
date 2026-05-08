@@ -2,7 +2,6 @@ import os
 import sys
 import importlib
 
-from google.genai import types
 from dotenv import load_dotenv
 
 # Ensure the parent directory is in the path so we can import src modules
@@ -156,26 +155,62 @@ Nhân vật A: (Biểu cảm) Lời thoại...
 
 def run_station_1_agent(episode_id: str):
     log_logic_transition(logger, "AGENT_INIT", f"Script Rewriter Agent for Episode: {episode_id}")
-    
-    config = types.GenerateContentConfig(
-        system_instruction=SYSTEM_PROMPT,
-        temperature=0.7,
-        tools=[read_episode_script, rewrite_to_screenplay, save_script],
-    )
+
+    tools = [
+        {
+            "name": "read_episode_script",
+            "description": "Đọc nội dung kịch bản gốc của tập phim (Read the script content of the current episode).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID của tập phim cần đọc"},
+                },
+                "required": ["episode_id"],
+            },
+            "function": read_episode_script,
+        },
+        {
+            "name": "rewrite_to_screenplay",
+            "description": "Lấy nội dung để AI viết lại thành kịch bản định dạng chuẩn (Screenplay).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID của tập phim"},
+                    "instructions": {"type": "string", "description": "Hướng dẫn bổ sung cho việc viết lại kịch bản"},
+                },
+                "required": ["episode_id"],
+            },
+            "function": rewrite_to_screenplay,
+        },
+        {
+            "name": "save_script",
+            "description": "Lưu nội dung kịch bản đã được viết lại vào tập phim.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID của tập phim cần lưu"},
+                    "content": {"type": "string", "description": "Toàn bộ nội dung kịch bản đã viết lại"},
+                },
+                "required": ["episode_id", "content"],
+            },
+            "function": save_script,
+        },
+    ]
 
     initial_message = f"Hãy thực hiện viết lại TOÀN BỘ kịch bản cho tập phim có episode_id='{episode_id}' theo đúng quy trình. Lưu ý KHÔNG TÓM TẮT, giữ nguyên độ chi tiết của truyện gốc."
-    
+
     log_logic_transition(logger, "AGENT_RUN", "Sending request to model")
-    
+
     try:
-        chat = start_chat("station_1_rewriter", config)
+        chat = start_chat("station_1_rewriter", system_prompt=SYSTEM_PROMPT, tools=tools, temperature=0.7)
         response = chat.send_message(initial_message)
         
         log_ai_interaction(logger, SYSTEM_PROMPT, initial_message, response)
         log_logic_transition(logger, "AGENT_COMPLETE", f"Finished station 1 for {episode_id}")
-        
+
         # Display AI Summary
-        logger.info(f"\n✨ [AI SUMMARY]\n{response.text}\n")
+        summary_text = response.choices[0].message.content if response.choices else ""
+        logger.info(f"\n✨ [AI SUMMARY]\n{summary_text}\n")
         return True
     except Exception as e:
         logger.error(f"❌ Agent Error: {e}")
