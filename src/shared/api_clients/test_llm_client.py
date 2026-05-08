@@ -1,39 +1,139 @@
+"""Tests for litellm-backed LLM client and generic tool-calling loop.
+
+Follows Gate 4.3 methodology:
+  - Skill: test-driven-development (TDD: Red-Green-Refactor)
+  - Skill: python-testing-patterns (AAA pattern, fixtures, parametrize)
+
+Each test = one behavior. Fixtures handle env isolation + singleton reset.
+Mock only external deps (litellm API) — real tool functions tested directly.
+"""
+
+from __future__ import annotations
+
 import os
-import unittest
 from unittest.mock import MagicMock, patch
 
+import pytest
 
-class TestToolLoop(unittest.TestCase):
-    """Tests for the generic tool-calling loop."""
+# ---------------------------------------------------------------------------
+# Fixtures — env isolation + singleton reset
+# ---------------------------------------------------------------------------
 
-    def test_build_tool_registry(self):
-        from src.shared.api_clients.tool_loop import build_tool_registry
 
-        def dummy_func():
-            return "ok"
+@pytest.fixture(autouse=True)
+def _isolate_env_and_singleton(monkeypatch):
+    """Before each test: save GEMINI_API_KEY, then reset litellm singleton."""
+    saved = os.environ.get("GEMINI_API_KEY")
+    yield
+    # Teardown: restore env + reset singleton flag.
+    if saved is not None:
+        monkeypatch.setenv("GEMINI_API_KEY", saved)
+    else:
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    import src.shared.api_clients.llm_client as mod
+
+    mod._configured = False
+
+
+@pytest.fixture
+def gemini_key_set(monkeypatch):
+    """Set a fake API key so _configure_litellm doesn't complain."""
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+
+
+# ---------------------------------------------------------------------------
+# Mock factories — reusable litellm response builders
+# ---------------------------------------------------------------------------
+
+
+def _make_text_response(content: str) -> MagicMock:
+    """Build a litellm response with text content and no tool_calls."""
+    msg = MagicMock()
+    msg.content = content
+    msg.tool_calls = None
+    msg.model_dump.return_value = {"role": "assistant", "content": content}
+    resp = MagicMock()
+    resp.choices = [MagicMock()]
+    resp.choices[0].message = msg
+    return resp
+
+
+def _make_tool_call_response(tool_name: str, tool_args: str, tool_id: str = "c1") -> MagicMock:
+    """Build a litellm response containing a single tool_call."""
+    tc = MagicMock()
+    tc.id = tool_id
+    tc.type = "function"
+    tc.function.name = tool_name
+    tc.function.arguments = tool_args
+    msg = MagicMock()
+    msg.content = None
+    msg.tool_calls = [tc]
+    msg.model_dump.return_value = {
+        "role": "assistant",
+        "tool_calls": [
+            {
+                "id": tool_id,
+                "type": "function",
+                "function": {"name": tool_name, "arguments": tool_args},
+            }
+        ],
+    }
+    resp = MagicMock()
+    resp.choices = [MagicMock()]
+    resp.choices[0].message = msg
+    return resp
+
+
+# ===================================================================
+# Test Group 1: tool_loop helpers (build_registry, schemas, execute)
+# ===================================================================
+
+
+class TestBuildToolRegistry:
+    """build_tool_registry — ánh xạ name → function."""
+
+    def test_builds_registry_from_valid_tools(self):
+        """Arrange: tools có name + function."""
+        def greet():
+            return "hi"
 
         tools = [
-            {"name": "t1", "description": "d1", "parameters": {}, "function": dummy_func},
-            {"name": "t2", "description": "d2", "parameters": {}, "function": dummy_func},
+            {"name": "greet", "function": greet},
+            {"name": "farewell", "function": greet},
         ]
-        registry = build_tool_registry(tools)
-        self.assertEqual(len(registry), 2)
-        self.assertIs(registry["t1"], dummy_func)
 
-    def test_build_tool_registry_skips_missing_keys(self):
+        # Act
         from src.shared.api_clients.tool_loop import build_tool_registry
 
-        tools = [{"description": "no name"}, {"name": "no func"}]
         registry = build_tool_registry(tools)
-        self.assertEqual(len(registry), 0)
 
-    def test_build_tool_schemas(self):
-        from src.shared.api_clients.tool_loop import build_tool_schemas
+        # Assert
+        assert len(registry) == 2
+        assert registry["greet"] is greet
+        assert registry["farewell"] is greet
 
+    def test_skips_entries_missing_name_or_function(self):
+        """Arrange: tools thiếu name hoặc function."""
+        tools = [{"description": "no name"}, {"name": "no func"}]
+
+        # Act
+        from src.shared.api_clients.tool_loop import build_tool_registry
+
+        registry = build_tool_registry(tools)
+
+        # Assert
+        assert len(registry) == 0
+
+
+class TestBuildToolSchemas:
+    """build_tool_schemas — convert sang OpenAI JSON Schema format."""
+
+    def test_converts_tool_to_openai_schema(self):
+        """Arrange: tool definition đầy đủ."""
         tools = [
             {
                 "name": "search",
-                "description": "Search registry",
+                "description": "Search the registry",
                 "parameters": {
                     "type": "object",
                     "properties": {"query": {"type": "string"}},
@@ -41,84 +141,123 @@ class TestToolLoop(unittest.TestCase):
                 },
             },
         ]
+
+        # Act
+        from src.shared.api_clients.tool_loop import build_tool_schemas
+
         schemas = build_tool_schemas(tools)
-        self.assertEqual(len(schemas), 1)
-        self.assertEqual(schemas[0]["type"], "function")
-        self.assertEqual(schemas[0]["function"]["name"], "search")
 
-    def test_execute_tool_call_success(self):
-        from src.shared.api_clients.tool_loop import execute_tool_call
+        # Assert
+        assert len(schemas) == 1
+        assert schemas[0]["type"] == "function"
+        assert schemas[0]["function"]["name"] == "search"
+        assert schemas[0]["function"]["description"] == "Search the registry"
 
+    def test_skips_tool_with_missing_name(self):
+        """Arrange: tool thiếu name key."""
+        tools = [
+            {"description": "no name here"},
+            {"name": "valid", "description": "valid tool", "parameters": {}},
+        ]
+
+        # Act
+        from src.shared.api_clients.tool_loop import build_tool_schemas
+
+        schemas = build_tool_schemas(tools)
+
+        # Assert — only the valid tool is included.
+        assert len(schemas) == 1
+        assert schemas[0]["function"]["name"] == "valid"
+
+
+class TestExecuteToolCall:
+    """execute_tool_call — gọi function từ registry."""
+
+    def test_executes_and_returns_json(self):
+        """Arrange: function nhận args, trả về dict."""
         def greet(name):
             return {"greeting": f"Hello {name}"}
 
         registry = {"greet": greet}
+
+        # Act
+        from src.shared.api_clients.tool_loop import execute_tool_call
+
         result = execute_tool_call("greet", {"name": "World"}, registry)
-        self.assertIn("Hello World", result)
 
-    def test_execute_tool_call_not_found(self):
-        from src.shared.api_clients.tool_loop import execute_tool_call
+        # Assert
+        assert "Hello World" in result
 
+    def test_returns_error_when_tool_not_found(self):
+        """Arrange: registry rỗng."""
         registry = {}
-        result = execute_tool_call("missing", {}, registry)
-        self.assertIn("not found", result)
 
-    def test_execute_tool_call_exception(self):
+        # Act
         from src.shared.api_clients.tool_loop import execute_tool_call
 
+        result = execute_tool_call("missing", {}, registry)
+
+        # Assert
+        assert "not found" in result
+
+    def test_catches_tool_exception_and_returns_error(self):
+        """Arrange: function throws exception."""
         def fail():
             raise ValueError("boom")
 
         registry = {"fail": fail}
+
+        # Act
+        from src.shared.api_clients.tool_loop import execute_tool_call
+
         result = execute_tool_call("fail", {}, registry)
-        self.assertIn("boom", result)
+
+        # Assert
+        assert "boom" in result
 
 
-class TestLLMClient(unittest.TestCase):
-    """Tests for the LiteLLM-backed client."""
+# ===================================================================
+# Test Group 2: llm_client — singleton, completion, chat
+# ===================================================================
 
-    def setUp(self):
-        self._saved_gemini = os.environ.get("GEMINI_API_KEY")
 
-    def tearDown(self):
-        if self._saved_gemini is not None:
-            os.environ["GEMINI_API_KEY"] = self._saved_gemini
-        else:
-            os.environ.pop("GEMINI_API_KEY", None)
-        # Reset singleton state
-        import src.shared.api_clients.llm_client as mod
+class TestConfigureLitellm:
+    """_configure_litellm — one-time setup."""
 
-        mod._configured = False
-
-    def test_configure_litellm_idempotent(self):
+    def test_idempotent_after_first_call(self, gemini_key_set):
+        """Arrange: gọi lần 1."""
         from src.shared.api_clients.llm_client import _configure_litellm
 
+        # Act — call twice.
         _configure_litellm()
-        # Second call is a no-op (already configured).
         _configure_litellm()
+
+        # Assert
         import src.shared.api_clients.llm_client as mod
 
-        self.assertTrue(mod._configured)
+        assert mod._configured is True
+
+
+class TestCompletion:
+    """completion() — single-turn LLM call with optional tool loop."""
 
     @patch("src.shared.api_clients.llm_client.litellm.completion")
-    def test_completion_no_tools(self, mock_completion):
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock()]
-        mock_response.choices[0].message.content = "Hello"
-        mock_response.choices[0].message.tool_calls = None
-        mock_completion.return_value = mock_response
+    def test_returns_text_when_no_tools_configured(self, mock_completion, gemini_key_set):
+        """Arrange: mock litellm trả về text."""
+        mock_completion.return_value = _make_text_response("Hello")
 
+        # Act
         from src.shared.api_clients.llm_client import completion
 
         response = completion("gemini/gemini-2.5-flash", [{"role": "user", "content": "hi"}])
-        mock_completion.assert_called_once()
-        self.assertEqual(response.choices[0].message.content, "Hello")
+
+        # Assert
+        assert mock_completion.call_count == 1
+        assert response.choices[0].message.content == "Hello"
 
     @patch("src.shared.api_clients.llm_client.litellm.completion")
-    def test_completion_with_tool_loop_single(self, mock_completion):
-        """Simulate: first call returns a tool_call, second returns final text."""
-
-        # Tool function to execute.
+    def test_runs_tool_loop_and_returns_final_text(self, mock_completion):
+        """Arrange: response 1 có tool_call → response 2 có text."""
         def get_weather(city):
             return {"temp": 30, "city": city}
 
@@ -135,136 +274,71 @@ class TestLLMClient(unittest.TestCase):
             },
         ]
 
-        # First response: has tool_calls.
-        call1 = MagicMock()
-        call1.id = "call_abc"
-        call1.type = "function"
-        call1.function.name = "get_weather"
-        call1.function.arguments = '{"city": "Hanoi"}'
+        mock_completion.side_effect = [
+            _make_tool_call_response("get_weather", '{"city": "Hanoi"}'),
+            _make_text_response("The weather in Hanoi is 30 C."),
+        ]
 
-        msg1 = MagicMock()
-        msg1.content = None
-        msg1.tool_calls = [call1]
-        msg1.model_dump.return_value = {"role": "assistant", "tool_calls": [{
-            "id": "call_abc",
-            "type": "function",
-            "function": {"name": "get_weather", "arguments": '{"city": "Hanoi"}'},
-        }]}
-
-        resp1 = MagicMock()
-        resp1.choices = [MagicMock()]
-        resp1.choices[0].message = msg1
-
-        # Second response: final text (no tool_calls).
-        msg2 = MagicMock()
-        msg2.content = "The weather in Hanoi is 30°C."
-        msg2.tool_calls = None
-
-        resp2 = MagicMock()
-        resp2.choices = [MagicMock()]
-        resp2.choices[0].message = msg2
-
-        mock_completion.side_effect = [resp1, resp2]
-
+        # Act
         from src.shared.api_clients.llm_client import completion
 
-        messages = [{"role": "user", "content": "What's the weather?"}]
-        response = completion(
-            "gemini/gemini-2.5-flash",
-            messages,
-            tools=tools,
-        )
+        messages = [{"role": "user", "content": "What is the weather?"}]
+        response = completion("gemini/gemini-2.5-flash", messages, tools=tools)
 
-        # Two calls: first with tool_call, second with tool result.
-        self.assertEqual(mock_completion.call_count, 2)
-        self.assertEqual(response.choices[0].message.content, "The weather in Hanoi is 30°C.")
+        # Assert — litellm called twice: tool_call round + final round.
+        assert mock_completion.call_count == 2
+        assert response.choices[0].message.content == "The weather in Hanoi is 30 C."
+
+
+class TestChatSession:
+    """ChatSession — multi-turn conversation với message history."""
 
     @patch("src.shared.api_clients.llm_client.litellm.completion")
-    def test_chat_session_send_message(self, mock_completion):
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock()]
-        mock_response.choices[0].message.content = "Hello back"
-        mock_response.choices[0].message.tool_calls = None
-        mock_response.choices[0].message.model_dump.return_value = {"role": "assistant", "content": "Hello back"}
-        mock_completion.return_value = mock_response
+    def test_send_message_stores_system_user_assistant(self, mock_completion, gemini_key_set):
+        """Arrange: mock trả về text không tools."""
+        mock_completion.return_value = _make_text_response("Hello back")
 
+        # Act
         from src.shared.api_clients.llm_client import ChatSession
 
         chat = ChatSession("gemini/gemini-2.5-flash", system_prompt="Be helpful")
         response = chat.send_message("Hi")
-        self.assertEqual(response.choices[0].message.content, "Hello back")
-        self.assertEqual(len(chat.messages), 3)  # system + user + assistant
-        mock_completion.assert_called_once()
+
+        # Assert
+        assert response.choices[0].message.content == "Hello back"
+        assert len(chat.messages) == 3  # system + user + assistant
+        assert mock_completion.call_count == 1
 
     @patch("src.shared.api_clients.llm_client.litellm.completion")
-    def test_chat_session_multi_turn(self, mock_completion):
-        """Verify message history grows across turns."""
-        def make_response(content):
-            resp = MagicMock()
-            resp.choices = [MagicMock()]
-            resp.choices[0].message.content = content
-            resp.choices[0].message.tool_calls = None
-            resp.choices[0].message.model_dump.return_value = {"role": "assistant", "content": content}
-            return resp
+    def test_message_history_grows_across_turns(self, mock_completion, gemini_key_set):
+        """Arrange: 2 turns, mỗi turn trả về text khác nhau."""
+        mock_completion.side_effect = [
+            _make_text_response("Turn 1"),
+            _make_text_response("Turn 2"),
+        ]
 
-        mock_completion.side_effect = [make_response("Turn 1"), make_response("Turn 2")]
-
+        # Act
         from src.shared.api_clients.llm_client import ChatSession
 
         chat = ChatSession("gemini/gemini-2.5-flash", system_prompt="Be helpful")
         chat.send_message("Q1")
         chat.send_message("Q2")
 
-        # system(1) + user1 + assistant1 + user2 + assistant2 = 5 messages
-        self.assertEqual(len(chat.messages), 5)
-        self.assertEqual(chat.messages[3]["content"], "Q2")
-        self.assertEqual(chat.messages[4]["content"], "Turn 2")
+        # Assert — 5 messages: system, user1, assistant1, user2, assistant2.
+        assert len(chat.messages) == 5
+        assert chat.messages[3]["content"] == "Q2"
+        assert chat.messages[4]["content"] == "Turn 2"
 
-    @patch("src.shared.api_clients.llm_client.litellm.embedding")
-    def test_embed_texts_success(self, mock_embedding):
-        mock_result = MagicMock()
-        mock_result.data = [
-            {"embedding": [0.1, 0.2, 0.3]},
-            {"embedding": [0.4, 0.5, 0.6]},
-        ]
-        mock_embedding.return_value = mock_result
 
-        os.environ["GEMINI_API_KEY"] = "test-key"
-        from src.shared.api_clients.llm_client import embed_texts
-
-        result = embed_texts(["text1", "text2"])
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0], [0.1, 0.2, 0.3])
-        mock_embedding.assert_called_once()
-
-    @patch("src.shared.api_clients.llm_client.litellm.embedding")
-    def test_embed_texts_returns_empty_on_error(self, mock_embedding):
-        mock_embedding.side_effect = RuntimeError("api error")
-
-        os.environ["GEMINI_API_KEY"] = "test-key"
-        from src.shared.api_clients.llm_client import embed_texts
-
-        result = embed_texts(["text1"])
-        self.assertEqual(result, [])
-
-    def test_get_llm_client_returns_litellm_module(self):
-        """Backward compatibility: get_llm_client() returns the litellm module."""
-        os.environ["GEMINI_API_KEY"] = "test-key"
-        from src.shared.api_clients.llm_client import get_llm_client
-
-        import litellm
-
-        client = get_llm_client()
-        self.assertIs(client, litellm)
+class TestGenerateContent:
+    """generate_content() — convenience wrapper build messages đúng format."""
 
     @patch("src.shared.api_clients.llm_client.litellm.completion")
-    def test_generate_content_wrapper(self, mock_completion):
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock()]
-        mock_response.choices[0].message.content = "Response"
-        mock_response.choices[0].message.tool_calls = None
-        mock_completion.return_value = mock_response
+    def test_formats_system_and_user_messages(self, mock_completion, gemini_key_set):
+        """Arrange: mock return."""
+        mock_completion.return_value = _make_text_response("Response")
 
+        # Act
         from src.shared.api_clients.llm_client import generate_content
 
         response = generate_content(
@@ -273,36 +347,84 @@ class TestLLMClient(unittest.TestCase):
             contents="Hello",
             temperature=0.7,
         )
-        self.assertEqual(response.choices[0].message.content, "Response")
 
+        # Assert
+        assert response.choices[0].message.content == "Response"
         call_args = mock_completion.call_args
-        self.assertIsNotNone(call_args)
         messages = call_args[1]["messages"]
-        self.assertEqual(len(messages), 2)
-        self.assertEqual(messages[0]["role"], "system")
-        self.assertEqual(messages[0]["content"], "You are helpful")
-        self.assertEqual(messages[1]["role"], "user")
-        self.assertEqual(messages[1]["content"], "Hello")
+        assert len(messages) == 2
+        assert messages[0] == {"role": "system", "content": "You are helpful"}
+        assert messages[1] == {"role": "user", "content": "Hello"}
 
 
-class TestToolLoopIntegration(unittest.TestCase):
-    """Tests for run_tool_loop directly (not through completion wrapper)."""
+class TestGetLLMClient:
+    """get_llm_client() — backward-compatible singleton access."""
 
-    def test_build_tool_schemas_skips_missing_name(self):
-        from src.shared.api_clients.tool_loop import build_tool_schemas
+    def test_returns_litellm_module(self, gemini_key_set):
+        """Arrange: có API key."""
+        # Act
+        from src.shared.api_clients.llm_client import get_llm_client
 
-        tools = [
-            {"description": "no name here"},
-            {"name": "valid", "description": "valid", "parameters": {}},
+        import litellm
+
+        client = get_llm_client()
+
+        # Assert
+        assert client is litellm
+
+
+# ===================================================================
+# Test Group 3: embedding
+# ===================================================================
+
+
+class TestEmbedTexts:
+    """embed_texts() — embedding qua litellm."""
+
+    @patch("src.shared.api_clients.llm_client.litellm.embedding")
+    def test_returns_vectors_on_success(self, mock_embedding, gemini_key_set):
+        """Arrange: mock litellm.embedding trả về data."""
+        mock_result = MagicMock()
+        mock_result.data = [
+            {"embedding": [0.1, 0.2, 0.3]},
+            {"embedding": [0.4, 0.5, 0.6]},
         ]
-        schemas = build_tool_schemas(tools)
-        self.assertEqual(len(schemas), 1)
-        self.assertEqual(schemas[0]["function"]["name"], "valid")
+        mock_embedding.return_value = mock_result
 
-    def test_run_tool_loop_multi_round(self):
-        """Three tool calls across two rounds — verify all executed."""
-        from src.shared.api_clients.tool_loop import run_tool_loop
+        # Act
+        from src.shared.api_clients.llm_client import embed_texts
 
+        result = embed_texts(["text1", "text2"])
+
+        # Assert
+        assert len(result) == 2
+        assert result[0] == [0.1, 0.2, 0.3]
+        mock_embedding.assert_called_once()
+
+    @patch("src.shared.api_clients.llm_client.litellm.embedding")
+    def test_returns_empty_list_on_api_error(self, mock_embedding, gemini_key_set):
+        """Arrange: litellm.embedding throws."""
+        mock_embedding.side_effect = RuntimeError("api error")
+
+        # Act
+        from src.shared.api_clients.llm_client import embed_texts
+
+        result = embed_texts(["text1"])
+
+        # Assert — không crash, trả về [].
+        assert result == []
+
+
+# ===================================================================
+# Test Group 4: run_tool_loop integration
+# ===================================================================
+
+
+class TestRunToolLoop:
+    """run_tool_loop() — generic loop engine."""
+
+    def test_executes_multiple_tools_across_rounds(self):
+        """Arrange: 2 tools ở round 1, text ở round 2."""
         calls_log = []
 
         def tool_a(x):
@@ -316,7 +438,7 @@ class TestToolLoopIntegration(unittest.TestCase):
         registry = {"tool_a": tool_a, "tool_b": tool_b}
         messages = [{"role": "user", "content": "do work"}]
 
-        # Round 1: two tool_calls → tool_a + tool_b
+        # Round 1 response: two tool_calls (tool_a + tool_b)
         tc1 = MagicMock()
         tc1.id = "c1"
         tc1.type = "function"
@@ -327,39 +449,38 @@ class TestToolLoopIntegration(unittest.TestCase):
         tc2.type = "function"
         tc2.function.name = "tool_b"
         tc2.function.arguments = '{"y": "world"}'
-
         msg1 = MagicMock()
         msg1.tool_calls = [tc1, tc2]
-        msg1.model_dump.return_value = {"role": "assistant", "tool_calls": [
-            {"id": "c1", "type": "function", "function": {"name": "tool_a", "arguments": '{"x": "hello"}'}},
-            {"id": "c2", "type": "function", "function": {"name": "tool_b", "arguments": '{"y": "world"}'}},
-        ]}
+        msg1.model_dump.return_value = {
+            "role": "assistant",
+            "tool_calls": [
+                {"id": "c1", "type": "function", "function": {"name": "tool_a", "arguments": '{"x": "hello"}'}},
+                {"id": "c2", "type": "function", "function": {"name": "tool_b", "arguments": '{"y": "world"}'}},
+            ],
+        }
         resp1 = MagicMock()
         resp1.choices = [MagicMock()]
         resp1.choices[0].message = msg1
 
-        # Round 2: no more tool_calls, final text.
-        msg2 = MagicMock()
-        msg2.content = "Done"
-        msg2.tool_calls = None
-        resp2 = MagicMock()
-        resp2.choices = [MagicMock()]
-        resp2.choices[0].message = msg2
-
         call_index = [0]
-        responses = [resp1, resp2]
+        responses = [resp1, _make_text_response("Done")]
 
         def completion_fn(msgs):
             idx = call_index[0]
             call_index[0] += 1
             return responses[idx]
 
-        result = run_tool_loop(messages, registry, completion_fn)
-        self.assertEqual(result.choices[0].message.content, "Done")
-        self.assertEqual(calls_log, ["a(hello)", "b(world)"])
+        # Act
+        from src.shared.api_clients.tool_loop import run_tool_loop
 
-    def test_run_tool_loop_max_rounds_exhausted(self):
-        """When tools keep getting called, stop at MAX_TOOL_ROUNDS."""
+        result = run_tool_loop(messages, registry, completion_fn)
+
+        # Assert — cả 2 tools được execute, loop dừng khi gặp text.
+        assert result.choices[0].message.content == "Done"
+        assert calls_log == ["a(hello)", "b(world)"]
+
+    def test_stops_at_max_rounds_with_endless_tool_calls(self):
+        """Arrange: tool luôn trả về tool_call — infinite loop bị chặn."""
         from src.shared.api_clients.tool_loop import run_tool_loop, MAX_TOOL_ROUNDS
 
         def endless_tool():
@@ -368,31 +489,14 @@ class TestToolLoopIntegration(unittest.TestCase):
         registry = {"endless_tool": endless_tool}
         messages = [{"role": "user", "content": "loop"}]
 
-        def make_response():
-            tc = MagicMock()
-            tc.id = "cx"
-            tc.type = "function"
-            tc.function.name = "endless_tool"
-            tc.function.arguments = "{}"
-            msg = MagicMock()
-            msg.tool_calls = [tc]
-            msg.model_dump.return_value = {"role": "assistant", "tool_calls": [
-                {"id": "cx", "type": "function", "function": {"name": "endless_tool", "arguments": "{}"}},
-            ]}
-            resp = MagicMock()
-            resp.choices = [MagicMock()]
-            resp.choices[0].message = msg
-            return resp
-
         call_count = [0]
 
         def completion_fn(msgs):
             call_count[0] += 1
-            return make_response()
+            return _make_tool_call_response("endless_tool", "{}", f"c{call_count[0]}")
 
+        # Act
         run_tool_loop(messages, registry, completion_fn)
-        self.assertEqual(call_count[0], MAX_TOOL_ROUNDS)
 
-
-if __name__ == "__main__":
-    unittest.main()
+        # Assert — bị chặn ở MAX_TOOL_ROUNDS, không chạy vô hạn.
+        assert call_count[0] == MAX_TOOL_ROUNDS
