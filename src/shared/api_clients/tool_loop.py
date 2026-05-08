@@ -156,4 +156,8 @@ def run_tool_loop(
             })
 
     logger.warning("Tool loop reached max rounds (%d) — stopping", max_rounds)
+    # Pop the assistant message appended in the final round (line ~134).
+    # Callers (ChatSession.send_message, completion) will append the final
+    # response themselves — avoids a duplicate message in the history.
+    messages.pop()
     return response

@@ -327,7 +327,10 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
             contents=p3,
             tools=phase3_tools,
         )
-        log_ai_interaction(logger, SYSTEM_PROMPT, p3, res3)
+        if res3.choices:
+            log_ai_interaction(logger, SYSTEM_PROMPT, p3, res3)
+        else:
+            logger.warning(f"Phase 3 returned empty choices for shot {sb.storyboard_number}")
 
         log_logic_transition(logger, "SHOT_COMPLETE", f"Finished Shot {sb.storyboard_number}")
 
