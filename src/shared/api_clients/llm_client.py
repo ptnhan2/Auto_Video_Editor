@@ -210,7 +210,8 @@ class ChatSession:
             response = _completion_fn(self.messages)
 
         # Append final assistant message to history for next turn.
-        self.messages.append(response.choices[0].message.model_dump(exclude_none=True))
+        if response.choices:
+            self.messages.append(response.choices[0].message.model_dump(exclude_none=True))
         return response
 
     @property
@@ -295,7 +296,13 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
         result = litellm.embedding(model=embedding_model, input=texts)
         # litellm returns: result.data[0]['embedding'], etc.
         if hasattr(result, "data"):
-            return [item["embedding"] for item in result.data if "embedding" in item]
+            vectors = []
+            for item in result.data:
+                if isinstance(item, dict) and "embedding" in item:
+                    vectors.append(item["embedding"])
+                elif hasattr(item, "embedding"):
+                    vectors.append(item.embedding)
+            return vectors
         return []
     except Exception as exc:
         logger.error(

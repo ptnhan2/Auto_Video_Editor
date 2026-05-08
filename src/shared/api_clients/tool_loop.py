@@ -123,6 +123,9 @@ def run_tool_loop(
     rounds = 0
     while rounds < max_rounds:
         response = completion_fn(messages)
+        if not response.choices:
+            logger.warning("Tool loop received response with no choices — stopping")
+            return response
         choice = response.choices[0]
         tool_calls = getattr(choice.message, "tool_calls", None)
 
@@ -156,8 +159,11 @@ def run_tool_loop(
             })
 
     logger.warning("Tool loop reached max rounds (%d) — stopping", max_rounds)
-    # Pop the assistant message appended in the final round (line ~134).
-    # Callers (ChatSession.send_message, completion) will append the final
-    # response themselves — avoids a duplicate message in the history.
+    # Pop the assistant message + tool results appended in the final round.
+    # Order: assistant_msg → tool_result_1 → ... → tool_result_N.
+    # Pop tool results first, then the assistant message.
+    if tool_calls:
+        for _ in tool_calls:
+            messages.pop()
     messages.pop()
     return response
