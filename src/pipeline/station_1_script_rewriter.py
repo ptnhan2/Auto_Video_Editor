@@ -1,16 +1,29 @@
 import os
 import sys
+import importlib
+
+from google.genai import types
+from dotenv import load_dotenv
 
 # Ensure the parent directory is in the path so we can import src modules
 sys.path.append(os.getcwd())
 
-from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from google.genai import types
-from dotenv import load_dotenv
+_logger = importlib.import_module('src.shared.logger')
+setup_logger = _logger.setup_logger
+log_ai_interaction = _logger.log_ai_interaction
+log_tool_execution = _logger.log_tool_execution
+log_logic_transition = _logger.log_logic_transition
+log_db_operation = _logger.log_db_operation
+log_environment_info = _logger.log_environment_info
 
-from src.db.database import SessionLocal
-from src.db.schema import Episode, Drama
-from src.shared.api_clients.llm_client import start_chat
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+
+_schema = importlib.import_module('src.db.schema')
+Episode = _schema.Episode
+
+_llm = importlib.import_module('src.shared.api_clients.llm_client')
+start_chat = _llm.start_chat
 
 load_dotenv(".env.local")
 
@@ -55,12 +68,12 @@ def rewrite_to_screenplay(episode_id: str, instructions: str = "") -> dict:
         log_db_operation(logger, "query", "Episode", {"id": episode_id})
         ep = db.query(Episode).filter(Episode.id == episode_id).first()
         if not ep:
-            res = {"error": f"Episode not found"}
+            res = {"error": "Episode not found"}
             log_tool_execution(logger, "rewrite_to_screenplay", {"episode_id": episode_id}, res)
             return res
         source = ep.content or ep.script_content
         if not source:
-            res = {"error": f"Episode has no content to rewrite"}
+            res = {"error": "Episode has no content to rewrite"}
             log_tool_execution(logger, "rewrite_to_screenplay", {"episode_id": episode_id}, res)
             return res
             
@@ -90,7 +103,7 @@ def save_script(episode_id: str, content: str) -> dict:
         log_db_operation(logger, "query", "Episode", {"id": episode_id})
         ep = db.query(Episode).filter(Episode.id == episode_id).first()
         if not ep:
-            res = {"error": f"Episode not found"}
+            res = {"error": "Episode not found"}
             log_tool_execution(logger, "save_script", {"episode_id": episode_id}, res)
             return res
             
@@ -152,7 +165,7 @@ def run_station_1_agent(episode_id: str):
 
     initial_message = f"Hãy thực hiện viết lại TOÀN BỘ kịch bản cho tập phim có episode_id='{episode_id}' theo đúng quy trình. Lưu ý KHÔNG TÓM TẮT, giữ nguyên độ chi tiết của truyện gốc."
     
-    log_logic_transition(logger, "AGENT_RUN", f"Sending request to model")
+    log_logic_transition(logger, "AGENT_RUN", "Sending request to model")
     
     try:
         chat = start_chat("station_1_rewriter", config)

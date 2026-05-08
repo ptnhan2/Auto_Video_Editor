@@ -52,7 +52,7 @@ def log_environment_info(logger):
     try:
         mem = psutil.virtual_memory()
         logger.debug(f"   Memory: {mem.available / (1024**3):.2f}GB available / {mem.total / (1024**3):.2f}GB total")
-    except:
+    except Exception:
         pass
     logger.debug("="*100 + "\n")
 
@@ -92,7 +92,8 @@ def log_logic_transition(logger, stage_name, description, metadata=None):
 def log_db_operation(logger, operation, table, criteria=None, data=None):
     """Log thao tác với cơ sở dữ liệu."""
     msg = f"🗄️  [DB {operation.upper()}] Table: {table}"
-    if criteria: msg += f" | Criteria: {criteria}"
+    if criteria:
+        msg += f" | Criteria: {criteria}"
     logger.debug(msg)
     if data:
         logger.debug(f"   Data: {json.dumps(data, ensure_ascii=False) if isinstance(data, dict) else data}")

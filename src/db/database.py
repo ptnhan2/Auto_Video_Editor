@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # The database will be created at the root of the project by default
@@ -11,7 +11,6 @@ engine = create_engine(
     connect_args={"check_same_thread": False, "timeout": 60}
 )
 
-from sqlalchemy import event
 @event.listens_for(engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
@@ -31,8 +30,9 @@ def get_db():
         db.close()
 
 def init_db():
-    # import schema to ensure models are registered
-    from . import schema
+    # Register model classes with SQLAlchemy Base metadata
+    import importlib
+    importlib.import_module('.schema', 'src.db')
     Base.metadata.create_all(bind=engine)
     print(f"Database initialized at {DB_PATH}")
 

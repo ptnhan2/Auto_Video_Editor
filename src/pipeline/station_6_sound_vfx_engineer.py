@@ -1,19 +1,33 @@
 import os
 import sys
-# Ensure the parent directory is in the path
-sys.path.append(os.getcwd())
-
 import json
 import math
+import importlib
 from datetime import datetime
-from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from typing import List, Dict, Any
+from typing import List
+
 from google.genai import types
 from dotenv import load_dotenv
 
-from src.db.database import SessionLocal
-from src.db.schema import Storyboard, Episode
-from src.shared.api_clients.llm_client import start_chat, embed_texts
+# Ensure the parent directory is in the path
+sys.path.append(os.getcwd())
+
+_logger = importlib.import_module('src.shared.logger')
+setup_logger = _logger.setup_logger
+log_ai_interaction = _logger.log_ai_interaction
+log_tool_execution = _logger.log_tool_execution
+log_logic_transition = _logger.log_logic_transition
+log_db_operation = _logger.log_db_operation
+
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+
+_schema = importlib.import_module('src.db.schema')
+Storyboard = _schema.Storyboard
+
+_llm = importlib.import_module('src.shared.api_clients.llm_client')
+start_chat = _llm.start_chat
+embed_texts = _llm.embed_texts
 
 load_dotenv(".env.local")
 
@@ -31,7 +45,8 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
     dot_product = sum(x * y for x, y in zip(a, b))
     magnitude_a = math.sqrt(sum(x * x for x in a))
     magnitude_b = math.sqrt(sum(x * x for x in b))
-    if magnitude_a == 0 or magnitude_b == 0: return 0.0
+    if magnitude_a == 0 or magnitude_b == 0:
+        return 0.0
     return dot_product / (magnitude_a * magnitude_b)
 
 def search_audio_vfx_registry(query: str) -> list:
@@ -43,11 +58,13 @@ def search_audio_vfx_registry(query: str) -> list:
         [{"type": "VFX", **item} for item in available_vfx] +
         [{"type": "BGM", **item} for item in available_bgm]
     )
-    if not all_items: return []
+    if not all_items:
+        return []
     
     docs = [f"{item.get('id')} {item.get('description')}" for item in all_items]
     q_emb = embed_texts([query])
-    if not q_emb: return all_items[:5]
+    if not q_emb:
+        return all_items[:5]
     
     doc_embs = embed_texts(docs)
     scored = []
@@ -66,7 +83,8 @@ def update_storyboard_audio(storyboard_id: str, sfx_id: str, vfx_tags: list[str]
     db = SessionLocal()
     try:
         shot = db.query(Storyboard).filter(Storyboard.id == storyboard_id).first()
-        if not shot: return {"error": "Storyboard not found"}
+        if not shot:
+            return {"error": "Storyboard not found"}
         
         # Verify SFX ID exists if provided
         if sfx_id and not any(item.get('id') == sfx_id for item in available_sfx):
@@ -155,5 +173,6 @@ def run_station_6_sound_vfx_engineer(episode_id: str, registry_path: str):
     return True
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2: sys.exit(1)
+    if len(sys.argv) < 2:
+        sys.exit(1)
     run_station_6_sound_vfx_engineer(sys.argv[1], "public/asset_registry.json")

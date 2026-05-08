@@ -1,12 +1,4 @@
 [lint]
-# Hiện tại project đang có 56 lỗi Python (chủ yếu là styling).
-# Tạm thời bỏ qua (ignore) để Máy soi chiếu (CI) pass cho codebase hiện tại.
-# Sẽ bắt tất cả các lỗi syntax, undefined variables (những lỗi có thể gây sập hệ thống) mới.
-ignore = [
-    "E701", # Multiple statements on one line
-    "E722", # Do not use bare `except`
-    "E402", # Module level import not at top of file
-    "F401", # Imported but unused
-    "F541", # f-string without any placeholders
-    "F841", # Local variable is assigned to but never used
-]
+# All linting violations have been fixed.
+# No ignored rules remain. CI Gatekeeper runs at maximum strictness.
+

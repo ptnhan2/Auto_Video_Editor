@@ -1,10 +1,12 @@
 import os
 import sys
 import asyncio
+import importlib
 
 # Thêm path để import TTSManager
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from scripts.core.tts.manager import TTSManager
+_manager = importlib.import_module('src.shared.api_clients.tts_manager')
+TTSManager = _manager.TTSManager
 
 async def main():
     # Fix for Windows console unicode issues

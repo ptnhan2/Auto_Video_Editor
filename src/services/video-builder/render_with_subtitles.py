@@ -1,9 +1,7 @@
 import os
 import json
-import time
 import sys
 import re
-import gc
 from difflib import SequenceMatcher
 import whisperx
 from faster_whisper.audio import decode_audio
@@ -105,7 +103,7 @@ def align_subtitles_precise(original_text, whisper_results):
 
 def process_script_with_whisper(json_path):
     """Duyệt script và cập nhật wordTimings bằng Forced Alignment (bỏ qua Transcription)."""
-    print(f"🚀 Bắt đầu quy trình Karaoke TỐI ƯU (Bỏ qua Transcribe, chỉ dùng Wav2Vec2)...")
+    print("🚀 Bắt đầu quy trình Karaoke TỐI ƯU (Bỏ qua Transcribe, chỉ dùng Wav2Vec2)...")
     
     device = "cuda" if os.environ.get("USE_GPU") == "1" else "cpu"
     
@@ -123,7 +121,8 @@ def process_script_with_whisper(json_path):
         for shot in scene.get("shots", []):
             audio_id = shot.get("audioId")
             dialogue = shot.get("dialogue", "")
-            if not audio_id: continue
+            if not audio_id:
+                continue
                 
             audio_path = os.path.join("public", "assets", "audio", "tts", f"{audio_id}.mp3")
             
@@ -178,7 +177,7 @@ def process_script_with_whisper(json_path):
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ HOÀN TẤT QUY TRÌNH KẾT NỐI TIMING SIÊU TỐC!")
+    print("\n✅ HOÀN TẤT QUY TRÌNH KẾT NỐI TIMING SIÊU TỐC!")
 
 if __name__ == "__main__":
     # Cho phép truyền tham số từ command line
