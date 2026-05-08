@@ -2,7 +2,6 @@ import os
 import sys
 import importlib
 
-from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy import and_
 
@@ -169,22 +168,63 @@ def run_station_3_agent(episode_id: str):
     finally:
         db.close()
     
-    config = types.GenerateContentConfig(
-        system_instruction=SYSTEM_PROMPT,
-        temperature=0.2,
-        tools=[read_storyboard_context, save_storyboards],
-    )
+    tools = [
+        {
+            "name": "read_storyboard_context",
+            "description": "Đọc kịch bản và thực thể liên quan để chuẩn bị phân rã storyboard.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID tập phim"},
+                    "drama_id": {"type": "string", "description": "ID dự án"},
+                },
+                "required": ["episode_id", "drama_id"],
+            },
+            "function": read_storyboard_context,
+        },
+        {
+            "name": "save_storyboards",
+            "description": "Lưu danh sách storyboard (Chế độ APPEND - Ghi thêm). Có thể gọi nhiều lần để lưu hết toàn bộ các phân cảnh. Mỗi storyboard cần: shot_number, scene_id, speaker_id, character_ids, action, dialogue, description, duration.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID tập phim"},
+                    "storyboards": {
+                        "type": "array",
+                        "description": "Danh sách storyboard",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "shot_number": {"type": "integer"},
+                                "scene_id": {"type": "string"},
+                                "speaker_id": {"type": "string"},
+                                "character_ids": {"type": "array", "items": {"type": "string"}},
+                                "action": {"type": "string"},
+                                "dialogue": {"type": "string"},
+                                "description": {"type": "string"},
+                                "duration": {"type": "integer"},
+                            },
+                            "required": ["shot_number", "action"],
+                        },
+                    },
+                },
+                "required": ["episode_id", "storyboards"],
+            },
+            "function": save_storyboards,
+        },
+    ]
 
     initial_message = f"Phân rã kịch bản cho episode_id='{episode_id}' (drama_id='{drama_id}'). Hãy chia thành các shots nhỏ, chi tiết và lưu lại toàn bộ."
-    
+
     log_logic_transition(logger, "AGENT_RUN", "Sending request to model")
     try:
-        chat = start_chat("station_3_breaker", config)
+        chat = start_chat("station_3_breaker", system_prompt=SYSTEM_PROMPT, tools=tools, temperature=0.2)
         response = chat.send_message(initial_message)
         log_ai_interaction(logger, SYSTEM_PROMPT, initial_message, response)
         log_logic_transition(logger, "AGENT_COMPLETE", f"Finished station 3 for {episode_id}")
-        
-        logger.info(f"\n✨ [AI SUMMARY]\n{response.text}\n")
+
+        summary_text = response.choices[0].message.content if response.choices else ""
+        logger.info(f"\n✨ [AI SUMMARY]\n{summary_text}\n")
         return True
     except Exception as e:
         logger.error(f"❌ Agent Error: {e}")

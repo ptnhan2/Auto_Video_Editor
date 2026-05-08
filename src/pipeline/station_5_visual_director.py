@@ -5,7 +5,6 @@ import math
 import importlib
 from typing import List
 
-from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy.orm import joinedload
 
@@ -30,7 +29,7 @@ _config = importlib.import_module('src.config')
 get_model_for_station = _config.get_model_for_station
 
 _llm = importlib.import_module('src.shared.api_clients.llm_client')
-get_llm_client = _llm.get_llm_client
+generate_content = _llm.generate_content
 embed_texts = _llm.embed_texts
 
 load_dotenv(".env.local")
@@ -248,28 +247,20 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         p1 += f"--- SHOT HIỆN TẠI {sb.storyboard_number} ---\n"
         p1 += f"Nội dung: {sb.action}\nNhân vật: {char_names}\n"
         p1 += "GIAI ĐOẠN 1: Hãy chọn `layout_style` và `camera_concept` phù hợp nhất."
-        
-        res1 = get_llm_client().models.generate_content(
-            model=model_name,
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-            contents=p1
-        )
+
+        res1 = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=p1)
         log_ai_interaction(logger, SYSTEM_PROMPT, p1, res1)
-        stage_1_decision = res1.text
+        stage_1_decision = res1.choices[0].message.content
 
         # GIAI ĐOẠN 2: DÀN CẢNH NHÂN VẬT (Stateless)
         log_logic_transition(logger, "PHASE_2_STAGING", "Positioning characters (Stateless)")
         p2 = f"--- LỊCH SỬ TIẾN TRÌNH ---\n{compact_history}\n\n"
         p2 += f"--- QUYẾT ĐỊNH GĐ1 ---\n{stage_1_decision}\n\n"
         p2 += f"GIAI ĐOẠN 2: Hãy xếp vị trí 9-grid cho các nhân vật ({char_names}) và chọn `asset_dynamics` cho họ."
-        
-        res2 = get_llm_client().models.generate_content(
-            model=model_name,
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-            contents=p2
-        )
+
+        res2 = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=p2)
         log_ai_interaction(logger, SYSTEM_PROMPT, p2, res2)
-        stage_2_decision = res2.text
+        stage_2_decision = res2.choices[0].message.content
 
         # GIAI ĐOẠN 3: HOÀN THIỆN & KHỚP ASSET (Stateless)
         log_logic_transition(logger, "PHASE_3_POLISH", "Matching assets and saving (Stateless)")
@@ -277,16 +268,69 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         p3 += f"--- QUYẾT ĐỊNH GĐ1&2 ---\n{stage_1_decision}\n{stage_2_decision}\n\n"
         p3 += f"Shot ID: {sb.id}\nAction thô: {sb.action}\n"
         p3 += "GIAI ĐOẠN 3: Hãy thêm `visual_metaphor`, `atmosphere_fx`, tìm asset IDs và gọi tool `update_storyboard_visuals`."
-        
-        res3 = get_llm_client().models.generate_content(
-            model=model_name,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-                tools=[search_animation_registry, update_storyboard_visuals, report_missing_asset]
-            ),
-            contents=p3
+
+        phase3_tools = [
+            {
+                "name": "search_animation_registry",
+                "description": "Tìm kiếm Action, Expression và Background trong kho tài nguyên.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Từ khóa tìm kiếm (ví dụ: 'walk', 'happy', 'forest')"},
+                    },
+                    "required": ["query"],
+                },
+                "function": search_animation_registry,
+            },
+            {
+                "name": "update_storyboard_visuals",
+                "description": "Cập nhật thông số visual cho một Storyboard shot.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "storyboard_id": {"type": "string", "description": "ID của storyboard cần cập nhật"},
+                        "layout_style": {"type": "string", "description": "Kiểu layout (diorama, scrapbook, split_screen, ...)"},
+                        "camera_concept": {"type": "string", "description": "Concept camera (endless_pan, micro_macro_zoom, ...)"},
+                        "asset_dynamics": {"type": "string", "description": "Hiệu ứng động (stop_motion_stutter, spring_overshoot, ...)"},
+                        "visual_metaphor": {"type": "string", "description": "Ẩn dụ hình ảnh (red_string, highlight_redact, ...)"},
+                        "transition_in": {"type": "string", "description": "Hiệu ứng chuyển cảnh (paper_tear, ink_bleed, ...)"},
+                        "atmosphere_fx": {"type": "string", "description": "Hiệu ứng không khí (drop_shadows, halftone_filter, ...)"},
+                        "action_id": {"type": "string", "description": "ID của action từ registry"},
+                        "expression_tag": {"type": "string", "description": "Tag biểu cảm nhân vật"},
+                        "background_id": {"type": "string", "description": "ID của background từ registry"},
+                        "characters_state": {"type": "string", "description": "JSON string chứa vị trí các nhân vật trên lưới 9 ô"},
+                    },
+                    "required": ["storyboard_id"],
+                },
+                "function": update_storyboard_visuals,
+            },
+            {
+                "name": "report_missing_asset",
+                "description": "Báo cáo asset bị thiếu để thêm vào backlog.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "storyboard_id": {"type": "string", "description": "ID storyboard liên quan"},
+                        "asset_type": {"type": "string", "description": "Loại asset (Action, Expression, Background)"},
+                        "description": {"type": "string", "description": "Mô tả chi tiết asset cần tạo"},
+                        "suggested_id": {"type": "string", "description": "ID đề xuất cho asset mới"},
+                    },
+                    "required": ["storyboard_id", "asset_type", "description", "suggested_id"],
+                },
+                "function": report_missing_asset,
+            },
+        ]
+
+        res3 = generate_content(
+            model_name,
+            system_prompt=SYSTEM_PROMPT,
+            contents=p3,
+            tools=phase3_tools,
         )
-        log_ai_interaction(logger, SYSTEM_PROMPT, p3, res3)
+        if res3.choices:
+            log_ai_interaction(logger, SYSTEM_PROMPT, p3, res3)
+        else:
+            logger.warning(f"Phase 3 returned empty choices for shot {sb.storyboard_number}")
 
         log_logic_transition(logger, "SHOT_COMPLETE", f"Finished Shot {sb.storyboard_number}")
 

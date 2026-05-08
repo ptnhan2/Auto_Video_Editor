@@ -2,7 +2,6 @@ import os
 import sys
 import importlib
 
-from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy import and_
 
@@ -283,22 +282,99 @@ def run_station_2_agent(episode_id: str):
     finally:
         db.close()
         
-    config = types.GenerateContentConfig(
-        system_instruction=SYSTEM_PROMPT,
-        temperature=0.2,
-        tools=[read_script_for_extraction, read_existing_characters, save_dedup_characters, save_dedup_scenes],
-    )
+    tools = [
+        {
+            "name": "read_script_for_extraction",
+            "description": "Đọc kịch bản định dạng chuẩn (Screenplay) để bóc tách nhân vật và bối cảnh.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID của tập phim cần đọc"},
+                },
+                "required": ["episode_id"],
+            },
+            "function": read_script_for_extraction,
+        },
+        {
+            "name": "read_existing_characters",
+            "description": "Đọc danh sách các nhân vật đã tồn tại trong dự án.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID tập phim"},
+                    "drama_id": {"type": "string", "description": "ID dự án"},
+                },
+                "required": ["episode_id", "drama_id"],
+            },
+            "function": read_existing_characters,
+        },
+        {
+            "name": "save_dedup_characters",
+            "description": "Lưu danh sách nhân vật với đầy đủ thông tin chi tiết (name, role, description, appearance, personality).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID tập phim"},
+                    "drama_id": {"type": "string", "description": "ID dự án"},
+                    "characters": {
+                        "type": "array",
+                        "description": "Danh sách nhân vật",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "role": {"type": "string"},
+                                "description": {"type": "string"},
+                                "appearance": {"type": "string"},
+                                "personality": {"type": "string"},
+                            },
+                            "required": ["name"],
+                        },
+                    },
+                },
+                "required": ["episode_id", "drama_id", "characters"],
+            },
+            "function": save_dedup_characters,
+        },
+        {
+            "name": "save_dedup_scenes",
+            "description": "Lưu danh sách bối cảnh với đầy đủ thông tin (location, time, prompt).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "episode_id": {"type": "string", "description": "ID tập phim"},
+                    "drama_id": {"type": "string", "description": "ID dự án"},
+                    "scenes": {
+                        "type": "array",
+                        "description": "Danh sách bối cảnh",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "location": {"type": "string"},
+                                "time": {"type": "string"},
+                                "prompt": {"type": "string"},
+                            },
+                            "required": ["location"],
+                        },
+                    },
+                },
+                "required": ["episode_id", "drama_id", "scenes"],
+            },
+            "function": save_dedup_scenes,
+        },
+    ]
 
     initial_message = f"Thực hiện bóc tách nhân vật và bối cảnh cho episode_id='{episode_id}' (drama_id='{drama_id}'). Hãy cung cấp thông tin cực kỳ chi tiết."
-    
+
     log_logic_transition(logger, "AGENT_RUN", "Sending request to model")
     try:
-        chat = start_chat("station_2_extractor", config)
+        chat = start_chat("station_2_extractor", system_prompt=SYSTEM_PROMPT, tools=tools, temperature=0.2)
         response = chat.send_message(initial_message)
         log_ai_interaction(logger, SYSTEM_PROMPT, initial_message, response)
         log_logic_transition(logger, "AGENT_COMPLETE", f"Finished station 2 for {episode_id}")
-        
-        logger.info(f"\n✨ [AI SUMMARY]\n{response.text}\n")
+
+        summary_text = response.choices[0].message.content if response.choices else ""
+        logger.info(f"\n✨ [AI SUMMARY]\n{summary_text}\n")
         return True
     except Exception as e:
         logger.error(f"❌ Agent Error: {e}")

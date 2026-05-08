@@ -6,7 +6,6 @@ import importlib
 from datetime import datetime
 from typing import List
 
-from google.genai import types
 from dotenv import load_dotenv
 
 # Ensure the parent directory is in the path
@@ -159,11 +158,55 @@ def run_station_6_sound_vfx_engineer(episode_id: str, registry_path: str):
     storyboards = db.query(Storyboard).filter(Storyboard.episode_id == episode_id).order_by(Storyboard.storyboard_number).all()
     db.close()
 
-    config = types.GenerateContentConfig(
-        system_instruction=SYSTEM_PROMPT,
-        tools=[search_audio_vfx_registry, update_storyboard_audio, report_missing_asset],
-    )
-    chat = start_chat("station_6_vfx", config)
+    tools = [
+        {
+            "name": "search_audio_vfx_registry",
+            "description": "Tìm kiếm SFX, VFX và BGM trong kho tài nguyên.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Từ khóa tìm kiếm (ví dụ: 'footsteps', 'explosion', 'happy')"},
+                },
+                "required": ["query"],
+            },
+            "function": search_audio_vfx_registry,
+        },
+        {
+            "name": "update_storyboard_audio",
+            "description": "Cập nhật thông số âm thanh và VFX cho một Storyboard shot.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "storyboard_id": {"type": "string", "description": "ID của storyboard cần cập nhật"},
+                    "sfx_id": {"type": "string", "description": "ID của SFX từ registry (để trống nếu không dùng)"},
+                    "vfx_tags": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Danh sách ID của VFX từ registry",
+                    },
+                    "bgm_track": {"type": "string", "description": "ID của BGM track từ registry (để trống nếu không dùng)"},
+                },
+                "required": ["storyboard_id", "sfx_id", "vfx_tags", "bgm_track"],
+            },
+            "function": update_storyboard_audio,
+        },
+        {
+            "name": "report_missing_asset",
+            "description": "Báo cáo asset âm thanh/VFX bị thiếu để thêm vào backlog.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "storyboard_id": {"type": "string", "description": "ID storyboard liên quan"},
+                    "asset_type": {"type": "string", "description": "Loại asset (SFX, VFX, BGM)"},
+                    "description": {"type": "string", "description": "Mô tả chi tiết asset cần tạo"},
+                    "suggested_id": {"type": "string", "description": "ID đề xuất cho asset mới"},
+                },
+                "required": ["storyboard_id", "asset_type", "description", "suggested_id"],
+            },
+            "function": report_missing_asset,
+        },
+    ]
+    chat = start_chat("station_6_vfx", system_prompt=SYSTEM_PROMPT, tools=tools)
     for sb in storyboards:
         prompt = f"Storyboard ID: {sb.id}\nShot {sb.storyboard_number}\nAction: {sb.action}\nDialogue: {sb.dialogue}\nAtmosphere: {sb.atmosphere}\nVisual Metaphor: {sb.visual_metaphor}"
         response = chat.send_message(prompt)
