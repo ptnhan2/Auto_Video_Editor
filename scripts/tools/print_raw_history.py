@@ -1,9 +1,14 @@
 import sys
-sys.path.append('.')
-from scripts.core.generate_video_script import create_new_scene
-import google.generativeai as genai
 import os
+import importlib
+
+import google.generativeai as genai
 from dotenv import load_dotenv
+
+sys.path.append('.')
+
+_scripts_core = importlib.import_module('scripts.core.generate_video_script')
+create_new_scene = _scripts_core.create_new_scene
 
 load_dotenv(".env.local")
 genai.configure(api_key=os.getenv("GOOGLE_GENERATIVE_AI_API_KEY"))

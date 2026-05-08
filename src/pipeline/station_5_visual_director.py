@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import math
+import importlib
 from typing import List
 
 from google.genai import types
@@ -11,11 +12,26 @@ from sqlalchemy.orm import joinedload
 # Ensure the parent directory is in the path
 sys.path.append(os.getcwd())
 
-from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from src.db.database import SessionLocal
-from src.db.schema import Storyboard
-from src.config import get_model_for_station
-from src.shared.api_clients.llm_client import get_llm_client, embed_texts
+_logger = importlib.import_module('src.shared.logger')
+setup_logger = _logger.setup_logger
+log_ai_interaction = _logger.log_ai_interaction
+log_tool_execution = _logger.log_tool_execution
+log_logic_transition = _logger.log_logic_transition
+log_db_operation = _logger.log_db_operation
+log_environment_info = _logger.log_environment_info
+
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+
+_schema = importlib.import_module('src.db.schema')
+Storyboard = _schema.Storyboard
+
+_config = importlib.import_module('src.config')
+get_model_for_station = _config.get_model_for_station
+
+_llm = importlib.import_module('src.shared.api_clients.llm_client')
+get_llm_client = _llm.get_llm_client
+embed_texts = _llm.embed_texts
 
 load_dotenv(".env.local")
 

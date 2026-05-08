@@ -1,12 +1,25 @@
 import sys
 import os
+import importlib
+
+from sqlalchemy.orm import Session
 
 # Add root to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db.database import SessionLocal, init_db
-from src.db.schema import Drama, Episode, Character, Scene, Storyboard, EpisodeCharacter, EpisodeScene, StoryboardCharacter
-from sqlalchemy.orm import Session
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+init_db = _db.init_db
+
+_schema = importlib.import_module('src.db.schema')
+Drama = _schema.Drama
+Episode = _schema.Episode
+Character = _schema.Character
+Scene = _schema.Scene
+Storyboard = _schema.Storyboard
+EpisodeCharacter = _schema.EpisodeCharacter
+EpisodeScene = _schema.EpisodeScene
+StoryboardCharacter = _schema.StoryboardCharacter
 
 def seed_data():
     db: Session = SessionLocal()

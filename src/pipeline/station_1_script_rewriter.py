@@ -1,16 +1,29 @@
 import os
 import sys
+import importlib
+
+from google.genai import types
+from dotenv import load_dotenv
 
 # Ensure the parent directory is in the path so we can import src modules
 sys.path.append(os.getcwd())
 
-from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
-from google.genai import types
-from dotenv import load_dotenv
+_logger = importlib.import_module('src.shared.logger')
+setup_logger = _logger.setup_logger
+log_ai_interaction = _logger.log_ai_interaction
+log_tool_execution = _logger.log_tool_execution
+log_logic_transition = _logger.log_logic_transition
+log_db_operation = _logger.log_db_operation
+log_environment_info = _logger.log_environment_info
 
-from src.db.database import SessionLocal
-from src.db.schema import Episode
-from src.shared.api_clients.llm_client import start_chat
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+
+_schema = importlib.import_module('src.db.schema')
+Episode = _schema.Episode
+
+_llm = importlib.import_module('src.shared.api_clients.llm_client')
+start_chat = _llm.start_chat
 
 load_dotenv(".env.local")
 

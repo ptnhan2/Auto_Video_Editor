@@ -5,13 +5,21 @@ import asyncio
 import threading
 import ctypes
 import sys
+import importlib
 
 # Thêm đường dẫn để import từ scripts/core/tts
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from scripts.core.tts.providers.edge import run_edge
-from scripts.core.tts.providers.tiktok import run_tiktok
-from scripts.core.tts.providers.elevenlabs import run_elevenlabs, fetch_voices, fetch_shared_voices
+_edge = importlib.import_module('scripts.core.tts.providers.edge')
+run_edge = _edge.run_edge
+
+_tiktok = importlib.import_module('scripts.core.tts.providers.tiktok')
+run_tiktok = _tiktok.run_tiktok
+
+_elevenlabs = importlib.import_module('scripts.core.tts.providers.elevenlabs')
+run_elevenlabs = _elevenlabs.run_elevenlabs
+fetch_voices = _elevenlabs.fetch_voices
+fetch_shared_voices = _elevenlabs.fetch_shared_voices
 
 # --- Quản lý Thư mục ---
 ASSET_DIR = os.path.join("public", "assets", "audio", "tts")

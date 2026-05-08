@@ -1,15 +1,27 @@
 import os
 import sys
 import asyncio
+import importlib
 
 # Ensure the parent directory is in the path
 sys.path.append(os.getcwd())
 
-from src.shared.logger import setup_logger, log_logic_transition, log_db_operation, log_environment_info
-from src.shared.api_clients.tts_manager import TTSManager
+_logger = importlib.import_module('src.shared.logger')
+setup_logger = _logger.setup_logger
+log_logic_transition = _logger.log_logic_transition
+log_db_operation = _logger.log_db_operation
+log_environment_info = _logger.log_environment_info
 
-from src.db.database import SessionLocal
-from src.db.schema import Storyboard, Character, Episode
+_tts = importlib.import_module('src.shared.api_clients.tts_manager')
+TTSManager = _tts.TTSManager
+
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+
+_schema = importlib.import_module('src.db.schema')
+Storyboard = _schema.Storyboard
+Character = _schema.Character
+Episode = _schema.Episode
 
 # Logging config
 logger = setup_logger("station_4_audio")

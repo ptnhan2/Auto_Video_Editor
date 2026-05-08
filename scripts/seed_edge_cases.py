@@ -1,11 +1,20 @@
 import sys
 import os
+import importlib
+
+from sqlalchemy.orm import Session
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db.database import SessionLocal, init_db
-from src.db.schema import Drama, Episode, Character, EpisodeCharacter
-from sqlalchemy.orm import Session
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+init_db = _db.init_db
+
+_schema = importlib.import_module('src.db.schema')
+Drama = _schema.Drama
+Episode = _schema.Episode
+Character = _schema.Character
+EpisodeCharacter = _schema.EpisodeCharacter
 
 # ============================================================
 # TEST SUITE 1: HỘI THOẠI & CẢM XÚC CƯỜNG ĐỘ CAO

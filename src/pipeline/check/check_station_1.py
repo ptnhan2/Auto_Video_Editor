@@ -1,11 +1,15 @@
 # scripts/check_station_1.py
 import sys
 import os
+import importlib
 # Thêm đường dẫn gốc của dự án vào sys.path để Python tìm thấy module 'src'
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 
-from src.db.database import SessionLocal
-from src.db.schema import Episode
+_db = importlib.import_module('src.db.database')
+SessionLocal = _db.SessionLocal
+
+_schema = importlib.import_module('src.db.schema')
+Episode = _schema.Episode
 
 db = SessionLocal()
 # Lấy tập phim ID = 1 vừa chạy
