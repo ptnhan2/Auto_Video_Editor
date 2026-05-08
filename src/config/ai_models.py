@@ -7,16 +7,15 @@
 #   gemini/<model>   — Google Gemini via AI Studio
 #   deepseek/<model> — DeepSeek (placeholder for GW-2/GW-3)
 #
-# NOTE: gemini-3-flash-preview and gemini-embedding-2 are not available
-# through litellm's Gemini provider (as of May 2026). Nearest equivalents:
-#   gemini-3-flash-preview → gemini-2.0-flash (equivalent capability tier)
-#   gemini-embedding-2      → text-embedding-004  (recommended upgrade)
-# Model IDs will be updated for GW-2/GW-3 when DeepSeek fallback is added.
+# NOTE: Model names use the litellm provider prefix convention.
+# gemini-3-flash-preview is available via litellm's Gemini provider (AI Studio).
+# gemini-embedding-2 is mapped to text-embedding-004 (litellm's nearest match).
+# Model IDs may be updated for GW-2/GW-3 when DeepSeek fallback is added.
 
 AI_MODEL_CONFIG = {
-    "station_1_rewriter": "gemini/gemini-2.0-flash",
-    "station_2_extractor": "gemini/gemini-2.0-flash",
-    "station_3_breaker": "gemini/gemini-2.0-flash",
+    "station_1_rewriter": "gemini/gemini-3-flash-preview",
+    "station_2_extractor": "gemini/gemini-3-flash-preview",
+    "station_3_breaker": "gemini/gemini-3-flash-preview",
     "station_4_audio": "gemini/gemini-2.5-flash",
     "station_5_visual": "gemini/gemini-2.5-flash",
     "station_6_vfx": "gemini/gemini-2.5-flash",

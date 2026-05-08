@@ -1,6 +1,6 @@
 """Centralized LLM client backed by LiteLLM.
 
-Replaces the previous google.genai.Client singleton with a LiteLLM-based
+Replaces the previous Google GenAI SDK singleton with a LiteLLM-based
 implementation that supports provider-agnostic completion, tool calling,
 and embeddings through a single interface.
 
@@ -11,9 +11,11 @@ Tool calling is handled by the generic loop in tool_loop.py.
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any, Callable, List, Optional
 
 import litellm
+from dotenv import load_dotenv
 
 from src.config.ai_models import get_embedding_model, get_model_for_station
 from src.shared.api_clients.tool_loop import (
@@ -34,13 +36,21 @@ _configured = False
 def _configure_litellm() -> None:
     """One-time litellm setup. Reads API keys from environment variables.
 
-    litellm automatically picks up:
-        GEMINI_API_KEY   → gemini/ provider
-        DEEPSEEK_API_KEY → deepseek/ provider
+    Loads .env.local and maps legacy env var names to litellm's expected vars:
+        GOOGLE_GENERATIVE_AI_API_KEY → GEMINI_API_KEY
+        DEEPSEEK_API_KEY           → (used as-is)
     """
     global _configured
     if _configured:
         return
+
+    # Load .env.local so env vars are available even if the caller didn't dotenv.
+    load_dotenv(".env.local")
+
+    # Map legacy env var to litellm's expected Gemini key name.
+    if os.getenv("GOOGLE_GENERATIVE_AI_API_KEY") and not os.getenv("GEMINI_API_KEY"):
+        os.environ["GEMINI_API_KEY"] = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY") or ""
+
     litellm.set_verbose = False
     _configured = True
     logger.debug("litellm configured (verbose=off)")
