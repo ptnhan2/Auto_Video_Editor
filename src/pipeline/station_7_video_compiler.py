@@ -1,16 +1,18 @@
 import os
 import sys
-sys.path.append(os.getcwd())
-
 import json
 import re
+
+from sqlalchemy.orm import joinedload
+
+sys.path.append(os.getcwd())
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 from src.shared.logger import setup_logger, log_logic_transition, log_db_operation, log_environment_info
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard, Episode
-from sqlalchemy.orm import joinedload
 
 logger = setup_logger("station_7_video_compiler")
 

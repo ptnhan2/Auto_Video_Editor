@@ -1,14 +1,13 @@
 import os
 import sys
+import asyncio
 
 # Ensure the parent directory is in the path
 sys.path.append(os.getcwd())
 
 from src.shared.logger import setup_logger, log_logic_transition, log_db_operation, log_environment_info
-import asyncio
 from src.shared.api_clients.tts_manager import TTSManager
 
-# Import DB
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard, Character, Episode
 

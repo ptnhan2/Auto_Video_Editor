@@ -1,16 +1,17 @@
 import os
 import sys
-# Ensure the parent directory is in the path
-sys.path.append(os.getcwd())
-
 import json
 import math
-from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
 from typing import List
+
 from google.genai import types
 from dotenv import load_dotenv
 from sqlalchemy.orm import joinedload
 
+# Ensure the parent directory is in the path
+sys.path.append(os.getcwd())
+
+from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation, log_environment_info
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard
 from src.config import get_model_for_station

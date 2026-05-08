@@ -1,16 +1,17 @@
 import os
 import sys
-# Ensure the parent directory is in the path
-sys.path.append(os.getcwd())
-
 import json
 import math
 from datetime import datetime
-from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation
 from typing import List
+
 from google.genai import types
 from dotenv import load_dotenv
 
+# Ensure the parent directory is in the path
+sys.path.append(os.getcwd())
+
+from src.shared.logger import setup_logger, log_ai_interaction, log_tool_execution, log_logic_transition, log_db_operation
 from src.db.database import SessionLocal
 from src.db.schema import Storyboard
 from src.shared.api_clients.llm_client import start_chat, embed_texts
