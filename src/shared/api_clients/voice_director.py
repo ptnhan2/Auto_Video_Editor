@@ -5,7 +5,7 @@ import importlib
 
 # Thêm path để import TTSManager
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-_manager = importlib.import_module('scripts.core.tts.manager')
+_manager = importlib.import_module('src.shared.api_clients.tts_manager')
 TTSManager = _manager.TTSManager
 
 async def main():

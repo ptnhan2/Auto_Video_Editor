@@ -7,16 +7,16 @@ import ctypes
 import sys
 import importlib
 
-# Thêm đường dẫn để import từ scripts/core/tts
+# Thêm project root vào sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-_edge = importlib.import_module('scripts.core.tts.providers.edge')
+_edge = importlib.import_module('src.shared.api_clients.providers.edge')
 run_edge = _edge.run_edge
 
-_tiktok = importlib.import_module('scripts.core.tts.providers.tiktok')
+_tiktok = importlib.import_module('src.shared.api_clients.providers.tiktok')
 run_tiktok = _tiktok.run_tiktok
 
-_elevenlabs = importlib.import_module('scripts.core.tts.providers.elevenlabs')
+_elevenlabs = importlib.import_module('src.shared.api_clients.providers.elevenlabs')
 run_elevenlabs = _elevenlabs.run_elevenlabs
 fetch_voices = _elevenlabs.fetch_voices
 fetch_shared_voices = _elevenlabs.fetch_shared_voices

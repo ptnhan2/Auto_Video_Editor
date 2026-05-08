@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from mutagen.mp3 import MP3
 from .providers.tiktok import run_tiktok
 from .providers.elevenlabs import run_elevenlabs
+from .providers.edge import run_edge  # noqa: F401 — fallback in render()
 import json
 import sys
 
@@ -53,12 +54,7 @@ class TTSManager:
             return True, f"Bỏ qua: File '{filename}' đã tồn tại."
 
         if provider == "edge":
-            # Cần cập nhật import nếu dùng provider ở scripts/core
-            try:
-                from scripts.core.tts.providers.edge import run_edge
-                return await run_edge(text, voice, filepath, **kwargs)
-            except ImportError:
-                return await run_edge(text, voice, filepath, **kwargs)
+            return await run_edge(text, voice, filepath, **kwargs)
             
         elif provider == "tiktok":
             session = kwargs.get("session", os.getenv("TIKTOK_SESSION_ID", ""))
