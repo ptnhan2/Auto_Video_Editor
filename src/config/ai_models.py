@@ -5,17 +5,17 @@
 #
 # Model names use the litellm provider prefix convention:
 #   gemini/<model>   — Google Gemini via AI Studio
-#   deepseek/<model> — DeepSeek (placeholder for GW-2/GW-3)
+#   deepseek/<model> — DeepSeek (active primary model for S1-S3)
 #
 # NOTE: Model names use the litellm provider prefix convention.
 # gemini-3-flash-preview is available via litellm's Gemini provider (AI Studio).
 # gemini-embedding-2 is mapped to text-embedding-004 (litellm's nearest match).
-# Model IDs may be updated for GW-2/GW-3 when DeepSeek fallback is added.
+# DeepSeek has been validated as primary model for stations S1-S3 as of Issue #92 audit.
 
 AI_MODEL_CONFIG = {
-    "station_1_rewriter": "gemini/gemini-3-flash-preview",
-    "station_2_extractor": "gemini/gemini-3-flash-preview",
-    "station_3_breaker": "gemini/gemini-3-flash-preview",
+    "station_1_rewriter": "deepseek/deepseek-chat",
+    "station_2_extractor": "deepseek/deepseek-chat",
+    "station_3_breaker": "deepseek/deepseek-chat",
     "station_4_audio": "gemini/gemini-2.5-flash",
     "station_5_visual": "gemini/gemini-2.5-flash",
     "station_6_vfx": "gemini/gemini-2.5-flash",
