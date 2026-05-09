@@ -21,14 +21,14 @@ python -c "import sqlite3; conn=sqlite3.connect('database.sqlite'); row=conn.exe
 
 ### 3. Xem S2 OUTPUT (nhân vật đã trích xuất)
 ```
-python -c "import sqlite3; conn=sqlite3.connect('database.sqlite'); [print(f'Ten: {r[0]} | Vai: {r[1]} | Tinh cach: {r[2][:80] if r[2] else None}... | Ngoai hinh: {r[3][:80] if r[3] else None}...') for r in conn.execute('SELECT name, role, personality, appearance FROM characters LIMIT 10')]"
+python -c "import sqlite3; conn=sqlite3.connect('database.sqlite'); [print(f'Tên: {r[0]} | Vai: {r[1]} | Tính cách: {r[2][:80] if r[2] else None}... | Ngoại hình: {r[3][:80] if r[3] else None}...') for r in conn.execute('SELECT name, role, personality, appearance FROM characters LIMIT 10')]"
 ```
 
 **Đối chiếu với rubric S2:** Đọc truyện gốc → đối chiếu danh sách nhân vật. Có thiếu ai không? Có bị trùng không? Mô tả có đa dạng không?
 
 ### 4. Xem S3 OUTPUT (storyboard)
 ```
-python -c "import sqlite3; conn=sqlite3.connect('database.sqlite'); [print(f'Shot #{r[0]} | {r[1]} | {r[2]} | Hanh dong: {r[3][:50] if r[3] else None}... | {r[4]}s') for r in conn.execute('SELECT storyboard_number, location, time, action, duration FROM storyboards ORDER BY storyboard_number LIMIT 38')]"
+python -c "import sqlite3; conn=sqlite3.connect('database.sqlite'); [print(f'Shot #{r[0]} | {r[1]} | {r[2]} | Hành động: {r[3][:50] if r[3] else None}... | {r[4]}s') for r in conn.execute('SELECT storyboard_number, location, time, action, duration FROM storyboards ORDER BY storyboard_number LIMIT 38')]"
 ```
 
 **Đối chiếu với rubric S3:** Xem pacing — mỗi shot dài bao nhiêu giây? Có shot nào quá ngắn/dài không? Location/time có bị None không?
