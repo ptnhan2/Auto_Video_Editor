@@ -16,7 +16,7 @@ Mục tiêu là cho phép **BẤT KỲ AI (không cần kiến thức lập trì
 
 ## 📝 PHẦN 1: CHECKLIST & BAREM ĐIỂM CHI TIẾT
 
-### 📖 S1-S3 — Script & Story Pipeline (Biên kịch & Phân cảnh)
+### 📖 S1 — Script Pipeline (Chuyển thể kịch bản)
 
 #### S1 — Hội thoại & Chuyển thể (Dialogue & Screenplay Adaptation)
 **Triệu chứng:** Nhân vật nói chuyện như đang đọc văn xuôi, đọc luôn cả lời dẫn truyện ("Anh ta nói", "Hắn nghĩ"), hoặc lời thoại khô khan, không tự nhiên.
@@ -34,6 +34,18 @@ Mục tiêu là cho phép **BẤT KỲ AI (không cần kiến thức lập trì
 - 5 = Tóm tắt xuất sắc, câu chuyện liền mạch, không thừa không thiếu.
 **Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S1 (Prompt summarization/adaptation quá gắt gao làm mất dữ kiện).
 
+#### S1 — Hành động & Mô tả khung cảnh (Action & Scene Description)
+**Triệu chứng:** Hành động của nhân vật quá chung chung ("đánh nhau") hoặc thiếu bối cảnh không gian, dẫn đến các trạm sau không biết render thế nào.
+**Barem:**
+- 1 = Không có mô tả hành động hoặc bối cảnh, chỉ có lời thoại trần trụi.
+- 3 = Có hành động cơ bản nhưng thiếu chi tiết trực quan (không rõ đang cầm vũ khí gì, ở đâu).
+- 5 = Mô tả hành động (action tags) sắc nét, rõ ràng bối cảnh, dễ dàng parse thành video prompt.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S1 (LLM không trích xuất hoặc generate đủ `action_description` và `scene_context`).
+
+---
+
+### 👥 S2 — Character Pipeline (Thiết kế nhân vật)
+
 #### S2 — Định danh nhân vật (Character Consistency & Dedup)
 **Triệu chứng:** Cùng một nhân vật nhưng lúc tên này lúc tên khác (Vd: "Ông Lão", "Lão Hạc", "Ông Cụ"). Nhân vật bị nhân bản vô lý.
 **Barem:**
@@ -42,13 +54,49 @@ Mục tiêu là cho phép **BẤT KỲ AI (không cần kiến thức lập trì
 - 5 = Định danh chuẩn xác 100%, reuse character asset hoàn hảo.
 **Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S2 (`dedup` logic fail, không check kỹ existing characters trong registry, hoặc vector search bị lỗi).
 
-#### S3 — Nhịp độ cắt cảnh (Pacing & Shot Length)
-**Triệu chứng:** Video tạo cảm giác quá dồn dập (câu nói chưa xong đã chuyển cảnh) hoặc quá lê thê (nhân vật nói xong 5 giây sau mới đổi cảnh).
+#### S2 — Đa dạng diện mạo (Visual Variety & Casting)
+**Triệu chứng:** Tất cả các nhân vật quần chúng đều trông giống hệt nhau (cùng một template), không phân biệt được ai với ai.
 **Barem:**
-- 1 = Nhịp độ hoàn toàn hỏng, người xem chóng mặt hoặc buồn ngủ.
-- 3 = Một vài shot hơi dài/ngắn, nhưng tổng thể xem được.
-- 5 = Pacing hoàn hảo, khớp với nhịp điệu hội thoại và hành động.
-**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S3 (Logic tính toán `duration` của shot không hợp lý, hoặc phân chia sentences_per_shot quá dày/mỏng).
+- 1 = Dùng chung 1-2 model avatar cho 10 nhân vật khác nhau.
+- 3 = Có phân biệt nam/nữ, già/trẻ nhưng quần áo, tóc tai còn na ná nhau.
+- 5 = Mỗi nhân vật có nét đặc trưng riêng, dễ dàng nhận diện bằng mắt thường.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S2 (Generator prompt thiếu tính ngẫu nhiên, hoặc asset library quá nghèo nàn).
+
+#### S2 — Nhất quán đặc điểm (Trait & Wardrobe Continuity)
+**Triệu chứng:** Ở đầu truyện nhân vật đội mũ đỏ, giữa truyện thành mũ xanh, cuối truyện mất mũ mà không có lý do logic.
+**Barem:**
+- 1 = Đặc điểm nhận dạng biến đổi liên tục qua từng phân cảnh.
+- 3 = Giữ được khuôn mặt/vóc dáng nhưng thỉnh thoảng sai màu áo, phụ kiện.
+- 5 = Đúng 100% chi tiết tạo hình từ đầu đến cuối trừ khi kịch bản yêu cầu thay đồ.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S2 (Không lưu trữ và áp dụng thẻ `visual_traits` xuyên suốt khi lookup asset).
+
+---
+
+### 🎬 S3 — Storyboard & Pacing (Phân cảnh & Nhịp độ)
+
+#### S3 — Nhịp độ cắt cảnh (Pacing & Shot Length)
+**Triệu chứng:** Cảnh chuyển không tự nhiên, phân bổ số lượng câu thoại trong một cảnh quá dồn dập hoặc quá lê thê.
+**Barem:**
+- 1 = Nhịp độ hoàn toàn hỏng, 1 shot chứa 10 câu thoại hoặc 1 câu thoại bị cắt vụn ra 3 shot.
+- 3 = Một vài shot hơi dài/ngắn so với nhịp hành động, nhưng tổng thể xem được.
+- 5 = Pacing hoàn hảo, số lượng thoại trên mỗi shot hợp lý với nhịp điệu.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S3 (Thuật toán phân chia `sentences_per_shot` quá dày hoặc quá mỏng).
+
+#### S3 — Liên tục hành động (Action Continuity)
+**Triệu chứng:** Shot trước nhân vật đang chạy bên trái, shot sau đột nhiên đứng yên bên phải mà không có sự kiện chuyển tiếp.
+**Barem:**
+- 1 = Hành động nhảy cóc, đứt gãy phi logic giữa các shot liên tiếp.
+- 3 = Có cảm giác hơi sượng giữa các cảnh hành động nhưng vẫn hiểu được.
+- 5 = Luồng hành động mượt mà, hợp logic vật lý và vị trí.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S3 (Thiếu cơ chế lưu trạng thái `previous_shot_action` để duy trì continuity).
+
+#### S3 — Lựa chọn cỡ cảnh (Shot Type/Framing Logic)
+**Triệu chứng:** Đoạn cao trào cảm xúc cần quay cận cảnh (Close-up) mặt diễn viên rơi nước mắt thì lại dùng toàn cảnh (Wide shot) từ xa.
+**Barem:**
+- 1 = Sai hoàn toàn mục đích cỡ cảnh (Wide shot cho nội tâm, Close-up cho đại cảnh chiến đấu).
+- 3 = Cỡ cảnh an toàn (toàn Medium shot), thiếu sự nhấn nhá điện ảnh.
+- 5 = Lựa chọn cỡ cảnh đúng ngôn ngữ điện ảnh, tôn lên được nội dung của phân đoạn.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S3 (Quy tắc suy diễn `shot_type` từ `action/emotion` bị lỏng lẻo).
 
 ---
 
@@ -140,7 +188,7 @@ Mục tiêu là cho phép **BẤT KỲ AI (không cần kiến thức lập trì
 - 1 = SFX/VFX sai bét hoặc hoàn toàn biến mất trong cảnh hành động cường độ cao.
 - 3 = Có SFX nhưng delay (chậm/sớm 1s) hoặc VFX hơi mờ nhạt.
 - 5 = Điểm nhấn xuất sắc, hình ảnh và âm thanh khớp nhau từng frame.
-**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S6 (Missing asset không được báo lỗi/fallback, hoặc time-sync logic bị sai).
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S6 (Chọn VFX từ registry nhưng file missing không được log vào `missing_assets_backlog`, hoặc time-sync logic bị sai).
 
 ---
 
@@ -153,6 +201,14 @@ Mục tiêu là cho phép **BẤT KỲ AI (không cần kiến thức lập trì
 - 3 = Lệch vài frame nhỏ.
 - 5 = Lipsync chính xác cho đúng nhân vật, chữ chạy theo đúng tiếng.
 **Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S7 (Speaker mapping `actorId` bị sai trong bước compile, lỗi bind `syncDependency`).
+
+#### S7 — Cắt cảnh cưỡng bức (Duration vs Dialogue Validation)
+**Triệu chứng:** Cảnh phim chuyển qua cảnh mới cái rụp trong khi diễn viên chưa nói hết câu, hoặc chữ chưa hiện xong.
+**Barem:**
+- 1 = Rất nhiều cảnh bị cắt cụt đuôi (câu thoại bị cắn mất phần cuối).
+- 3 = Thi thoảng bị cắt vội ở vài chữ cuối của câu dài.
+- 5 = Thời lượng cảnh luôn ôm trọn 100% thời lượng âm thanh thoại cộng thêm một chút padding.
+**Nếu FAIL → nguyên nhân có thể → trạm gây lỗi:** S7 (Logic `duration_ms` cấp cho shot quá ngắn so với độ dài thực tế của file âm thanh, không overwrite lại duration từ S3).
 
 #### S7 — Tính toàn vẹn của Video (Video Integrity)
 **Triệu chứng:** Video output đang xem bị màn hình đen giữa chừng, thiếu một số cảnh (shot bị drop), hoặc crash không render ra file mp4.
@@ -181,7 +237,8 @@ Sử dụng bảng này để tra cứu nhanh từ "Cái bạn nhìn/nghe thấy
 | **THOẠI & KỊCH BẢN** | | |
 | Lời thoại có kèm: "anh ta bước tới và nói" | LLM bê nguyên text thay vì diễn đạt lại | **S1** (Script) |
 | Lão Hạc lúc thì tên Lão, lúc tên Hạc | Vector search / dedup nhân vật bị hụt | **S2** (Character) |
-| Cảnh phim chuyển nhanh như chớp, nhức mắt | `duration_ms` cấp cho shot quá bé | **S3** (Pacing) / **S7** |
+| Cảnh phim phân bố thoại dày mỏng bất thường | Thuật toán chia `sentences_per_shot` sai lệch | **S3** (Pacing) |
+| Cảnh bị cắt rụp khi người xem chưa kịp nghe/đọc | `duration_ms` bị overwrite sai, bé hơn audio length | **S7** (Video Compiler) |
 | **ÂM THANH & GIỌNG ĐỌC** | | |
 | Nữ nhi lên tiếng bằng giọng ông lão khàn | Map sai `voice_id` theo gender/age | **S4** (Audio/TTS) |
 | Chữ hiện xong 1 lúc âm thanh mới phát | Lệch `word_timings` | **S4** (Audio/TTS) |
