@@ -1,4 +1,19 @@
-# Báo Cáo Chất Lượng Pipeline S1-S3
+# Bao cao chat luong Pipeline S1-S3
+
+## Lan chay 1: Gemini (gemini/gemini-3-flash-preview)
+
+- S1: OK (43s) - sinh screenplay thanh cong, luu vao script_content
+- S2: FAILED - RateLimitError (429 Too Many Requests), vuot quota free tier (5 req/min)
+- S3: KHONG CHAY - bi gian doan do S2 that bai
+
+## Lan chay 2: DeepSeek (deepseek/deepseek-chat)
+
+- Da sua `src/config/ai_models.py`: station_1_rewriter, station_2_extractor, station_3_breaker doi thanh `deepseek/deepseek-chat`
+- S1: DA CHAY THANH CONG o lan 1, khong can chay lai
+- S2: FAILED - Authentication Fails, DEEPSEEK_API_KEY khong hop le (401 Unauthorized)
+- S3: KHONG CHAY - bi gian doan do S2 that bai
+
+## Ket luan: Pipeline S1-S3 KHONG CHAY HET
 
 ## S1 Output
 
@@ -56,35 +71,50 @@ Cánh cửa khép lại, ngăn cách tiếng mưa gào thét bên ngoài. Trong 
 Cơn mưa ngoài kia vẫn rơi không ngớt, nhưng trong không gian này, sự ấm áp bắt đầu quay trở lại qua những cái ôm và những lời hứa hẹn hàn gắn. Hai con người, sau cơn bão lòng, lại tìm thấy nhau trong sự tha thứ.
 ```
 
-## S2 Output
+## S2 Output (Seeded data - pipeline crashed)
 
-- **Nhân vật:** Nam (TC1)
-  - **Mô tả:** Chàng trai 28 tuổi, bị bạn gái bắt quả tang tin nhắn mập mờ với đồng nghiệp. Ban đầu anh bối rối, cố gắng phủ nhận và nổi nóng để che đậy, nhưng sau đó đã hối lỗi và tìm cách xoa dịu bạn gái.
-  - **Vai trò:** Chính
+- **Nhan vat:** Nam (TC1)
+  - **Mo ta:** Chàng trai 28 tuổi, bị bạn gái bắt quả tang tin nhắn mập mờ với đồng nghiệp. Ban đầu anh bối rối, cố gắng phủ nhận và nổi nóng để che đậy, nhưng sau đó đã hối lỗi và tìm cách xoa dịu bạn gái.
+  - **Vai tro:** Chính
 
-- **Nhân vật:** Trang (TC1)
-  - **Mô tả:** Cô gái 26 tuổi, đang trải qua cú sốc tâm lý khi phát hiện bạn trai có dấu hiệu phản bội. Cô thể hiện sự đau đớn, phẫn nộ và cuối cùng là sự yếu đuối, sợ mất đi tình yêu.
-  - **Vai trò:** Chính
+- **Nhan vat:** Trang (TC1)
+  - **Mo ta:** Cô gái 26 tuổi, đang trải qua cú sốc tâm lý khi phát hiện bạn trai có dấu hiệu phản bội. Cô thể hiện sự đau đớn, phẫn nộ và cuối cùng là sự yếu đuối, sợ mất đi tình yêu.
+  - **Vai tro:** Chính
 
-- **Nhân vật:** Narrator
-  - **Mô tả:** Người dẫn dắt câu chuyện, mô tả bối cảnh và cảm xúc của nhân vật.
-  - **Vai trò:** Narrator
+- **Nhan vat:** Narrator
+  - **Mo ta:** Người dẫn dắt câu chuyện, mô tả bối cảnh và cảm xúc của nhân vật.
+  - **Vai tro:** Narrator
 
-## S3 Output
+## S3 Output (Seeded data - pipeline crashed)
 
-> **Lỗi:** S3 bị timeout/crash do RateLimit từ trạm S2, không tạo ra được Storyboard mới (chỉ có dữ liệu seed sẵn nếu có).
+### Canh: Trước cửa nhà Nam
+- **Prompt:** A quiet street at night under heavy pouring rain. A young woman with wet hair and a soaked white shirt stands alone in front of a closed wooden door, looking devastated. Dim streetlights, thunder in the distance.
+- **So luong storyboard:** 1
 
-## Câu hỏi cần trả lời trong báo cáo
+### Canh: Cửa chính nhà Nam
+- **Prompt:** A wooden front door opens, revealing a warm yellow light from inside. A young man in pajamas stands at the doorway, looking shocked. Outside, it's dark and raining heavily.
+- **So luong storyboard:** 1
 
-### 1. Pipeline S1-S3 chạy hết không? Có crash không?
-Pipeline S1-S3 **KHÔNG** chạy hết. Pipeline bị crash ở trạm **S2**.
-- **S1 (Script Rewriter):** Chạy thành công. Đã sinh ra kịch bản screenplay và cập nhật vào CSDL.
-- **S2 (Extractor):** Cố gắng kết nối vào API nhưng bị lỗi rate limit của Gemini API (`429 Too Many Requests`). Hệ thống retry nhiều lần nhưng do vượt quota free tier (5 requests/minute) và gọi tool liên tục nên bị timeout/treo ở PowerShell.
-- **S3 (Storyboard Breaker):** Chưa kịp chạy do tiến trình đã bị gián đoạn ở S2.
+### Canh: Hiên nhà Nam
+- **Prompt:** The man and woman are standing under a small porch, sheltered from the rain. They are both wet. The man gently brushes wet hair from her forehead. She looks up at him with teary, vulnerable eyes.
+- **So luong storyboard:** 1
 
-### 2. Output có đúng schema không?
-- Output của **S1** (đã chạy thành công) tuân thủ đúng schema, lưu vào trường `script_content` theo format markdown chuẩn của kịch bản phim phân cảnh.
-- Output của **S2** và **S3** không được sinh ra mới do bị crash, những dữ liệu Character hiện có là dữ liệu được mồi (seed) sẵn từ `scripts/seed_edge_cases.py`.
+### Canh: Phòng khách nhà Nam
+- **Prompt:** Inside a cozy, dimly lit living room. The man and woman are sitting on the floor near the entrance, hugging each other. The woman is still sobbing quietly. Through the window, rain can be seen falling outside.
+- **So luong storyboard:** 1
 
-### 3. Có thiếu file output nào không?
-- Thiếu các file output log hoặc dữ liệu extraction từ S2 và Storyboard break từ S3 do tiến trình pipeline crash giữa chừng vì Rate Limit.
+## Cau hoi can tra loi trong bao cao
+
+### 1. Pipeline S1-S3 chay het khong? Co crash khong?
+Pipeline S1-S3 **KHONG** chay het. Crash o tram **S2**.
+- Lan chay 1 (Gemini): S1 OK. S2 crash voi `RateLimitError (429)`. Quota free tier Gemini (5 req/min) bi vuot.
+- Lan chay 2 (DeepSeek): S1 da chay xong o lan 1. S2 crash voi `401 Unauthorized` - DEEPSEEK_API_KEY khong hop le.
+- S3 khong kip chay trong ca 2 lan do S2 that bai.
+
+### 2. Output co dung schema khong?
+- Output S1 dung schema: luu vao `script_content` theo format markdown screenplay phan canh.
+- Output S2 va S3 khong duoc sinh ra moi do crash. Du lieu hien co (character/scene) la du lieu seed san tu `scripts/seed_edge_cases.py`.
+
+### 3. Co thieu file output nao khong?
+- Thieu toan bo output moi tu S2 (Extractor) va S3 (Storyboard Breaker) do pipeline crash.
+- Can kich hoat DeepSeek API key hop le hoac nang cap Gemini API tier de pipeline chay hoan chinh.

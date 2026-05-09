@@ -13,9 +13,9 @@
 # Model IDs may be updated for GW-2/GW-3 when DeepSeek fallback is added.
 
 AI_MODEL_CONFIG = {
-    "station_1_rewriter": "gemini/gemini-3-flash-preview",
-    "station_2_extractor": "gemini/gemini-3-flash-preview",
-    "station_3_breaker": "gemini/gemini-3-flash-preview",
+    "station_1_rewriter": "deepseek/deepseek-chat",
+    "station_2_extractor": "deepseek/deepseek-chat",
+    "station_3_breaker": "deepseek/deepseek-chat",
     "station_4_audio": "gemini/gemini-2.5-flash",
     "station_5_visual": "gemini/gemini-2.5-flash",
     "station_6_vfx": "gemini/gemini-2.5-flash",
