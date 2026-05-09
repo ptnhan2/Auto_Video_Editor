@@ -83,7 +83,7 @@ def save_storyboards(episode_id: str, storyboards: list[dict]) -> dict:
     
     Args:
         episode_id: ID tập phim.
-        storyboards: List các dict {shot_number, scene_id, speaker_id, character_ids, action, dialogue, description}.
+        storyboards: List các dict {shot_number, scene_id, speaker_id, character_ids, action, dialogue, description, duration, location, time}.
     """
     log_logic_transition(logger, "TOOL_START", "save_storyboards", {"count": len(storyboards)})
     db = SessionLocal()
@@ -186,7 +186,7 @@ def run_station_3_agent(episode_id: str):
         },
         {
             "name": "save_storyboards",
-            "description": "Lưu danh sách storyboard (Chế độ APPEND - Ghi thêm). Có thể gọi nhiều lần để lưu hết toàn bộ các phân cảnh. Mỗi storyboard cần: shot_number, scene_id, speaker_id, character_ids, action, dialogue, description, duration.",
+            "description": "Lưu danh sách storyboard (Chế độ APPEND - Ghi thêm). Có thể gọi nhiều lần để lưu hết toàn bộ các phân cảnh. Mỗi storyboard cần: shot_number, scene_id, speaker_id, character_ids, action, dialogue, description, duration, location, time.",
             "parameters": {
                 "type": "object",
                 "properties": {
