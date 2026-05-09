@@ -2,9 +2,11 @@
 
 ## Lan chay cuoi: DeepSeek (deepseek/deepseek-chat) - THANH CONG
 
-- S1: OK - da chay lan truoc (Gemini), sinh screenplay, luu script_content
-- S2: OK (95s) - trich xuat 3 nhan vat + 9 canh, cap nhat DB
-- S3: OK (146s) - sinh 38 storyboard, luu DB
+- S1: OK - da chay tu lan 1 voi Gemini, nguon du lieu (screenplay) co san
+- S2: OK (95s, DeepSeek) - trich xuat 3 nhan vat + 9 canh, cap nhat DB
+- S3: OK (146s, DeepSeek) - sinh 38 storyboard, luu DB
+
+**CANH BAO S3:** Thieu metadata co cau truc. Tat ca 38 storyboard co `Dia diem: None`, `Thoi gian: None`, `Goc may: None`. Model DeepSeek chi dien vao `action` + `dialogue` ma khong dien cac truong structured (location/time/shot_type). Day la bug cua station_3_storyboard_breaker.py khi lam viec voi DeepSeek (hoac tool function cua S3 khong khai bao cac truong nay).
 
 ## S1 Output
 
