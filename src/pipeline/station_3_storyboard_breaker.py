@@ -99,7 +99,9 @@ def save_storyboards(episode_id: str, storyboards: list[dict]) -> dict:
                 action=sb.get("action"),
                 dialogue=sb.get("dialogue") or "",
                 description=sb.get("description"),
-                duration=duration
+                duration=duration,
+                location=sb.get("location"),
+                time=sb.get("time"),
             )
             db.add(new_sb)
             db.flush()
@@ -203,6 +205,8 @@ def run_station_3_agent(episode_id: str):
                                 "dialogue": {"type": "string"},
                                 "description": {"type": "string"},
                                 "duration": {"type": "integer"},
+                                "location": {"type": "string"},
+                                "time": {"type": "string"},
                             },
                             "required": ["shot_number", "action"],
                         },
