@@ -1,5 +1,27 @@
 # Bao cao chat luong Pipeline S1-S3
 
+## Input Gốc (Truyện gốc)
+
+Nam và Trang đã yêu nhau ba năm. Một đêm mưa tầm tã, Trang đứng trước cửa nhà Nam, toàn thân ướt sũng, mắt đỏ hoe.
+
+Nam mở cửa và giật mình: "Trang? Em làm gì ở đây giữa đêm mưa thế này?"
+Trang nói trong run rẩy: "Có phải anh đã nói dối em không? Em thấy tin nhắn trong điện thoại anh... với một người con gái khác."
+Nam sững lại. Mặt anh biến sắc từ ngạc nhiên sang bối rối. Anh lắp bắp: "Em... em đã đọc tin nhắn của anh sao?"
+
+Trang bật khóc. Những giọt nước mắt hòa lẫn với nước mưa trên má. Giọng cô lớn dần, đầy tức giận: "Tại sao hả Nam? Em đã tin tưởng anh tuyệt đối! Ba năm qua, em chưa từng nghi ngờ anh một lần nào!"
+Nam bước tới một bước, giọng gấp gáp cố giải thích: "Không phải như em nghĩ đâu Trang! Đó chỉ là đồng nghiệp thôi mà!"
+"ĐỒNG NGHIỆP?" Trang hét lên, giọng vỡ òa. Cô chỉ tay thẳng vào mặt Nam: "Đồng nghiệp mà nhắn 'em nhớ anh' lúc nửa đêm à? Anh coi tôi là đồ ngốc sao?"
+
+Nam thở dài mạnh, vò đầu bứt tóc. Sự bực tức bắt đầu leo thang trong ánh mắt anh: "Anh đã nói là không phải rồi! Em cứ làm ầm lên như vậy thì nói chuyện được gì nữa?"
+Trang gào lên, hai tay nắm chặt thành nắm đấm, cả người run lên vì cảm xúc hỗn độn: "Anh... anh không những phản bội tôi mà còn dám lớn tiếng với tôi sao?" Cô đấm thình thịch vào ngực Nam, nước mắt trào ra không ngừng: "Tôi GHÉT ANH! GHÉT ANH!"
+
+Nam bắt lấy hai tay Trang, kéo cô vào lòng. Giọng anh dịu lại đột ngột, ấm áp và ăn năn: "Anh xin lỗi Trang. Đúng... anh có sai. Nhưng không phải là phản bội. Anh đã yếu lòng một chút khi đồng nghiệp đó tỏ tình, nhưng anh chưa từng phản bội em. Tin anh đi."
+
+Trang vùng vẫy một lúc rồi nấc lên trong lòng Nam. Giọng cô yếu ớt như đứa trẻ: "Em sợ mất anh lắm... em không biết phải sống sao nếu anh rời đi."
+Nam vuốt tóc cô, mắt cũng đỏ hoe. Anh thì thầm: "Anh cũng sợ mất em, Trang à."
+
+Cơn mưa ngoài kia vẫn rơi. Nhưng trong căn phòng nhỏ, hai con người ôm lấy nhau, trong tiếng khóc và cả những lời hứa hẹn hàn gắn.
+
 ## Lan chay cuoi: DeepSeek (deepseek/deepseek-chat) - THANH CONG (SAU FIX PR #109)
 
 - S1: OK (170s, DeepSeek) - viet lai kich ban tu content, 6073 tu, 7 canh
