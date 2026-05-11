@@ -1,85 +1,127 @@
 # Hướng dẫn đánh giá S1-S3 (Script Pipeline)
 
-## Cách lấy dữ liệu — Dùng DB Browser (SQLite)
+## Bước 1: Chạy Pipeline
 
-Mở DB Browser, mở file `database.sqlite` (thư mục gốc dự án).
-Vào tab **Execute SQL**, paste từng lệnh bên dưới, bấm Run (F5).
+Mở PowerShell trong thư mục gốc dự án. Chạy từng lệnh, **đợi xong rồi mới chạy lệnh tiếp**.
+
+### Seed dữ liệu (nếu chưa có)
+```
+python scripts/seed_edge_cases.py
+```
+
+### Chạy S1 — Script Rewriter (3 episode)
+```
+python src/pipeline/station_1_script_rewriter.py 019de35281daadc5bb29ba2c2bf0d8d3
+python src/pipeline/station_1_script_rewriter.py 019de35281f0bc98b6f2d64a1dcf5b8c
+python src/pipeline/station_1_script_rewriter.py 019de3528208cfb31a972d714279e22a
+```
+
+### Chạy S2 — Extractor (3 episode)
+```
+python src/pipeline/station_2_extractor.py 019de35281daadc5bb29ba2c2bf0d8d3
+python src/pipeline/station_2_extractor.py 019de35281f0bc98b6f2d64a1dcf5b8c
+python src/pipeline/station_2_extractor.py 019de3528208cfb31a972d714279e22a
+```
+
+### Chạy S3 — Storyboard Breaker (3 episode)
+```
+python src/pipeline/station_3_storyboard_breaker.py 019de35281daadc5bb29ba2c2bf0d8d3
+python src/pipeline/station_3_storyboard_breaker.py 019de35281f0bc98b6f2d64a1dcf5b8c
+python src/pipeline/station_3_storyboard_breaker.py 019de3528208cfb31a972d714279e22a
+```
 
 ---
 
-### 1. Xem INPUT GỐC (truyện đầu vào cho S1)
+## Bước 2: Audit — Dùng DB Browser
+
+Mở DB Browser, mở file `database.sqlite`. Vào tab **Execute SQL**, paste từng lệnh.
+
+### 1. Xem INPUT GỐC (3 episode)
 
 ```sql
-SELECT content FROM episodes WHERE script_content IS NOT NULL AND script_content != '';
+SELECT id, title, content FROM episodes
+WHERE id IN (
+  '019de35281daadc5bb29ba2c2bf0d8d3',
+  '019de35281f0bc98b6f2d64a1dcf5b8c',
+  '019de3528208cfb31a972d714279e22a'
+);
 ```
 
 ### 2. Xem S1 OUTPUT (kịch bản đã chuyển thể)
 
 ```sql
-SELECT script_content FROM episodes WHERE script_content IS NOT NULL AND script_content != '';
+SELECT id, title, script_content FROM episodes
+WHERE id IN (
+  '019de35281daadc5bb29ba2c2bf0d8d3',
+  '019de35281f0bc98b6f2d64a1dcf5b8c',
+  '019de3528208cfb31a972d714279e22a'
+);
 ```
 
-**Đối chiếu với rubric S1:** Đọc input gốc (lệnh 1) rồi đọc output (lệnh 2). So sánh: có giữ đúng nội dung không? Thoại có tự nhiên không? Mô tả hành động có đủ không?
+**Đối chiếu rubric S1:** Đọc input (lệnh 1) rồi đọc output (lệnh 2) cho cùng 1 episode. So sánh: giữ đúng nội dung? Thoại tự nhiên? Mô tả hành động đủ?
 
 ### 3. Xem S2 OUTPUT (nhân vật đã trích xuất)
 
 ```sql
-SELECT name, role, personality, appearance, voice_style FROM characters;
+SELECT c.name, c.role, c.personality, c.appearance, c.voice_style
+FROM characters c
+JOIN episode_characters ec ON c.id = ec.character_id
+WHERE ec.episode_id IN (
+  '019de35281daadc5bb29ba2c2bf0d8d3',
+  '019de35281f0bc98b6f2d64a1dcf5b8c',
+  '019de3528208cfb31a972d714279e22a'
+);
 ```
 
-**Đối chiếu với rubric S2:** Đọc truyện gốc → đối chiếu danh sách nhân vật. Có thiếu ai không? Có bị trùng không? Mô tả có đa dạng không?
+**Đối chiếu rubric S2:** Đọc truyện gốc → đối chiếu danh sách nhân vật từng episode. Thiếu ai? Trùng ai? Mô tả có đa dạng?
 
 ### 4. Xem S3 OUTPUT (storyboard)
 
 ```sql
-SELECT storyboard_number, location, time, shot_type, action, dialogue, duration
+SELECT episode_id, storyboard_number, location, time, shot_type, action, dialogue, duration
 FROM storyboards
-ORDER BY storyboard_number;
+WHERE episode_id IN (
+  '019de35281daadc5bb29ba2c2bf0d8d3',
+  '019de35281f0bc98b6f2d64a1dcf5b8c',
+  '019de3528208cfb31a972d714279e22a'
+)
+ORDER BY episode_id, storyboard_number;
 ```
 
-**Đối chiếu với rubric S3:** Xem pacing — mỗi shot dài bao nhiêu giây? Có shot nào quá ngắn/dài không? Location/time có bị NULL không?
+**Đối chiếu rubric S3:** Pacing hợp lý? Location/time có NULL? Shot liên tục?
 
 ---
 
-## Cách chấm điểm
+## Bước 3: Chấm điểm
 
-1. Mở file `docs/audit/quality-rubric.md` (tab mới)
-2. Cuộn đến phần S1, S2, S3. Mỗi trạm có 3 tiêu chí, mỗi tiêu chí có barem 1-5
-3. Query DB (lệnh SQL trên) → so sánh với rubric → cho điểm
-4. Ghi điểm + 1-2 câu nhận xét vào bảng bên dưới
+Mở `docs/audit/quality-rubric.md`. Chấm riêng từng episode (TC1, TC2, TC3).
 
----
-
-## Feedback cho Manager
-
-Sau khi chấm xong, paste bảng này vào chat:
+### Feedback cho Manager
 
 ```
 ## S1 - Script Rewriter
-| Tiêu chí | Điểm | Nhận xét |
-|----------|------|----------|
-| Hội thoại tự nhiên | ?/5 | ... |
-| Giữ thông tin gốc | ?/5 | ... |
-| Mô tả hành động & bối cảnh | ?/5 | ... |
+| Tiêu chí | TC1 | TC2 | TC3 | Nhận xét |
+|----------|-----|-----|-----|----------|
+| Hội thoại tự nhiên | ?/5 | ?/5 | ?/5 | ... |
+| Giữ thông tin gốc | ?/5 | ?/5 | ?/5 | ... |
+| Mô tả hành động & bối cảnh | ?/5 | ?/5 | ?/5 | ... |
 
 ## S2 - Extractor
-| Tiêu chí | Điểm | Nhận xét |
-|----------|------|----------|
-| Định danh nhân vật (dedup) | ?/5 | ... |
-| Đa dạng diện mạo | ?/5 | ... |
-| Nhất quán đặc điểm | ?/5 | ... |
+| Tiêu chí | TC1 | TC2 | TC3 | Nhận xét |
+|----------|-----|-----|-----|----------|
+| Định danh nhân vật (dedup) | ?/5 | ?/5 | ?/5 | ... |
+| Đa dạng diện mạo | ?/5 | ?/5 | ?/5 | ... |
+| Nhất quán đặc điểm | ?/5 | ?/5 | ?/5 | ... |
 
 ## S3 - Storyboard Breaker
-| Tiêu chí | Điểm | Nhận xét |
-|----------|------|----------|
-| Nhịp độ cắt cảnh (pacing) | ?/5 | ... |
-| Liên tục hành động (continuity) | ?/5 | ... |
-| Lựa chọn cỡ cảnh (shot type) | ?/5 | ... |
+| Tiêu chí | TC1 | TC2 | TC3 | Nhận xét |
+|----------|-----|-----|-----|----------|
+| Nhịp độ cắt cảnh (pacing) | ?/5 | ?/5 | ?/5 | ... |
+| Liên tục hành động (continuity) | ?/5 | ?/5 | ?/5 | ... |
+| Lựa chọn cỡ cảnh (shot type) | ?/5 | ?/5 | ?/5 | ... |
 
 ## Tổng kết
-- Điểm trung bình: ?/5
-- Trạm nào yếu nhất?
-- Cần sửa gì?
+- Điểm TB: ?/5
+- Trạm yếu nhất: ?
+- Cần sửa: ?
 ```
-
-Manager sẽ đọc feedback → tạo Issue cho Worker sửa pipeline.
