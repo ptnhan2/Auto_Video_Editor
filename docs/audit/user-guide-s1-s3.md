@@ -2,7 +2,7 @@
 
 ## Cách lấy dữ liệu — Dùng DB Browser (SQLite)
 
-Không cần Worker. Mở DB Browser, mở file `database.sqlite` (thư mục gốc dự án).
+Mở DB Browser, mở file `database.sqlite` (thư mục gốc dự án).
 Vào tab **Execute SQL**, paste từng lệnh bên dưới, bấm Run (F5).
 
 ---
@@ -10,13 +10,13 @@ Vào tab **Execute SQL**, paste từng lệnh bên dưới, bấm Run (F5).
 ### 1. Xem INPUT GỐC (truyện đầu vào cho S1)
 
 ```sql
-SELECT content FROM episodes LIMIT 1;
+SELECT content FROM episodes WHERE script_content IS NOT NULL AND script_content != '';
 ```
 
 ### 2. Xem S1 OUTPUT (kịch bản đã chuyển thể)
 
 ```sql
-SELECT script_content FROM episodes LIMIT 1;
+SELECT script_content FROM episodes WHERE script_content IS NOT NULL AND script_content != '';
 ```
 
 **Đối chiếu với rubric S1:** Đọc input gốc (lệnh 1) rồi đọc output (lệnh 2). So sánh: có giữ đúng nội dung không? Thoại có tự nhiên không? Mô tả hành động có đủ không?
