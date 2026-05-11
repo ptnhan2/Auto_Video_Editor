@@ -13,96 +13,94 @@ init_db = _db.init_db
 _schema = importlib.import_module('src.db.schema')
 Drama = _schema.Drama
 Episode = _schema.Episode
-Character = _schema.Character
-EpisodeCharacter = _schema.EpisodeCharacter
 
 # ============================================================
-# TEST SUITE 1: HỘI THOẠI & CẢM XÚC CƯỜNG ĐỘ CAO
-# Trọng tâm: Speaker Routing, Lip-sync, Expression Layer, Micro-sync Subtitle
+# TEST SUITE 1: HOI THOAI & CAM XUC CUONG DO CAO
+# Trong tam: Speaker Routing, Lip-sync, Expression Layer, Micro-sync Subtitle
 # ============================================================
 
-TC1_CONTENT = """Nam và Trang đã yêu nhau ba năm. Một đêm mưa tầm tã, Trang đứng trước cửa nhà Nam, toàn thân ướt sũng, mắt đỏ hoe.
+TC1_CONTENT = """Nam va Trang da yeu nhau ba nam. Mot dem mua tam ta, Trang dung truoc cua nha Nam, toan than uot sung, mat do hoe.
 
-Nam mở cửa và giật mình: "Trang? Em làm gì ở đây giữa đêm mưa thế này?"
-Trang nói trong run rẩy: "Có phải anh đã nói dối em không? Em thấy tin nhắn trong điện thoại anh... với một người con gái khác."
-Nam sững lại. Mặt anh biến sắc từ ngạc nhiên sang bối rối. Anh lắp bắp: "Em... em đã đọc tin nhắn của anh sao?"
+Nam mo cua va giat minh: "Trang? Em lam gi o day giua dem mua the nay?"
+Trang noi trong run ray: "Co phai anh da noi doi em khong? Em thay tin nhan trong dien thoai anh... voi mot nguoi con gai khac."
+Nam sung lai. Mat anh bien sac tu ngac nhien sang boi roi. Anh lap bap: "Em... em da doc tin nhan cua anh sao?"
 
-Trang bật khóc. Những giọt nước mắt hòa lẫn với nước mưa trên má. Giọng cô lớn dần, đầy tức giận: "Tại sao hả Nam? Em đã tin tưởng anh tuyệt đối! Ba năm qua, em chưa từng nghi ngờ anh một lần nào!"
-Nam bước tới một bước, giọng gấp gáp cố giải thích: "Không phải như em nghĩ đâu Trang! Đó chỉ là đồng nghiệp thôi mà!"
-"ĐỒNG NGHIỆP?" Trang hét lên, giọng vỡ òa. Cô chỉ tay thẳng vào mặt Nam: "Đồng nghiệp mà nhắn 'em nhớ anh' lúc nửa đêm à? Anh coi tôi là đồ ngốc sao?"
+Trang bat khoc. Nhung giot nuoc mat hoa lan voi nuoc mua tren ma. Giong co lon dan, day tuc gian: "Tai sao ha Nam? Em da tin tuong anh tuyet doi! Ba nam qua, em chua tung nghi ngo anh mot lan nao!"
+Nam buoc toi mot buoc, giong gap gap co giai thich: "Khong phai nhu em nghi dau Trang! Do chi la dong nghiep thoi ma!"
+"DONG NGHIEP?" Trang het len, giong vo oa. Co chi tay thang vao mat Nam: "Dong nghiep ma nhan 'em nho anh' luc nua dem a? Anh coi toi la do ngoc sao?"
 
-Nam thở dài mạnh, vò đầu bứt tóc. Sự bực tức bắt đầu leo thang trong ánh mắt anh: "Anh đã nói là không phải rồi! Em cứ làm ầm lên như vậy thì nói chuyện được gì nữa?"
-Trang gào lên, hai tay nắm chặt thành nắm đấm, cả người run lên vì cảm xúc hỗn độn: "Anh... anh không những phản bội tôi mà còn dám lớn tiếng với tôi sao?" Cô đấm thình thịch vào ngực Nam, nước mắt trào ra không ngừng: "Tôi GHÉT ANH! GHÉT ANH!"
+Nam tho dai manh, vo dau but toc. Su buc tuc bat dau leo thang trong anh mat anh: "Anh da noi la khong phai roi! Em cu lam am len nhu vay thi noi chuyen duoc gi nua?"
+Trang gao len, hai tay nam chat thanh nam dam, ca nguoi run len vi cam xuc hon don: "Anh... anh khong nhung phan boi toi ma con dam lon tieng voi toi sao?" Co dam thinh thich vao nguc Nam, nuoc mat trao ra khong ngung: "Toi GHET ANH! GHET ANH!"
 
-Nam bắt lấy hai tay Trang, kéo cô vào lòng. Giọng anh dịu lại đột ngột, ấm áp và ăn năn: "Anh xin lỗi Trang. Đúng... anh có sai. Nhưng không phải là phản bội. Anh đã yếu lòng một chút khi đồng nghiệp đó tỏ tình, nhưng anh chưa từng phản bội em. Tin anh đi."
+Nam bat lay hai tay Trang, keo co vao long. Giong anh diu lai dot ngot, am ap va an nan: "Anh xin loi Trang. Dung... anh co sai. Nhung khong phai la phan boi. Anh da yeu long mot chut khi dong nghiep do to tinh, nhung anh chua tung phan boi em. Tin anh di."
 
-Trang vùng vẫy một lúc rồi nấc lên trong lòng Nam. Giọng cô yếu ớt như đứa trẻ: "Em sợ mất anh lắm... em không biết phải sống sao nếu anh rời đi."
-Nam vuốt tóc cô, mắt cũng đỏ hoe. Anh thì thầm: "Anh cũng sợ mất em, Trang à."
+Trang vung vay mot luc roi nac len trong long Nam. Giong co yeu ot nhu dua tre: "Em so mat anh lam... em khong biet phai song sao neu anh roi di."
+Nam vuot toc co, mat cung do hoe. Anh thi tham: "Anh cung so mat em, Trang a."
 
-Cơn mưa ngoài kia vẫn rơi. Nhưng trong căn phòng nhỏ, hai con người ôm lấy nhau, trong tiếng khóc và cả những lời hứa hẹn hàn gắn."""
-
-# ============================================================
-# TEST SUITE 2: HÀNH ĐỘNG & NHỊP ĐỘ NHANH
-# Trọng tâm: Cinematic Camera (whip_pan, camera_shake), VFX Overlay, Asset Dynamics
-# ============================================================
-
-TC2_CONTENT = """Trong màn đêm đen kịt của một khu công nghiệp bỏ hoang, Hùng chạy băng qua hàng loạt container rỉ sét, hơi thở dồn dập, mồ hôi túa ra đầm đìa. Phía sau anh, ba tên vệ sĩ mặc đồ đen đang đuổi theo sát nút.
-
-Tiếng giày đinh đập lộp cộp trên nền bê tông ẩm ướt vang vọng khắp nhà kho. Hùng liếc nhanh ra sau, thấy bóng bọn chúng đang tiến gần. Một tia chớp lóe lên bên ngoài, chiếu sáng toàn bộ khung cảnh trong một giây.
-
-Hùng rẽ ngoặt sang trái, suýt trượt chân trên vũng dầu, nhưng kịp bám vào một thanh sắt han gỉ. Anh nấp sau một container lớn, tim đập thình thịch, cố gắng nín thở. Ánh đèn pin của bọn truy đuổi quét qua quét lại, chỉ vài centimet cách mặt anh.
-
-"THẤY NÓ RỒI!" Một giọng đàn ông vang lên khàn đục.
-Ngay lập tức, Hùng bật người lao ra khỏi chỗ nấp. Camera rung lắc dữ dội. Một cú đấm từ tên vệ sĩ thứ nhất lao tới, Hùng cúi người né được trong gang tấc. Anh xoay người, tung một cú đá móc vào bụng hắn. Cú va chạm vang lên tiếng bộp khô khốc.
-
-Tên thứ hai lao vào ôm lấy Hùng từ phía sau. Hùng giật mạnh khuỷu tay ra sau, đánh vào mặt hắn. Tiếng rên đau vang lên ngay sau đó. Nhưng còn tên thứ ba đã rút ra một con dao găm, lưỡi dao ánh lên trong bóng tối.
-
-Không do dự, Hùng nhảy lên thùng container, rồi phóng mình sang một giàn giáo kim loại bên cạnh. Cả khung giàn giáo rung lên bần bật, phát ra âm thanh ken két chói tai. Hắn không dừng lại – phải chạy tiếp lên tầng trên. Cầu thang sắt hẹp dẫn lên mái nhà kho.
-
-Trên mái kho, gió mạnh thổi vù vù. Mặt trăng ló ra khỏi đám mây, để lộ bóng dáng hai người. Tên vệ sĩ cuối cùng cũng lên tới nơi, thở hồng hộc. Chúng đứng đối diện nhau, mắt long sòng sọc nhìn nhau.
-
-Tên vệ sĩ lao tới trước. Hùng đỡ được cú đấm đầu tiên, nhưng dính ngay một cú móc vào mạng sườn. Anh gập người vì đau. Camera lắc mạnh. Hùng chồm tới ôm lấy chân đối thủ, quật hắn ngã xuống sàn mái. Một tiếng động lớn vang lên.
-
-Hùng đứng dậy trước, thở gấp gáp. Anh nhìn xuống tên vệ sĩ đang nằm bất động, rồi quay lưng bước đi vào màn đêm. Trên người anh, những vết thương bắt đầu rỉ máu, nhưng ánh mắt vẫn kiên định như thép."""
+Con mua ngoai kia van roi. Nhung trong can phong nho, hai con nguoi om lay nhau, trong tieng khoc va ca nhung loi hua hen han gan."""
 
 # ============================================================
-# TEST SUITE 3: MISSING ASSET FALLBACK / ẢO GIÁC AI
-# Trọng tâm: Trạm 6 không crash, gán cờ null an toàn, log vào missing_assets_backlog.jsonl
+# TEST SUITE 2: HANH DONG & NHIP DO NHANH
+# Trong tam: Cinematic Camera (whip_pan, camera_shake), VFX Overlay, Asset Dynamics
 # ============================================================
 
-TC3_CONTENT = """Phi hành gia An tỉnh dậy trong khoang điều khiển của con tàu vũ trụ Zephyr-7. Ánh đèn LED màu tím chập chờn nhấp nháy, báo hiệu hệ thống hỗ trợ sự sống đang gặp trục trặc. An vội vàng kiểm tra bảng điều khiển hologram nổi lơ lửng trong không trung.
+TC2_CONTENT = """Trong man dem den kit cua mot khu cong nghiep bo hoang, Hung chay bang qua hang loat container ri set, hoi tho don dap, mo hoi tua ra dam dia. Phia sau anh, ba ten ve si mac do den dang duoi theo sat nut.
 
-"Máy tính, báo cáo trạng thái!" An ra lệnh với giọng căng thẳng.
-Trí tuệ nhân tạo của tàu, mang tên IRIS, vang lên với giọng giọng lạnh lẽo: "Hệ thống điều hướng chính bị hư hại 67%. Phát hiện từ trường bất thường từ tiểu hành tinh gần nhất. Khuyến cáo: Chuẩn bị hạ cánh khẩn cấp."
+Tieng giay dinh dap lop cop tren nen be tong am uot vang vong khap nha kho. Hung liec nhanh ra sau, thay bong bon chung dang tien gan. Mot tia chop loe len ben ngoai, chieu sang toan bo khung canh trong mot giay.
 
-Qua khung cửa sổ kính cường lực của khoang lái, An thấy một hành tinh màu tím kỳ lạ với những tinh thể lơ lửng lấp lánh bên dưới. Những hòn đảo đá trôi nổi trên bầu trời, kết nối với nhau bằng những cây cầu ánh sáng mờ ảo. Chưa từng có bản đồ nào ghi nhận hành tinh này.
+Hung re ngoat sang trai, suyt truot chan tren vung dau, nhung kip bam vao mot thanh sat han gi. Anh nap sau mot container lon, tim dap thinh thich, co gang nin tho. Anh den pin cua bon truy duoi quet qua quet lai, chi vai centimet cach mat anh.
 
-Tàu Zephyr-7 rung lắc dữ dội khi bắt đầu xuyên qua bầu khí quyển đặc quánh màu hồng. An bấu chặt lấy ghế lái. Tiếng còi báo động rít lên. "Hãy giữ vững, IRIS! Chúng ta sắp tiếp đất rồi!"
+"THAY NO ROI!" Mot giong dan ong vang len khan duc.
+Ngay lap tuc, Hung bat nguoi lao ra khoi cho nap. Camera rung lac du doi. Mot cu dam tu ten ve si thu nhat lao toi, Hung cui nguoi ne duoc trong gang tac. Anh xoay nguoi, tung mot cu da moc vao bung han. Cu va cham vang len tieng bop kho khoc.
 
-Tàu đáp xuống mặt đất với một cú va chạm mạnh. Khói bốc lên nghi ngút xung quanh. An loạng choạng bước ra khỏi tàu, tay cầm một thanh kiếm ánh sáng màu xanh neon làm vũ khí tự vệ. Mặt đất dưới chân anh là những phiến đá phát quang màu tím, mỗi bước đi lại phát ra âm thanh như thủy tinh vỡ.
+Ten thu hai lao vao om lay Hung tu phia sau. Hung giat manh khuyu tay ra sau, danh vao mat han. Tieng ren dau vang len ngay sau do. Nhung con ten thu ba da rut ra mot con dao gam, luoi dao anh len trong bong toi.
 
-Đột nhiên, từ phía sau một khối tinh thể khổng lồ, bốn sinh vật robot có hình dạng giống bọ ngựa khổng lồ xuất hiện. Mắt chúng phát ra ánh sáng đỏ rực, và trên càng của chúng gắn những khẩu pháo plasma đang kêu vo ve.
+Khong do du, Hung nhay len thung container, roi phong minh sang mot gian giao kim loai ben canh. Ca khung gian giao rung len ban bat, phat ra am thanh ken ket choi tai. Han khong dung lai - phai chay tiep len tang tren. Cau thang sat hep dan len mai nha kho.
 
-"XÂM PHẠM! TIÊU DIỆT!" Giọng robotic của chúng vang lên đồng thanh, chói tai.
+Tren mai kho, gio manh thoi vu vu. Mat trang lo ra khoi dam may, de lo bong dang hai nguoi. Ten ve si cuoi cung cung len toi noi, tho hong hoc. Chung dung doi dien nhau, mat long song soc nhin nhau.
 
-An nhanh chóng triệu hồi chiếc mô-tô bay của mình. Cỗ máy lơ lửng cách mặt đất nửa mét, động cơ phản lực rực sáng màu cam. Anh nhảy lên xe, vặn ga hết cỡ, phóng vọt đi giữa những tảng đá lơ lửng. Những tia plasma đỏ rực bay vèo vèo qua đầu.
+Ten ve si lao toi truoc. Hung do duoc cu dam dau tien, nhung dinh ngay mot cu moc vao mang suon. Anh gap nguoi vi dau. Camera lac manh. Hung chom toi om lay chan doi thu, quat han nga xuong san mai. Mot tieng dong lon vang len.
 
-An lượn lách qua các khối tinh thể, cố gắng tìm nơi trú ẩn. Phía trước, một cổng dịch chuyển không gian mở ra như một vòng xoáy ánh sáng bảy sắc cầu vồng. Anh không còn lựa chọn nào khác – nhắm mắt, tăng tốc tối đa, lao thẳng vào vòng xoáy.
+Hung dung day truoc, tho gap gap. Anh nhin xuong ten ve si dang nam bat dong, roi quay lung buoc di vao man dem. Tren nguoi anh, nhung vet thuong bat dau ri mau, nhung anh mat van kien dinh nhu thep."""
 
-Ánh sáng chói lòa bao trùm mọi thứ. Mọi âm thanh tắt lịm. An rơi vào khoảng không vô định, chỉ còn lại tiếng tim đập và hơi thở gấp gáp của chính mình. Liệu anh có sống sót được không?"""
+# ============================================================
+# TEST SUITE 3: MISSING ASSET FALLBACK / AO GIAC AI
+# Trong tam: Tram 6 khong crash, gan co null an toan, log vao missing_assets_backlog.jsonl
+# ============================================================
+
+TC3_CONTENT = """Phi hanh gia An tinh day trong khoang dieu khien cua con tau vu tru Zephyr-7. Anh den LED mau tim chap chon nhap nhay, bao hieu he thong ho tro su song dang gap truc trac. An voi vang kiem tra bang dieu khien hologram noi lo lung trong khong trung.
+
+"May tinh, bao cao trang thai!" An ra lenh voi giong cang thang.
+Tri tue nhan tao cua tau, mang ten IRIS, vang len voi giong lanh leo: "He thong dieu huong chinh bi hu hai 67%. Phat hien tu truong bat thuong tu tieu hanh tinh gan nhat. Khuyen cao: Chuan bi ha canh khan cap."
+
+Qua khung cua so kinh cuong luc cua khoang lai, An thay mot hanh tinh mau tim ky la voi nhung tinh the lo lung lap lanh ben duoi. Nhung hon dao da troi noi tren bau troi, ket noi voi nhau bang nhung cay cau anh sang mo ao. Chua tung co ban do nao ghi nhan hanh tinh nay.
+
+Tau Zephyr-7 rung lac du doi khi bat dau xuyen qua bau khi quyen dac quanh mau hong. An bau chat lay ghe lai. Tieng coi bao dong rit len. "Hay giu vung, IRIS! Chung ta sap tiep dat roi!"
+
+Tau dap xuong mat dat voi mot cu va cham manh. Khoi boc len nghi ngut xung quanh. An loang choang buoc ra khoi tau, tay cam mot thanh kiem anh sang mau xanh neon lam vu khi tu ve. Mat dat duoi chan anh la nhung phien da phat quang mau tim, moi buoc di lai phat ra am thanh nhu thuy tinh vo.
+
+Dot nhien, tu phia sau mot khoi tinh the khong lo, bon sinh vat robot co hinh dang giong bo ngua khong lo xuat hien. Mat chung phat ra anh sang do ruc, va tren cang cua chung gan nhung khau phao plasma dang keu vo ve.
+
+"XAM PHAM! TIEU DIET!" Giong robotic cua chung vang len dong thanh, choi tai.
+
+An nhanh chong trieu hoi chiec mo-to bay cua minh. Co may lo lung cach mat dat nua met, dong co phan luc ruc sang mau cam. Anh nhay len xe, van ga het co, phong vot di giua nhung tang da lo lung. Nhung tia plasma do ruc bay veo veo qua dau.
+
+An luon lach qua cac khoi tinh the, co gang tim noi tru an. Phia truoc, mot cong dich chuyen khong gian mo ra nhu mot vong xoay anh sang bay sac cau vong. Anh khong con lua chon nao khac - nham mat, tang toc toi da, lao thang vao vong xoay.
+
+Anh sang choi loa bao trum moi thu. Moi am thanh tat lim. An roi vao khoang khong vo dinh, chi con lai tieng tim dap va hoi tho gap gap cua chinh minh. Lieu anh co song sot duoc khong?"""
 
 
 def seed_edge_cases():
     db: Session = SessionLocal()
     try:
         # ============================================================
-        # TC1: HỘI THOẠI & CẢM XÚC CƯỜNG ĐỘ CAO
+        # TC1: HOI THOAI & CAM XUC CUONG DO CAO
         # ============================================================
-        tc1_drama = db.query(Drama).filter(Drama.title == "[EDGE-TC1] Cơn Giận Đêm Mưa").first()
+        tc1_drama = db.query(Drama).filter(Drama.title == "[EDGE-TC1] Con Gian Dem Mua").first()
         if not tc1_drama:
             tc1_drama = Drama(
-                title="[EDGE-TC1] Cơn Giận Đêm Mưa",
-                description="Edge Case Test: Hội thoại cường độ cao, tranh cãi gay gắt, cảm xúc cực đoan (khóc, giận, hòa giải). Kiểm thử Speaker Routing, Lip-sync, Expression Layer, Micro-sync Subtitle.",
+                title="[EDGE-TC1] Con Gian Dem Mua",
+                description="Edge Case Test: Hoi thoai cuong do cao, tranh cai gay gat, cam xuc cuc doan. Kiem thu Speaker Routing, Lip-sync, Expression Layer.",
                 genre="Drama, Romance, Emotional",
                 status="active"
             )
@@ -113,40 +111,6 @@ def seed_edge_cases():
         else:
             print(f"[TC1] Drama '{tc1_drama.title}' already exists.")
 
-        tc1_nam = db.query(Character).filter(
-            Character.drama_id == tc1_drama.id, Character.name == "Nam (TC1)"
-        ).first()
-        if not tc1_nam:
-            tc1_nam = Character(
-                drama_id=tc1_drama.id,
-                name="Nam (TC1)",
-                role="Main Character - Angry/Frustrated",
-                description="Chàng trai 28 tuổi, bị bạn gái phát hiện có tin nhắn đáng ngờ. Ban đầu bối rối, sau chuyển sang tức giận, cuối cùng ăn năn hối lỗi.",
-                personality="Bướng bỉnh, dễ nổi nóng nhưng sâu thẳm rất yêu bạn gái",
-                voice_style="Nam trung niên, khi tức giận giọng gắt gỏng, khi dịu dàng giọng ấm áp trầm"
-            )
-            db.add(tc1_nam)
-            print(f"[TC1] Created Character: {tc1_nam.name}")
-
-        tc1_trang = db.query(Character).filter(
-            Character.drama_id == tc1_drama.id, Character.name == "Trang (TC1)"
-        ).first()
-        if not tc1_trang:
-            tc1_trang = Character(
-                drama_id=tc1_drama.id,
-                name="Trang (TC1)",
-                role="Main Character - Crying/Emotional",
-                description="Cô gái 26 tuổi, phát hiện nghi ngờ bạn trai phản bội. Khóc lóc, hét lên, đấm đá, sau đó yếu đuối sợ mất người yêu.",
-                personality="Nhạy cảm, yêu cuồng nhiệt, dễ tổn thương nhưng dũng cảm đối mặt",
-                voice_style="Nữ trẻ, lúc khóc giọng run run vỡ òa, lúc giận giọng chói tai, lúc yếu đuối thì thào"
-            )
-            db.add(tc1_trang)
-            print(f"[TC1] Created Character: {tc1_trang.name}")
-
-        db.commit()
-        db.refresh(tc1_nam)
-        db.refresh(tc1_trang)
-
         tc1_episode = db.query(Episode).filter(
             Episode.drama_id == tc1_drama.id, Episode.episode_number == 1
         ).first()
@@ -154,8 +118,8 @@ def seed_edge_cases():
             tc1_episode = Episode(
                 drama_id=tc1_drama.id,
                 episode_number=1,
-                title="[TC1] Bão Trong Đêm",
-                description="Edge Case Test: Cuộc tranh cãi nảy lửa giữa Nam và Trang trong đêm mưa. Kiểm thử biểu cảm tức giận, khóc lóc, hòa giải và Speaker Routing.",
+                title="[TC1] Bao Trong Dem",
+                description="Edge Case Test: Cuoc tranh cai nay lua giua Nam va Trang trong dem mua.",
                 content=TC1_CONTENT,
                 status="active"
             )
@@ -166,24 +130,14 @@ def seed_edge_cases():
         else:
             print(f"[TC1] Episode '{tc1_episode.title}' already exists.")
 
-        for char in [tc1_nam, tc1_trang]:
-            link = db.query(EpisodeCharacter).filter(
-                EpisodeCharacter.episode_id == tc1_episode.id,
-                EpisodeCharacter.character_id == char.id
-            ).first()
-            if not link:
-                db.add(EpisodeCharacter(episode_id=tc1_episode.id, character_id=char.id))
-        db.commit()
-        print(f"[TC1] Linked characters to episode. Episode ID: {tc1_episode.id}")
-
         # ============================================================
-        # TC2: HÀNH ĐỘNG & NHỊP ĐỘ NHANH
+        # TC2: HANH DONG & NHIP DO NHANH
         # ============================================================
-        tc2_drama = db.query(Drama).filter(Drama.title == "[EDGE-TC2] Cuộc Truy Đuổi Trong Bóng Tối").first()
+        tc2_drama = db.query(Drama).filter(Drama.title == "[EDGE-TC2] Cuoc Truy Duoi Trong Bong Toi").first()
         if not tc2_drama:
             tc2_drama = Drama(
-                title="[EDGE-TC2] Cuộc Truy Đuổi Trong Bóng Tối",
-                description="Edge Case Test: Đánh nhau, rượt đuổi, bối cảnh tối tăm, hành động bất ngờ. Kiểm thử Cinematic Camera (whip_pan, camera_shake), VFX Overlay, Asset Dynamics vật lý giấy.",
+                title="[EDGE-TC2] Cuoc Truy Duoi Trong Bong Toi",
+                description="Edge Case Test: Danh nhau, ruot duoi, boi canh toi tam. Kiem thu Cinematic Camera, VFX Overlay.",
                 genre="Action, Thriller",
                 status="active"
             )
@@ -194,40 +148,6 @@ def seed_edge_cases():
         else:
             print(f"[TC2] Drama '{tc2_drama.title}' already exists.")
 
-        tc2_hung = db.query(Character).filter(
-            Character.drama_id == tc2_drama.id, Character.name == "Hùng (TC2)"
-        ).first()
-        if not tc2_hung:
-            tc2_hung = Character(
-                drama_id=tc2_drama.id,
-                name="Hùng (TC2)",
-                role="Main Character - Fugitive/Fighter",
-                description="Cựu đặc vụ 32 tuổi, đang bị truy đuổi trong khu công nghiệp bỏ hoang. Võ nghệ cao cường, phản xạ nhanh, cơ thể đầy sẹo.",
-                personality="Trầm tĩnh, tính toán, nhưng bùng nổ dữ dội khi chiến đấu",
-                voice_style="Nam trung niên, trầm khàn, hơi thở gấp khi chạy, gằn giọng khi ra đòn"
-            )
-            db.add(tc2_hung)
-            print(f"[TC2] Created Character: {tc2_hung.name}")
-
-        tc2_guard = db.query(Character).filter(
-            Character.drama_id == tc2_drama.id, Character.name == "Vệ Sĩ Đầu Đàn (TC2)"
-        ).first()
-        if not tc2_guard:
-            tc2_guard = Character(
-                drama_id=tc2_drama.id,
-                name="Vệ Sĩ Đầu Đàn (TC2)",
-                role="Antagonist - Pursuer/Enforcer",
-                description="Tên vệ sĩ cao to 35 tuổi, mặc đồ đen, mang dao găm. Giọng khàn đục, tàn nhẫn.",
-                personality="Tàn bạo, ít nói, chiến đấu theo bản năng",
-                voice_style="Nam trung niên, giọng khàn đục như tiếng cưa, hét to khi phát hiện mục tiêu"
-            )
-            db.add(tc2_guard)
-            print(f"[TC2] Created Character: {tc2_guard.name}")
-
-        db.commit()
-        db.refresh(tc2_hung)
-        db.refresh(tc2_guard)
-
         tc2_episode = db.query(Episode).filter(
             Episode.drama_id == tc2_drama.id, Episode.episode_number == 1
         ).first()
@@ -235,8 +155,8 @@ def seed_edge_cases():
             tc2_episode = Episode(
                 drama_id=tc2_drama.id,
                 episode_number=1,
-                title="[TC2] Bóng Ma Trong Hẻm",
-                description="Edge Case Test: Cuộc rượt đuổi và đánh nhau trong khu công nghiệp bỏ hoang giữa đêm. Kiểm thử whip_pan, camera_shake, VFX screen_shake, combat stance, punch SFX.",
+                title="[TC2] Bong Ma Trong Hem",
+                description="Edge Case Test: Cuoc ruot duoi va danh nhau trong khu cong nghiep bo hoang.",
                 content=TC2_CONTENT,
                 status="active"
             )
@@ -247,24 +167,14 @@ def seed_edge_cases():
         else:
             print(f"[TC2] Episode '{tc2_episode.title}' already exists.")
 
-        for char in [tc2_hung, tc2_guard]:
-            link = db.query(EpisodeCharacter).filter(
-                EpisodeCharacter.episode_id == tc2_episode.id,
-                EpisodeCharacter.character_id == char.id
-            ).first()
-            if not link:
-                db.add(EpisodeCharacter(episode_id=tc2_episode.id, character_id=char.id))
-        db.commit()
-        print(f"[TC2] Linked characters to episode. Episode ID: {tc2_episode.id}")
-
         # ============================================================
-        # TC3: MISSING ASSET FALLBACK / ẢO GIÁC AI
+        # TC3: MISSING ASSET FALLBACK / AO GIAC AI
         # ============================================================
-        tc3_drama = db.query(Drama).filter(Drama.title == "[EDGE-TC3] Du Hành Vũ Trụ Phi Lý").first()
+        tc3_drama = db.query(Drama).filter(Drama.title == "[EDGE-TC3] Du Hanh Vu Tru Phi Ly").first()
         if not tc3_drama:
             tc3_drama = Drama(
-                title="[EDGE-TC3] Du Hành Vũ Trụ Phi Lý",
-                description="Edge Case Test: Đòi hỏi các vật phẩm/bối cảnh KHÔNG có trong asset_registry.json. Kiểm thử Trạm 6 không crash, gán cờ null an toàn, log vào missing_assets_backlog.jsonl, Trạm 8 render không đỏ màn hình.",
+                title="[EDGE-TC3] Du Hanh Vu Tru Phi Ly",
+                description="Edge Case Test: Asset khong ton tai trong registry. Kiem thu Tram 6 khong crash, log missing_assets_backlog.",
                 genre="Sci-Fi, Absurd",
                 status="active"
             )
@@ -275,56 +185,6 @@ def seed_edge_cases():
         else:
             print(f"[TC3] Drama '{tc3_drama.title}' already exists.")
 
-        tc3_an = db.query(Character).filter(
-            Character.drama_id == tc3_drama.id, Character.name == "An (TC3)"
-        ).first()
-        if not tc3_an:
-            tc3_an = Character(
-                drama_id=tc3_drama.id,
-                name="An (TC3)",
-                role="Main Character - Astronaut",
-                description="Phi hành gia 30 tuổi, mắc kẹt trên hành tinh lạ. Cầm kiếm ánh sáng, lái mô-tô bay, xuyên qua cổng dịch chuyển.",
-                personality="Dũng cảm, thực tế nhưng sẵn sàng đối mặt với những điều phi lý",
-                voice_style="Nam trẻ, giọng căng thẳng khi gặp nguy hiểm, lạnh lẽo khi ra lệnh"
-            )
-            db.add(tc3_an)
-            print(f"[TC3] Created Character: {tc3_an.name}")
-
-        tc3_iris = db.query(Character).filter(
-            Character.drama_id == tc3_drama.id, Character.name == "IRIS (TC3)"
-        ).first()
-        if not tc3_iris:
-            tc3_iris = Character(
-                drama_id=tc3_drama.id,
-                name="IRIS (TC3)",
-                role="Supporting - AI Companion",
-                description="Trí tuệ nhân tạo của tàu Zephyr-7. Giọng lạnh lẽo, vô cảm, báo cáo tình trạng hệ thống.",
-                personality="Máy móc, logic, không có cảm xúc",
-                voice_style="Giọng robotic, đều đều, không ngữ điệu"
-            )
-            db.add(tc3_iris)
-            print(f"[TC3] Created Character: {tc3_iris.name}")
-
-        tc3_robot = db.query(Character).filter(
-            Character.drama_id == tc3_drama.id, Character.name == "Robot Bọ Ngựa (TC3)"
-        ).first()
-        if not tc3_robot:
-            tc3_robot = Character(
-                drama_id=tc3_drama.id,
-                name="Robot Bọ Ngựa (TC3)",
-                role="Antagonist - Alien Robot Guardian",
-                description="Sinh vật robot hình bọ ngựa khổng lồ, mắt đỏ, càng gắn pháo plasma. Bảo vệ hành tinh tinh thể tím.",
-                personality="Máy móc, tàn nhẫn, giọng robotic đồng thanh",
-                voice_style="Giọng robotic chói tai, đồng thanh nhiều giọng, âm lượng lớn"
-            )
-            db.add(tc3_robot)
-            print(f"[TC3] Created Character: {tc3_robot.name}")
-
-        db.commit()
-        db.refresh(tc3_an)
-        db.refresh(tc3_iris)
-        db.refresh(tc3_robot)
-
         tc3_episode = db.query(Episode).filter(
             Episode.drama_id == tc3_drama.id, Episode.episode_number == 1
         ).first()
@@ -332,8 +192,8 @@ def seed_edge_cases():
             tc3_episode = Episode(
                 drama_id=tc3_drama.id,
                 episode_number=1,
-                title="[TC3] Hành Tinh Tinh Thể Tím",
-                description="Edge Case Test: Phi hành gia cầm kiếm ánh sáng, lái mô-tô bay, robot bọ ngựa bắn plasma, cổng dịch chuyển. Tất cả asset đều KHÔNG tồn tại trong registry.",
+                title="[TC3] Hanh Tinh Tinh The Tim",
+                description="Edge Case Test: Phi hanh gia, kiem anh sang, mo-to bay, robot bo ngua. Tat ca asset KHONG ton tai.",
                 content=TC3_CONTENT,
                 status="active"
             )
@@ -343,16 +203,6 @@ def seed_edge_cases():
             print(f"[TC3] Created Episode: {tc3_episode.title}")
         else:
             print(f"[TC3] Episode '{tc3_episode.title}' already exists.")
-
-        for char in [tc3_an, tc3_iris, tc3_robot]:
-            link = db.query(EpisodeCharacter).filter(
-                EpisodeCharacter.episode_id == tc3_episode.id,
-                EpisodeCharacter.character_id == char.id
-            ).first()
-            if not link:
-                db.add(EpisodeCharacter(episode_id=tc3_episode.id, character_id=char.id))
-        db.commit()
-        print(f"[TC3] Linked characters to episode. Episode ID: {tc3_episode.id}")
 
         # ============================================================
         # SUMMARY
@@ -364,6 +214,7 @@ def seed_edge_cases():
         print(f"  [TC2 - Action/Chase]      Episode ID: {tc2_episode.id}")
         print(f"  [TC3 - Missing Assets]    Episode ID: {tc3_episode.id}")
         print("=" * 60)
+        print("Characters NOT pre-created - Station 2 (Extractor) will generate them.")
         print("To run pipeline for each test case:")
         print(f"  python scripts/run_pipeline.py {tc1_episode.id}")
         print(f"  python scripts/run_pipeline.py {tc2_episode.id}")
