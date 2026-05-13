@@ -208,12 +208,9 @@ const VisualPlaceholder: React.FC<{
       `${type === 'character' ? `Full body character design, ${label}, ${details || 'neutral expression'}, flat colors, 2d game art style, transparent background --v 6.0` 
       : `Background design, ${label}, visual novel background, 2d art style, empty room, no characters --v 6.0 --ar 16:9`}`;
     
-    // Copy to clipboard if available
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(prompt);
-      alert(`Đã copy Prompt gen ảnh vào clipboard!\n\n${prompt}`);
-    } else {
-      alert(`Prompt gen ảnh:\n\n${prompt}`);
+    console.warn(`[VisualPlaceholder] Prompt gen ảnh cho ${type} "${label}":\n${prompt}`);
+    if (typeof navigator !== 'undefined' && typeof navigator.clipboard !== 'undefined') {
+      navigator.clipboard.writeText(prompt).catch(() => {});
     }
   };
 

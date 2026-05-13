@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 _configured = False
 _embedding_cache: dict[str, list[float]] = {}
+MAX_EMBEDDING_CACHE_SIZE = 1000
 
 
 def _configure_litellm() -> None:
@@ -318,6 +319,8 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
                     vectors.append(item.embedding)
 
             for text, vec in zip(uncached_texts, vectors):
+                if len(_embedding_cache) >= MAX_EMBEDDING_CACHE_SIZE:
+                    _embedding_cache.pop(next(iter(_embedding_cache)))
                 _embedding_cache[text] = vec
 
             all_vecs = [None] * len(texts)

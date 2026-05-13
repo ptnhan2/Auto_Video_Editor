@@ -36,5 +36,9 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     print(f"Database initialized at {DB_PATH}")
 
+    # Run migrations for columns added after initial schema creation
+    from scripts.migrate_add_character_position import migrate as migrate_character_position
+    migrate_character_position()
+
 if __name__ == "__main__":
     init_db()

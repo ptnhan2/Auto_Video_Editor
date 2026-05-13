@@ -167,5 +167,8 @@ verified_key.json
 # Hoặc chặn tất cả các file json có tên chứa "key"
 *key*.json
 
+# --- Auto-generated Remotion files ---
+remotion/_generated-files.ts
+
 # --- External References & Lab Code ---
 /.archive/
