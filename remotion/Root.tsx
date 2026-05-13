@@ -9,46 +9,11 @@ import { ActorData } from '../src/shared/types/ai-schemas';
 import { COMPOSITION_ID, FPS, VIDEO_HEIGHT, VIDEO_WIDTH, DURATION_IN_FRAMES } from '../src/lib/remotion';
 import { calculateSceneDuration } from '../src/lib/audio-timing';
 import { z } from 'zod';
+import { scriptFiles as _scriptFiles, actionFiles as _actionFiles, characterFolders as _characterFolders } from './_generated-files';
 
-// Automatically detect all JSON files in public/animations folder using Webpack require.context
-// This allows Remotion Studio UI to show a dropdown of available actions
-let animationFiles = ['verified_walk.json'];
-try {
-  // @ts-expect-error - Webpack specific
-  const context = require.context('../public/animations', false, /\.json$/);
-  animationFiles = context.keys().map((k: string) => k.replace('./', ''));
-} catch (e) {
-  // Fallback if not bundled by webpack
-  console.warn('Could not auto-detect animation files', e);
-}
-
-// Automatically detect all JSON files in public/scripts folder
-let scriptFiles = ['draft.json'];
-try {
-  // @ts-expect-error - Webpack specific
-  const context = require.context('../public/scripts', false, /\.json$/);
-  scriptFiles = context.keys().map((k: string) => k.replace('./', ''));
-} catch (e) {
-  console.warn('Could not auto-detect script files', e);
-}
-
-// Automatically detect characters in public/assets/humanoid/
-let characterFolders = ['char_001'];
-try {
-  // @ts-expect-error - Webpack specific
-  // We match character.json to find character folders
-  const context = require.context('../public/assets/humanoid', true, /character\.json$/);
-  const detected = context.keys().map((k: string) => {
-    // k is like "./char_001/character.json"
-    const match = k.match(/\.\/(.+)\/character\.json/);
-    return match ? match[1] : null;
-  }).filter(Boolean);
-  if (detected.length > 0) {
-    characterFolders = detected as string[];
-  }
-} catch (e) {
-  console.warn('Could not auto-detect character folders', e);
-}
+const animationFiles = _actionFiles;
+const scriptFiles = _scriptFiles;
+const characterFolders = _characterFolders;
 
 // Create a zod enum schema dynamically from the detected files
 const actionFileEnum = z.enum(
@@ -183,10 +148,7 @@ export const RemotionRoot: React.FC = () => {
             };
           }
         }}
-        defaultProps={{
-          scriptFile: "draft.json",
-          syncOffset: 0
-        }}
+        defaultProps={{"scriptFile":"compiled_019e1b29210e5da702bf5f591cdbb62e.json" as const,"syncOffset":0}}
       />
       <Composition
         id="WaddleEngineTest"
