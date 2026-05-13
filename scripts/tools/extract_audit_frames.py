@@ -68,7 +68,7 @@ def extract_frames(episode_id):
         try:
             subprocess.run(cmd, check=True, capture_output=True)
             extracted_files.append(out_file)
-            print(f"✅ OK")
+            print("✅ OK")
         except subprocess.CalledProcessError as e:
             print(f"❌ Lỗi khi chụp frame {frame}: {e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)}")
             

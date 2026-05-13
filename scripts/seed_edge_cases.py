@@ -3,9 +3,9 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db.database import SessionLocal, init_db
-from src.db.schema import Drama, Episode, Character, EpisodeCharacter
-from sqlalchemy.orm import Session
+from src.db.database import SessionLocal, init_db  # noqa: E402
+from src.db.schema import Drama, Episode, Character, EpisodeCharacter  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
 
 # ============================================================
 # TEST SUITE 1: HỘI THOẠI & CẢM XÚC CƯỜNG ĐỘ CAO
