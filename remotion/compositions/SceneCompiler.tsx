@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, Sequence, Series, continueRender, delayRender, staticFile, interpolate, useCurrentFrame, useVideoConfig, Audio, Img, Easing, spring } from 'remotion';
+import { AudioWithRadar } from '../components/AudioWithRadar';
 import { HumanoidSprite as WaddleSprite } from '../components/HumanoidSprite';
 import { InteractionEffect } from '../components/InteractionEffect';
 import { Action } from '../../src/shared/types/animation';
@@ -177,7 +178,12 @@ export const SingleActor: React.FC<{
           onError={() => setHasError(true)}
         />
       ) : (
-        <VisualPlaceholder type="character" label={characterId} />
+        <VisualPlaceholder 
+          type="character" 
+          label={characterId} 
+          details={`Cảm xúc: ${expressionTag || expressionId}`} 
+          flipText={facing === 'left'}
+        />
       )}
     </div>
   );
@@ -190,16 +196,34 @@ export const SingleActor: React.FC<{
 const VisualPlaceholder: React.FC<{
   type: 'character' | 'background' | 'prop',
   label: string,
-  style?: React.CSSProperties
-}> = ({ type, label, style }) => {
+  details?: string,
+  style?: React.CSSProperties,
+  flipText?: boolean
+}> = ({ type, label, details, style, flipText }) => {
   const isBg = type === 'background';
   
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const prompt = `Lệnh tạo ảnh Midjourney/StableDiffusion gợi ý cho ${type} "${label}":\n` +
+      `${type === 'character' ? `Full body character design, ${label}, ${details || 'neutral expression'}, flat colors, 2d game art style, transparent background --v 6.0` 
+      : `Background design, ${label}, visual novel background, 2d art style, empty room, no characters --v 6.0 --ar 16:9`}`;
+    
+    console.warn(`[VisualPlaceholder] Prompt gen ảnh cho ${type} "${label}":\n${prompt}`);
+    if (typeof navigator !== 'undefined' && typeof navigator.clipboard !== 'undefined') {
+      navigator.clipboard.writeText(prompt).catch(() => {});
+    }
+  };
+
+  const textTransform = flipText ? 'scaleX(-1)' : 'none';
+
   return (
-    <div style={{
-      width: isBg ? '100%' : 250,
-      height: isBg ? '100%' : 400,
-      backgroundColor: isBg ? '#334155' : 'rgba(100, 116, 139, 0.4)',
-      border: '4px dashed rgba(255,255,255,0.3)',
+    <div 
+      onClick={handleClick}
+      style={{
+      width: isBg ? '100%' : 600,
+      height: isBg ? '100%' : 1200,
+      backgroundColor: isBg ? '#334155' : 'rgba(30, 41, 59, 0.8)',
+      border: '4px dashed #facc15', // Viền vàng nổi bật
       borderRadius: isBg ? 0 : 20,
       display: 'flex',
       flexDirection: 'column',
@@ -209,6 +233,8 @@ const VisualPlaceholder: React.FC<{
       fontFamily: 'monospace',
       position: isBg ? 'absolute' : 'relative',
       overflow: 'hidden',
+      cursor: 'pointer',
+      boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
       ...style
     }}>
       {/* Họa tiết Grid cho background */}
@@ -222,14 +248,25 @@ const VisualPlaceholder: React.FC<{
         }} />
       )}
       
-      <div style={{ fontSize: isBg ? 80 : 40, marginBottom: 10 }}>
-        {type === 'character' ? '👤' : type === 'background' ? '🖼️' : '📦'}
-      </div>
-      <div style={{ fontSize: isBg ? 30 : 16, fontWeight: 'bold', textAlign: 'center', padding: '0 20px' }}>
-        MISSING {type.toUpperCase()}
-      </div>
-      <div style={{ fontSize: isBg ? 20 : 14, opacity: 0.8, marginTop: 5 }}>
-        ID: {label}
+      {/* Nội dung text bọc trong thẻ div có khả năng lật ngược */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: textTransform }}>
+        <div style={{ fontSize: isBg ? 80 : 80, marginBottom: 20 }}>
+          {type === 'character' ? '👤' : type === 'background' ? '🖼️' : '📦'}
+        </div>
+        <div style={{ fontSize: isBg ? 30 : 36, fontWeight: 'bold', textAlign: 'center', padding: '0 20px', color: '#facc15' }}>
+          [MISSING {type.toUpperCase()}]
+        </div>
+        <div style={{ fontSize: isBg ? 20 : 32, fontWeight: 'bold', marginTop: 20, wordBreak: 'break-all', textAlign: 'center', padding: '0 20px' }}>
+          {label}
+        </div>
+        {details && (
+          <div style={{ fontSize: isBg ? 16 : 24, opacity: 0.9, marginTop: 20, textAlign: 'center', padding: '0 20px' }}>
+            {details}
+          </div>
+        )}
+        <div style={{ fontSize: isBg ? 12 : 18, marginTop: 40, opacity: 0.7, background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: 8 }}>
+          🖱️ Click để lấy Prompt
+        </div>
       </div>
     </div>
   );
@@ -474,17 +511,32 @@ export const SceneCompiler: React.FC<{
                     durationFrames={durationFrames}
                   />
 
-                  {/* Audio/SFX */}
+                  {/* Audio Radar: Missing SFX / BGM */}
+                  <AbsoluteFill style={{ pointerEvents: 'none', zIndex: 1100 }}>
+                    {/* BGM Radar */}
+                    {shot.bgmId && (
+                      <Sequence from={0} durationInFrames={durationFrames} name={`🎵 BGM: ${shot.bgmId}`}>
+                        <AudioWithRadar type="BGM" assetId={shot.bgmId} path={`assets/audio/bgm/${shot.bgmId}.mp3`} topOffset={20} />
+                      </Sequence>
+                    )}
+                    
+                    {/* Shot SFX Radar */}
+                    {shot.sfxId && (
+                      <Sequence from={0} durationInFrames={durationFrames} name={`🔊 SFX: ${shot.sfxId}`}>
+                        <AudioWithRadar type="SFX" assetId={shot.sfxId} path={`assets/audio/sfx/${shot.sfxId}.mp3`} topOffset={70} />
+                      </Sequence>
+                    )}
+                  </AbsoluteFill>
+
+                  {/* Audio/SFX (Actors) */}
                   {shot.actors && shot.actors.map((actor, idx) => (
-                    <AbsoluteFill key={`audio-${idx}`}>
+                    <AbsoluteFill key={`audio-${idx}`} style={{ pointerEvents: 'none' }}>
                       {actor.audioId && (
                         <Audio src={staticFile(`assets/audio/tts/${actor.audioId}.mp3`)} />
                       )}
                       {actor.sfx?.map((effect, i) => (
-                        <Sequence key={`sfx-${i}`} from={effect.startFrame || 0} name={`🔊 SFX: ${effect.assetId}`}>
-                          <div style={{ position: 'absolute', top: 20 + i*30, right: 20, padding: 10, background: 'orange', color: 'white', fontWeight: 'bold', zIndex: 1000, borderRadius: 5 }}>
-                            🔊 SFX: {effect.assetId}
-                          </div>
+                        <Sequence key={`sfx-${i}`} from={effect.startFrame || 0} durationInFrames={30} name={`🔊 Actor SFX: ${effect.assetId}`}>
+                          <AudioWithRadar type="SFX" assetId={effect.assetId} path={`assets/audio/sfx/${effect.assetId}.mp3`} topOffset={120 + i*50} />
                         </Sequence>
                       ))}
                     </AbsoluteFill>

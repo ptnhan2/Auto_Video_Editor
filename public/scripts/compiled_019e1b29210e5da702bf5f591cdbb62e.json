@@ -1,0 +1,1381 @@
+{
+  "title": "[TC1] Bão Trong Đêm",
+  "scenes": [
+    {
+      "sceneId": "019e1b2e0bbf620dca4ded7b8df9bd92",
+      "backgroundId": "bg_dormitory_gate_night",
+      "totalDurationSeconds": 18.0,
+      "shots": [
+        {
+          "shotId": "019e1b2f80b51b7569072ab87b148828",
+          "durationSeconds": 5.0,
+          "actors": [],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "light_leaks, film_grain, drop_shadows",
+          "assetDynamics": "back_center:wobble_jitter, mid_right:float_drift, front_center:stop_motion_stutter",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80b7fc61582b166eee89e6aa",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "look_around",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "blueprint_overlay",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "drop_shadows,light_leaks",
+          "assetDynamics": "hinge_rigging",
+          "camera": {
+            "type": "pan_right",
+            "intensity": 1.5
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80b8b52cad8765e27bd57990",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "surprise_fear",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "magnifying_glass",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "film_grain, drop_shadows",
+          "assetDynamics": "stop_motion_stutter, wobble_jitter, paper_fold",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80bac2b510366514397f9d8f",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "surprise_fear",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "continuous_scroll",
+          "visualMetaphor": "kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows,light_leaks,film_grain",
+          "assetDynamics": "spring_overshoot,wobble_jitter,smear_2d,hinge_rigging,paper_fold,float_drift",
+          "camera": {
+            "type": "pan_right"
+          },
+          "sfxId": ""
+        }
+      ]
+    },
+    {
+      "sceneId": "019e1b2e0bd1f55369ccaa936af0e388",
+      "backgroundId": "bg_dormitory_gate_night",
+      "totalDurationSeconds": 150.0,
+      "shots": [
+        {
+          "shotId": "019e1b2f80bb5da4de30f4eb58cbf660",
+          "durationSeconds": 6.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "surprise_fear",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "surprise_fear",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "polaroid_frame",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "light_leaks, drop_shadows",
+          "assetDynamics": "smear_2d, spring_overshoot",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80bda635f4bc130fa430ff2f",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "surprise_fear",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Trang? Em làm gì ở đây giữa đêm mưa thế này?",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80bda635f4bc130fa430ff2f"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "surprise_fear",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "chromatic_aberration",
+          "assetDynamics": "[{\"character\": \"Nam\", \"position\": \"mid_center\", \"dynamics\": \"wobble_jitter\"}, {\"character\": \"Trang\", \"position\": \"front_left\", \"dynamics\": \"spring_overshoot\"}]",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80bea052da3a462029ccf30c",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "surprise_fear",
+              "expressionId": "sad + fear",
+              "expressionTag": "sad + fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture, film_grain",
+          "assetDynamics": "wobble_jitter (toàn thân Trang - rung siêu nhẹ), spring_overshoot (ngón tay Trang - co quắp đàn hồi)",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c0a9ca180e61053648aa3d",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "{\"Trang\": \"talk_sad\", \"Nam\": \"combat_stance\"}",
+              "expressionId": "{\"Trang\": \"sad\", \"Nam\": \"neutral\"}",
+              "expressionTag": "{\"Trang\": \"sad\", \"Nam\": \"neutral\"}",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "{\"Trang\": \"talk_sad\", \"Nam\": \"combat_stance\"}",
+              "expressionId": "{\"Trang\": \"sad\", \"Nam\": \"neutral\"}",
+              "expressionTag": "{\"Trang\": \"sad\", \"Nam\": \"neutral\"}",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Có phải anh đã nói dối em không?",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80c0a9ca180e61053648aa3d"
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, light_leaks",
+          "assetDynamics": "{\"Nam\": \"stop_motion_stutter\", \"Trang\": \"wobble_jitter\"}",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c1539e1d21d4ecf562102a",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "surprise_fear",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture",
+          "assetDynamics": "smear_2d",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c2ff1fd42e0d303e6bf327",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Em thấy tin nhắn trong điện thoại anh... với một người con gái khác.",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80c2ff1fd42e0d303e6bf327"
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "magnifying_glass",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "drop_shadows,film_grain",
+          "assetDynamics": "spring_overshoot",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c224977daafadabee25656",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "surprise_fear",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "polaroid_frame",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "film_grain + light_leaks",
+          "assetDynamics": "spring_overshoot",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c497af2e69476859838d7a",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Em... em đã đọc tin nhắn của anh sao?",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80c497af2e69476859838d7a"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "split_screen",
+          "visualMetaphor": "highlight_redact, kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "paper_texture, film_grain",
+          "assetDynamics": "mid_left: wobble_jitter, paper_fold | mid_right: float_drift, spring_overshoot",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c5a9c98e4c87be09c46415",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string + kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows + film_grain",
+          "assetDynamics": "wobble_jitter + float_drift",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c6bea996248b0e6532e15d",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "chromatic_aberration",
+          "assetDynamics": "spring_overshoot",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c7636cfe9ffb53280ae9f5",
+          "durationSeconds": 10.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_angry",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_angry",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Tại sao hả Nam? Em đã tin tưởng anh tuyệt đối! Ba năm qua, em chưa từng nghi ngờ anh một lần nào! Chưa từng!",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80c7636cfe9ffb53280ae9f5"
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string + highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "chromatic_aberration + film_grain",
+          "assetDynamics": "{\"Trang\": \"spring_overshoot\", \"Nam\": \"wobble_jitter\"}",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c885659f5d704a95eafb6d",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "reach_out",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "drop_shadows, paper_texture",
+          "assetDynamics": "spring_overshoot",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80c92312e0251701091cedea",
+          "durationSeconds": 6.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_angry",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Không phải như em nghĩ đâu Trang! Đó chỉ là đồng nghiệp thôi mà!",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80c92312e0251701091cedea"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_angry",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "split_screen",
+          "visualMetaphor": "kinetic_typography, magnifying_glass",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "light_leaks, film_grain",
+          "assetDynamics": "wobble_jitter, stop_motion_stutter, spring_overshoot, float_drift",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b2f80ca66fed9bb8b4eaf244fef",
+          "durationSeconds": 8.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_angry",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_angry",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "ĐỒNG NGHIỆP? Đồng nghiệp mà nhắn \"em nhớ anh\" lúc nửa đêm à? Anh coi tôi là đồ ngốc sao?",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b2f80ca66fed9bb8b4eaf244fef"
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture",
+          "assetDynamics": "wobble_jitter",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.5
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aa3413010df39769e720330",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "fear",
+              "expressionTag": "fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "matchbox",
+          "visualMetaphor": "blueprint_overlay",
+          "transitionIn": "page_flip",
+          "atmosphereFx": "light_leaks",
+          "assetDynamics": "stop_motion_stutter",
+          "camera": {
+            "type": "pan_right"
+          }
+        },
+        {
+          "shotId": "019e1b303aa4f959c5d3709155fcb4a0",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "look_around",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, chromatic_aberration",
+          "assetDynamics": "spring_overshoot",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.5
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aa59d2b9727e9144f56eb07",
+          "durationSeconds": 7.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_angry",
+              "expressionId": "Nam: angry | Trang: fear",
+              "expressionTag": "Nam: angry | Trang: fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Anh đã nói là không phải rồi! Em cứ làm ầm lên như vậy thì nói chuyện được gì nữa?",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303aa59d2b9727e9144f56eb07"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_angry",
+              "expressionId": "Nam: angry | Trang: fear",
+              "expressionTag": "Nam: angry | Trang: fear",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "camera_shake",
+          "assetDynamics": "Nam: spring_overshoot | Trang: wobble_jitter",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aa65007da8e362f3f4e24be",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_angry",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string + kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows + film_grain + chromatic_aberration",
+          "assetDynamics": "spring_overshoot + wobble_jitter",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aa7c01161bbd2b9a43115ba",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "{\"Nam\": \"surprise_fear\", \"Trang\": \"talk_angry\"}",
+              "expressionId": "{\"Nam\": \"surprised\", \"Trang\": \"angry\"}",
+              "expressionTag": "{\"Nam\": \"surprised\", \"Trang\": \"angry\"}",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "{\"Nam\": \"surprise_fear\", \"Trang\": \"talk_angry\"}",
+              "expressionId": "{\"Nam\": \"surprised\", \"Trang\": \"angry\"}",
+              "expressionTag": "{\"Nam\": \"surprised\", \"Trang\": \"angry\"}",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Anh... anh không những phản bội tôi mà còn dám lớn tiếng với tôi sao?",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303aa7c01161bbd2b9a43115ba"
+            }
+          ],
+          "layoutStyle": "split_screen",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "chromatic_aberration + film_grain",
+          "assetDynamics": "{\"Nam\": \"stop_motion_stutter\", \"Trang\": \"wobble_jitter\"}",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aa725accb6a4445f2dd9092",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "strike",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "strike",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string, kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "light_leaks, film_grain, paper_texture",
+          "assetDynamics": "smear_2d",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.5
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aa82c540f9c5bcc3af1a4f4",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "scream_cry_punch",
+              "expressionId": "cry_breakdown_ugly",
+              "expressionTag": "cry_breakdown_ugly",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "scream_cry_punch",
+              "expressionId": "cry_breakdown_ugly",
+              "expressionTag": "cry_breakdown_ugly",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Tôi GHÉT ANH! GHÉT ANH!",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303aa82c540f9c5bcc3af1a4f4"
+            }
+          ],
+          "layoutStyle": "scrapbook",
+          "visualMetaphor": "red_string + kinetic_typography",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "paper_texture + chromatic_aberration + drop_shadows",
+          "assetDynamics": "stop_motion_stutter + wobble_jitter + paper_fold + float_drift",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aabea6ab9576e9894f275c1",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "strike",
+              "expressionId": "Trang: angry | Nam: sad",
+              "expressionTag": "Trang: angry | Nam: sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "strike",
+              "expressionId": "Trang: angry | Nam: sad",
+              "expressionTag": "Trang: angry | Nam: sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "light_leaks, paper_texture",
+          "assetDynamics": "Trang: spring_overshoot, smear_2d | Nam: stop_motion_stutter, float_drift",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.5
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aad1e855717bf2588b01b76",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "reach_out",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "reach_out",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "light_leaks, drop_shadows",
+          "assetDynamics": "smear_2d",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aaea809a6a95dcd078c195b",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "combat_stance",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "combat_stance",
+              "expressionId": "angry",
+              "expressionTag": "angry",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows",
+          "assetDynamics": "hinge_rigging + wobble_jitter + float_drift",
+          "camera": {
+            "type": "static"
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303aafeec57fa2bfa9941d47d5",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Anh xin lỗi Trang.",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303aafeec57fa2bfa9941d47d5"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, light_leaks",
+          "assetDynamics": "Nam: spring_overshoot | Trang: undefined",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab06b3eba77a8c39f8901b1",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "surprise_fear",
+              "expressionId": "surprised",
+              "expressionTag": "surprised",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows,paper_texture",
+          "assetDynamics": "wobble_jitter",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab2eb8aba551b3ee070b066",
+          "durationSeconds": 12.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "reach_out",
+              "expressionId": "Trang: sad | Nam: neutral",
+              "expressionTag": "Trang: sad | Nam: neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Đúng... anh có sai. Nhưng không phải là phản bội. Anh đã yếu lòng một chút khi đồng nghiệp đó tỏ tình, nhưng anh chưa từng phản bội em. Tin anh đi.",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303ab2eb8aba551b3ee070b066"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "reach_out",
+              "expressionId": "Trang: sad | Nam: neutral",
+              "expressionTag": "Trang: sad | Nam: neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "paper_cutout_overlay",
+          "visualMetaphor": "red_string + kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows + paper_texture + light_leaks",
+          "assetDynamics": "Trang: float_drift | Nam: hinge_rigging",
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab4921df70d406d5d59380b",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad_to_neutral",
+              "expressionTag": "sad_to_neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad_to_neutral",
+              "expressionTag": "sad_to_neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "polaroid_frame",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture",
+          "assetDynamics": "spring_overshoot",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab5d5469df330fd931f802d",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "paper_texture, drop_shadows",
+          "assetDynamics": "{\"trang\": \"spring_overshoot\"}",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab68031fa6ea678a7ec9b3e",
+          "durationSeconds": 6.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Em sợ mất anh lắm... Em không biết phải sống sao nếu anh rời đi.",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303ab68031fa6ea678a7ec9b3e"
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture",
+          "assetDynamics": "Nam:hinge_rigging, Trang:spring_overshoot, Frame:paper_fold",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab770da4f7e396fd2563c8c",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "reach_out",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string + highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "paper_texture + drop_shadows + light_leaks",
+          "assetDynamics": "wobble_jitter + spring_overshoot (Nam), stop_motion_stutter (Trang), float_drift (Bàn tay cận)",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b303ab8ace38882e06e97849359",
+          "durationSeconds": 3.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": "Anh cũng sợ mất em, Trang à.",
+              "isSpeaking": true,
+              "audioId": "aud_sb019e1b303ab8ace38882e06e97849359"
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "neutral",
+              "expressionTag": "neutral",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "matchbox",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows,paper_texture",
+          "assetDynamics": "Trang_front_left:wobble_jitter;Nam_front_right:spring_overshoot;LOG_front_center:float_drift",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        }
+      ]
+    },
+    {
+      "sceneId": "019e1b2e0bdfe2bc0b8527552abe5def",
+      "backgroundId": "bg_dormitory_gate_night",
+      "totalDurationSeconds": 5.0,
+      "shots": [
+        {
+          "shotId": "019e1b308c84c33d176b18ac0a1bfd83",
+          "durationSeconds": 5.0,
+          "actors": [],
+          "layoutStyle": "continuous_scroll",
+          "visualMetaphor": "blueprint_overlay",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture, light_leaks",
+          "assetDynamics": "float_drift, stop_motion_stutter, wobble_jitter",
+          "camera": {
+            "type": "pan_right"
+          },
+          "sfxId": ""
+        }
+      ]
+    },
+    {
+      "sceneId": "019e1b2e0bbf620dca4ded7b8df9bd92",
+      "backgroundId": "bg_dorm_room_dark",
+      "totalDurationSeconds": 32.0,
+      "shots": [
+        {
+          "shotId": "019e1b308c85ef77720e93f05cab8ea9",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "light_leaks, paper_texture",
+          "assetDynamics": "{\"Trang\": \"spring_overshoot_muted\", \"Nam\": \"float_drift_protective\"}",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b308c86bf32200359b4c7624371",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "gentle_back_hug",
+              "expressionId": "tender_love (Nam: dịu dàng, mơ màng; Trang: nhắm mắt, tận hưởng, bình yên)",
+              "expressionTag": "tender_love (Nam: dịu dàng, mơ màng; Trang: nhắm mắt, tận hưởng, bình yên)",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "gentle_back_hug",
+              "expressionId": "tender_love (Nam: dịu dàng, mơ màng; Trang: nhắm mắt, tận hưởng, bình yên)",
+              "expressionTag": "tender_love (Nam: dịu dàng, mơ màng; Trang: nhắm mắt, tận hưởng, bình yên)",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "kinetic_typography — trái tim \"♥ ♥ ♥\" xuất hiện từ đỉnh đầu Trang, nảy lên với spring_overshoot, lan tỏa ra hai bên rồi tan biến thành những chấm sáng nhỏ (sparkle fade). Lặp lại mỗi 3 giây.",
+          "transitionIn": "ink_bleed — từ trung tâm (khuôn mặt họ) lan tỏa ra toàn khung hình, tốc độ chậm (2.5s), màu mực nâu sepia ấm áp, để lộ lớp paper_texture bên dưới",
+          "atmosphereFx": "drop_shadows (bóng đổ mềm, độ mờ 35%, góc -45°, đặc biệt bóng Nam đổ lên vai Trang) + paper_texture (texture giấy cream/vanilla, cường độ 0.4, blend mode: multiply nhẹ) + light_leaks (hiệu ứng rò sáng màu vàng ấm từ góc trên bên trái, mô phỏng ánh đèn phòng) + film_grain (hạt phim rất nhẹ, 12%, tăng cảm giác hoài niệm)",
+          "assetDynamics": "Nam: spring_overshoot (cánh tay khi ôm & vuốt tóc) + wobble_jitter (toàn thân, 8% - sinh học nhẹ); Trang: float_drift (mái tóc ướt bay nhẹ) + wobble_jitter (toàn thân, 5%)",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b308c874cd275b6eb93e720619b",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "blueprint_overlay",
+          "transitionIn": "paper_tear",
+          "atmosphereFx": "drop_shadows, film_grain",
+          "assetDynamics": "Nam:float_drift, Trang:wobble_jitter",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b308c89bc67031577f3d0de09f2",
+          "durationSeconds": 4.0,
+          "actors": [
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "Trang: sad | Nam: happy",
+              "expressionTag": "Trang: sad | Nam: happy",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "highlight_redact",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, light_leaks",
+          "assetDynamics": "hinge_rigging, spring_overshoot, wobble_jitter, float_drift",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b308c8a709d3a74682808568d4b",
+          "durationSeconds": 5.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "scrapbook",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, paper_texture, light_leaks",
+          "assetDynamics": "wobble_jitter",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.3
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b308c8b1d820452b37a52c1fb1a",
+          "durationSeconds": 6.0,
+          "actors": [
+            {
+              "characterId": "019e1b2ddda65e0e6bf97f3b07eb49b9",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            },
+            {
+              "characterId": "019e1b2dddb11983a449960228029bae",
+              "actionId": "talk_sad",
+              "expressionId": "sad",
+              "expressionTag": "sad",
+              "facing": "left",
+              "position": "mid_center",
+              "dialogue": null,
+              "isSpeaking": false
+            }
+          ],
+          "layoutStyle": "diorama",
+          "visualMetaphor": "red_string",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "drop_shadows, film_grain",
+          "assetDynamics": "Trang:spring_overshoot, Nam:float_drift",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        },
+        {
+          "shotId": "019e1b308c8cc2ac9e4b69bc0187bc1f",
+          "durationSeconds": 3.0,
+          "actors": [],
+          "layoutStyle": "frame_in_frame",
+          "visualMetaphor": "kinetic_typography",
+          "transitionIn": "ink_bleed",
+          "atmosphereFx": "film_grain,drop_shadows",
+          "assetDynamics": "float_drift",
+          "camera": {
+            "type": "zoom_in",
+            "intensity": 1.2
+          },
+          "sfxId": ""
+        }
+      ]
+    }
+  ]
+}

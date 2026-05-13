@@ -37,8 +37,18 @@ export const DraftVideoPreview: React.FC<{
             );
           
           if (!isTTSFormat) {
-            console.error("Lỗi cấu trúc kịch bản:", result.error.format());
-            throw new Error(`File kịch bản '${scriptFile}' bị lỗi cấu trúc nghiêm trọng (Thiếu 'scenes').`);
+            console.warn("Định dạng file không hỗ trợ:", result.error?.format());
+            const hasScenes = rawData && 'scenes' in rawData;
+            const isEmpty = !rawData || Object.keys(rawData).length === 0;
+            if (isEmpty) {
+              setError(`File '${scriptFile}' rỗng hoặc bị lỗi trong quá trình compile. Vui lòng chạy lại pipeline hoặc chọn file khác.`);
+            } else if (hasScenes) {
+              setError(`File kịch bản '${scriptFile}' có 'scenes' nhưng sai định dạng. Hãy thử file khác (vd: compiled_019e1b29210e5da702bf5f591cdbb62e.json).`);
+            } else {
+              setError(`File '${scriptFile}' thuộc định dạng cũ (V1). Vui lòng chọn file được sinh ra từ Pipeline V2.`);
+            }
+            continueRender(handle);
+            return;
           }
           
           console.warn(`[DraftVideoPreview] File '${scriptFile}' không khớp hoàn toàn với VideoScriptSchema, nhưng vẫn có cấu trúc cơ bản. Đang cố gắng render...`);

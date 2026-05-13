@@ -80,7 +80,8 @@ export const InteractionEffect: React.FC<InteractionEffectProps> = ({
         }} />
       )}
 
-      {/* 2. VISUAL METAPHOR */}
+      {/* 2. VISUAL METAPHOR (Tạm tắt các hiệu ứng SVG placeholder chưa hoàn thiện) */}
+      {/* 
       {layerType === 'over_actors' && visualMetaphor === 'red_string' && (
         <AbsoluteFill style={{ pointerEvents: 'none', zIndex: 50 }}>
           <svg width="100%" height="100%" style={{ position: 'absolute' }}>
@@ -95,6 +96,7 @@ export const InteractionEffect: React.FC<InteractionEffectProps> = ({
           </svg>
         </AbsoluteFill>
       )}
+      */}
       
       {layerType === 'over_actors' && visualMetaphor === 'magnifying_glass' && (
         <AbsoluteFill style={{ pointerEvents: 'none', zIndex: 50, justifyContent: 'center', alignItems: 'center' }}>
@@ -130,7 +132,8 @@ export const InteractionEffect: React.FC<InteractionEffectProps> = ({
         }} />
       )}
       
-      {/* 4. LAYOUT STYLE */}
+      {/* 4. LAYOUT STYLE (Tạm tắt đường kẻ trắng split_screen chưa hoàn thiện) */}
+      {/* 
       {layerType === 'over_actors' && layoutStyle === 'split_screen' && (
         <AbsoluteFill style={{ pointerEvents: 'none', zIndex: 150 }}>
           <div style={{
@@ -145,6 +148,7 @@ export const InteractionEffect: React.FC<InteractionEffectProps> = ({
           }} />
         </AbsoluteFill>
       )}
+      */}
       
       {layerType === 'under_actors' && layoutStyle === 'diorama' && (
         <AbsoluteFill style={{ pointerEvents: 'none', zIndex: 1 }}>

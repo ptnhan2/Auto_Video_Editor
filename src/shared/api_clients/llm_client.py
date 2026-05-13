@@ -31,6 +31,8 @@ logger = logging.getLogger(__name__)
 # lazy configuration once.
 # ---------------------------------------------------------------------------
 _configured = False
+_embedding_cache: dict[str, list[float]] = {}
+MAX_EMBEDDING_CACHE_SIZE = 1000
 
 
 def _configure_litellm() -> None:
@@ -292,9 +294,22 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
     """
     _configure_litellm()
     embedding_model = get_embedding_model()
+
+    cached = []
+    uncached_texts = []
+    uncached_indices = []
+    for i, text in enumerate(texts):
+        if text in _embedding_cache:
+            cached.append((i, _embedding_cache[text]))
+        else:
+            uncached_texts.append(text)
+            uncached_indices.append(i)
+
+    if not uncached_texts:
+        return [v for _, v in sorted(cached, key=lambda x: x[0])] if cached else []
+
     try:
-        result = litellm.embedding(model=embedding_model, input=texts)
-        # litellm returns: result.data[0]['embedding'], etc.
+        result = litellm.embedding(model=embedding_model, input=uncached_texts)
         if hasattr(result, "data"):
             vectors = []
             for item in result.data:
@@ -302,7 +317,18 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
                     vectors.append(item["embedding"])
                 elif hasattr(item, "embedding"):
                     vectors.append(item.embedding)
-            return vectors
+
+            for text, vec in zip(uncached_texts, vectors):
+                if len(_embedding_cache) >= MAX_EMBEDDING_CACHE_SIZE:
+                    _embedding_cache.pop(next(iter(_embedding_cache)))
+                _embedding_cache[text] = vec
+
+            all_vecs = [None] * len(texts)
+            for idx, vec in cached:
+                all_vecs[idx] = vec
+            for idx, vec in zip(uncached_indices, vectors):
+                all_vecs[idx] = vec
+            return all_vecs
         return []
     except Exception as exc:
         logger.error(
@@ -311,4 +337,13 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
             len(texts),
             exc,
         )
+        # Fallback: return cached vectors + zero vectors for uncached texts
+        if cached:
+            all_vecs = [None] * len(texts)
+            for idx, vec in cached:
+                all_vecs[idx] = vec
+            zero_vec = [0.0] * (len(cached[0][1]) if cached else 1536)
+            for idx in uncached_indices:
+                all_vecs[idx] = zero_vec
+            return all_vecs
         return []

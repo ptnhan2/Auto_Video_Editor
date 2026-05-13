@@ -162,6 +162,7 @@ class Storyboard(Base):
     action_id = Column(String, nullable=True)
     expression_tag = Column(String, nullable=True)
     background_id = Column(String, nullable=True)
+    character_position = Column(Text, nullable=True)  # JSON string for character positions per shot
     
     bgm_prompt = Column(Text, nullable=True)
     sound_effect = Column(String, nullable=True)
