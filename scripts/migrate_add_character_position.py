@@ -6,22 +6,22 @@ from sqlalchemy import text  # noqa: E402
 
 def migrate():
     with engine.connect() as conn:
-        # Check if storyboard table exists at all
+        # Check if storyboards table exists at all (SQLAlchemy model __tablename__)
         table_check = conn.execute(
-            text("SELECT name FROM sqlite_master WHERE type='table' AND name='storyboard'")
+            text("SELECT name FROM sqlite_master WHERE type='table' AND name='storyboards'")
         ).fetchone()
         if not table_check:
-            print("[MIGRATION] storyboard table does not exist yet, skipping")
+            print("[MIGRATION] storyboards table does not exist yet, skipping")
             return
 
-        result = conn.execute(text("PRAGMA table_info(storyboard)"))
+        result = conn.execute(text("PRAGMA table_info(storyboards)"))
         columns = [row[1] for row in result]
         if 'character_position' not in columns:
             conn.execute(text(
-                "ALTER TABLE storyboard ADD COLUMN character_position TEXT"
+                "ALTER TABLE storyboards ADD COLUMN character_position TEXT"
             ))
             conn.commit()
-            print("[MIGRATION] Added character_position column to storyboard")
+            print("[MIGRATION] Added character_position column to storyboards")
         else:
             print("[MIGRATION] character_position column already exists, skipping")
 
