@@ -70,6 +70,38 @@ Therefore, all components, props, and schemas must be designed for an LLM to und
 - **Abstract Complexity:** Hide pixel-perfect coordinates or complex math from the AI's API. Provide high-level relative positioning (e.g., `position: 'left'`) that the internal React/Remotion engine converts to absolute values.
 - **Safe Fallbacks:** Ensure robust error handling and fallbacks if the AI hallucinates an ID.
 
+### Rule F: "Fence Editing"
+
+When AI agents modify code, they MUST respect a strict boundary system to prevent accidental deletion or modification of verified code.
+
+#### Markers
+
+- `# ✋ FROZEN` / `// 🔒 FROZEN BLOCK` — Code above this marker is verified and MUST NOT be modified.
+- `# ✏️ EDIT ZONE START (line X)` / `# ✏️ EDIT ZONE END (line Y)` — Only code between these markers may be changed.
+
+#### Diff Gate
+
+After making changes, the agent MUST:
+1. Run `git diff -- <file>`
+2. Verify every changed line falls within the EDIT ZONE
+3. If any change falls outside → revert immediately and retry
+4. Include full diff output in completion report
+
+#### 1 Task = 1 File = 1 Commit
+
+- Each Worker prompt targets exactly ONE file
+- Worker commits immediately after verification
+- Manager reviews diff (not description) before approving
+- Tasks dispatched sequentially, never in parallel on the same module
+
+#### Agent Constitutions
+
+Detailed agent rules are defined in:
+- `.kilo/agent/worker.md` — Worker agent rules
+- `.kilo/agent/manager.md` — Manager agent rules
+
+All agents MUST read their respective constitution before starting any task.
+
 ---
 
-_Last updated: April 2026_
+_Last updated: May 2026_
