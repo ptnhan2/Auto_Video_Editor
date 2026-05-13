@@ -337,4 +337,13 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
             len(texts),
             exc,
         )
+        # Fallback: return cached vectors + zero vectors for uncached texts
+        if cached:
+            all_vecs = [None] * len(texts)
+            for idx, vec in cached:
+                all_vecs[idx] = vec
+            zero_vec = [0.0] * (len(cached[0][1]) if cached else 1536)
+            for idx in uncached_indices:
+                all_vecs[idx] = zero_vec
+            return all_vecs
         return []
