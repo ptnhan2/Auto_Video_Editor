@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.db.database import SessionLocal, init_db  # noqa: E402
-from src.db.schema import Drama, Episode, Character, EpisodeCharacter  # noqa: E402
+from src.db.schema import Drama, Episode  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 # ============================================================
@@ -124,20 +124,7 @@ def seed_edge_cases():
         else:
             print(f"[TC1] Episode '{tc1_episode.title}' already exists.")
 
-        tc1_nam = db.query(Character).filter(Character.name == "Nam").first()
-        tc1_trang = db.query(Character).filter(Character.name == "Trang").first()
-        if tc1_nam and tc1_trang:
-            for char in [tc1_nam, tc1_trang]:
-                link = db.query(EpisodeCharacter).filter(
-                    EpisodeCharacter.episode_id == tc1_episode.id,
-                    EpisodeCharacter.character_id == char.id
-                ).first()
-                if not link:
-                    db.add(EpisodeCharacter(episode_id=tc1_episode.id, character_id=char.id))
-            db.commit()
-            print(f"[TC1] Linked characters to episode. Episode ID: {tc1_episode.id}")
-        else:
-            print(f"[TC1] Characters not yet created in DB. Station 2 will generate them. Episode ID: {tc1_episode.id}")
+        # Characters for TC1 are NOT pre-created. Station 2 generates them from content.
 
         # ============================================================
         # TC2: HÀNH ĐỘNG & NHỊP ĐỘ NHANH
@@ -177,20 +164,7 @@ def seed_edge_cases():
         else:
             print(f"[TC2] Episode '{tc2_episode.title}' already exists.")
 
-        tc2_hung = db.query(Character).filter(Character.name == "Hùng").first()
-        tc2_guard = db.query(Character).filter(Character.name == "Vệ sĩ").first()
-        if tc2_hung and tc2_guard:
-            for char in [tc2_hung, tc2_guard]:
-                link = db.query(EpisodeCharacter).filter(
-                    EpisodeCharacter.episode_id == tc2_episode.id,
-                    EpisodeCharacter.character_id == char.id
-                ).first()
-                if not link:
-                    db.add(EpisodeCharacter(episode_id=tc2_episode.id, character_id=char.id))
-            db.commit()
-            print(f"[TC2] Linked characters to episode. Episode ID: {tc2_episode.id}")
-        else:
-            print(f"[TC2] Characters not yet created in DB. Station 2 will generate them. Episode ID: {tc2_episode.id}")
+        # Characters for TC2 are NOT pre-created. Station 2 generates them from content.
 
         # ============================================================
         # TC3: MISSING ASSET FALLBACK / ẢO GIÁC AI
@@ -230,21 +204,7 @@ def seed_edge_cases():
         else:
             print(f"[TC3] Episode '{tc3_episode.title}' already exists.")
 
-        tc3_an = db.query(Character).filter(Character.name == "An").first()
-        tc3_iris = db.query(Character).filter(Character.name == "IRIS").first()
-        tc3_robot = db.query(Character).filter(Character.name == "Robot").first()
-        if tc3_an and tc3_iris and tc3_robot:
-            for char in [tc3_an, tc3_iris, tc3_robot]:
-                link = db.query(EpisodeCharacter).filter(
-                    EpisodeCharacter.episode_id == tc3_episode.id,
-                    EpisodeCharacter.character_id == char.id
-                ).first()
-                if not link:
-                    db.add(EpisodeCharacter(episode_id=tc3_episode.id, character_id=char.id))
-            db.commit()
-            print(f"[TC3] Linked characters to episode. Episode ID: {tc3_episode.id}")
-        else:
-            print(f"[TC3] Characters not yet created in DB. Station 2 will generate them. Episode ID: {tc3_episode.id}")
+        # Characters for TC3 are NOT pre-created. Station 2 generates them from content.
 
         # ============================================================
         # SUMMARY
