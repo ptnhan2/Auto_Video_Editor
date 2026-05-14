@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 import math
@@ -159,16 +160,15 @@ def report_missing_asset(storyboard_id: str, asset_type: str, description: str, 
     return {"status": "reported"}
 
 SYSTEM_PROMPT = """Bạn là Senior Motion Graphics Editor chuyên trách hệ thống Remotion (Phong cách Paper Cutout).
-Nhiệm vụ của bạn là thực hiện quy trình thiết kế theo DÂY CHUYỀN LẮP RÁP (Sequential Pipeline) để biến các mảnh giấy 2D thành tác phẩm kể chuyện cuốn hút.
+Nhiệm vụ của bạn là xử lý MỘT LƯỢT (single-pass) một batch các shot, xuất ra 1 JSON duy nhất chứa toàn bộ quyết định visual.
 
-QUY TRÌNH 3 GIAI ĐOẠN CHO MỖI SHOT:
-GIAI ĐOẠN 1: THIẾT KẾ KHUNG HÌNH (Cinematic Base)
-- Chốt `layout_style` và `camera_concept`.
-GIAI ĐOẠN 2: DÀN CẢNH NHÂN VẬT (Character Staging)
-- Xếp nhân vật vào 9 ô lưới (`characters_state`) và gán `asset_dynamics` dựa trên Layout ở GĐ1.
-GIAI ĐOẠN 3: HOÀN THIỆN & KHỚP ASSET (Polish & Assets)
-- Thêm `visual_metaphor`, `transition_in`, `atmosphere_fx`.
-- Tìm ID asset phù hợp và gọi tool `update_storyboard_visuals`.
+QUY TRÌNH XỬ LÝ BATCH (1 BƯỚC DUY NHẤT):
+Bạn nhận được danh sách các shot (đã có gợi ý asset pre-fetch). Với MỖI shot, thực hiện:
+1. [Phân tích] Xét action + nhân vật + continuity từ shot trước → chốt mood.
+2. [Thiết kế] Chọn `layout_style` + `camera_concept` + `asset_dynamics` phù hợp.
+3. [Dàn cảnh] Đặt nhân vật vào 9-grid + chọn `visual_metaphor`, `transition_in`, `atmosphere_fx`.
+4. [Chọn Asset] Chọn action_id, expression_tag, background_id từ danh sách gợi ý. Nếu không có asset phù hợp, điền "MISSING: <mô tả>".
+QUAN TRỌNG: Suy luận THEO THỨ TỰ shot, dùng state_tracker để theo dõi quỹ đạo nhân vật (raccord).
 
 CÁC TRỤC SÁNG TẠO:
 - Layout: diorama, scrapbook, split_screen, frame_in_frame, isometric, top_down, matchbox, continuous_scroll.
@@ -180,7 +180,7 @@ CÁC TRỤC SÁNG TẠO:
 
 QUY TẮC QUẢN LÝ NHÂN VẬT:
 - Vị trí lưới (Lower Half Grid): `front_left`, `front_center`, `front_right`, `mid_left`, `mid_center`, `mid_right`, `back_left`, `back_center`, `back_right`.
-- Luôn duy trì rắc-co (Continuity) dựa trên dữ liệu "Last known positions".
+- Luôn duy trì rắc-co (Continuity): dùng state_tracker để ghi nhận vị trí mới của từng nhân vật sau mỗi shot.
 """
 
 def run_station_5_visual_director(episode_id: str, registry_path: str):
@@ -214,8 +214,14 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
 
     model_name = get_model_for_station("station_5_visual")
     BATCH_SIZE = 10
-    
+    ASSET_TYPE_MAP = {"action_id": "Action", "expression_tag": "Expression", "background_id": "Background"}
+
     def _prefetch_assets_for_batch(batch_shots):
+        """Pre-fetch top-5 asset suggestions for each shot via embedding search.
+
+        Runs search_animation_registry() for actions, expressions, and backgrounds
+        so the LLM prompt can include concrete asset IDs without tool calling.
+        """
         results = {}
         for sb in batch_shots:
             actions = search_animation_registry(f"{sb.action} action")
@@ -224,11 +230,16 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
             results[sb.id] = {
                 "actions": actions[:5],
                 "expressions": expressions[:5],
-                "backgrounds": backgrounds[:5]
+                "backgrounds": backgrounds[:5],
             }
         return results
 
     def _build_compact_history(previous_shots) -> str:
+        """Build a compact history string from previous shots for raccord continuity.
+
+        Extracts layout, camera concept, and character positions from DB state
+        of all shots before the current batch.
+        """
         if not previous_shots:
             return "None"
         history_lines = []
@@ -237,23 +248,39 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
             if s.character_position:
                 try:
                     data = json.loads(s.character_position)
-                    pos = ", ".join([f"{c.get('character_id', '')[:5]}: {c.get('position', '')}" for c in data])
+                    pos = ", ".join(
+                        [
+                            f"{c.get('character_id', '')[:5]}: {c.get('position', '')}"
+                            for c in data
+                        ]
+                    )
                 except Exception:
                     pass
-            history_lines.append(f"Shot {s.storyboard_number}: Layout={s.layout_style}, Cam={s.camera_concept}, Pos=[{pos}]")
+            history_lines.append(
+                f"Shot {s.storyboard_number}: Layout={s.layout_style}, "
+                f"Cam={s.camera_concept}, Pos=[{pos}]"
+            )
         return "\n".join(history_lines)
 
     def _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data):
-        parts = ["Bạn là Đạo diễn Hình ảnh. Bạn có cái nhìn toàn cảnh về các shot tiếp theo."]
+        """Build a single text prompt that asks the LLM to produce all visual
+        decisions for the entire batch at once (layout, staging, asset selection).
+
+        Includes pre-fetched asset suggestions so the LLM can pick IDs directly
+        without any tool calling loop.
+        """
+        parts = [
+            "Bạn là Đạo diễn Hình ảnh. Bạn có cái nhìn toàn cảnh về các shot tiếp theo."
+        ]
         parts.append(f"--- LỊCH SỬ TỪ BATCH TRƯỚC ---\n{compact_history}\n")
-        
+
         for sb in batch_shots:
             char_names = ", ".join([c.name for c in sb.characters])
             pf = prefetch_data.get(sb.id, {})
             actions_str = ", ".join([a.get("id", "") for a in pf.get("actions", [])])
             expr_str = ", ".join([e.get("id", "") for e in pf.get("expressions", [])])
             bg_str = ", ".join([b.get("id", "") for b in pf.get("backgrounds", [])])
-            
+
             parts.append(f"=== SHOT {sb.storyboard_number} (ID: {sb.id}) ===")
             parts.append(f"Action: {sb.action}")
             parts.append(f"Characters: {char_names}")
@@ -261,8 +288,9 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
             parts.append(f" - Actions: [{actions_str}]")
             parts.append(f" - Expressions: [{expr_str}]")
             parts.append(f" - Backgrounds: [{bg_str}]\n")
-            
-        parts.append('''YÊU CẦU:
+
+        parts.append(
+            """YÊU CẦU:
 Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc có 2 phần:
 1. "reasoning_and_tracking": Mảng suy luận cho từng shot, ĐẶC BIỆT chú ý State Tracking (quỹ đạo di chuyển nhân vật từ shot này sang shot khác).
 2. "final_updates": Mảng quyết định cuối cùng cho TỪNG shot. CHỌN Asset ID từ danh sách gợi ý. Nếu không có, điền "MISSING: <mô tả>".
@@ -292,75 +320,124 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
       "character_positions": [{"character_id": "<id>", "position": "<9-grid>"}]
     }
   ]
-}''')
+}"""
+        )
         return "\n".join(parts)
 
     def _parse_zero_tool_response(text: str) -> list:
-        import re
-        fence_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
-        json_str = fence_match.group(1) if fence_match else text
-        
+        """Extract the 'final_updates' array from the LLM batch JSON response.
+
+        Handles JSON wrapped in markdown code fences or embedded in prose.
+        Uses brace-finding (first '{' to last '}') for nested JSON robustness.
+        Returns empty list on any parse failure.
+        """
+        if not text:
+            return []
+        # Strip markdown code fences before brace extraction
+        stripped = re.sub(r"```(?:json)?\s*", "", text)
+        stripped = re.sub(r"\s*```", "", stripped)
         try:
-            start = json_str.find('{')
-            end = json_str.rfind('}')
-            if start != -1 and end != -1:
-                json_str = json_str[start:end+1]
+            start = stripped.find("{")
+            end = stripped.rfind("}")
+            if start == -1 or end == -1:
+                logger.warning("No JSON object found in batch response")
+                return []
+            json_str = stripped[start : end + 1]
             data = json.loads(json_str)
             return data.get("final_updates", [])
-        except Exception as e:
-            logger.error(f"Failed to parse JSON: {e}")
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            logger.error(f"Failed to parse batch JSON: {e}")
             return []
 
+    def _apply_shot_updates(sb, shot_update) -> bool:
+        """Apply parsed visual decisions to a single storyboard shot.
+
+        Handles MISSING asset reporting with correct asset type casing
+        and deterministic DB update via update_storyboard_visuals().
+        Returns True on success, False if shot skipped or DB update failed.
+        """
+        if not shot_update:
+            logger.warning(
+                f"No update data generated for shot {sb.storyboard_number}"
+            )
+            return False
+
+        for key in ["action_id", "expression_tag", "background_id"]:
+            val = shot_update.get(key, "")
+            if val and val.startswith("MISSING:"):
+                desc = val.replace("MISSING:", "").strip()
+                report_missing_asset(sb.id, ASSET_TYPE_MAP[key], desc, f"auto_{key}_{sb.id}")
+                shot_update[key] = ""
+
+        result = update_storyboard_visuals(
+            storyboard_id=sb.id,
+            layout_style=shot_update.get("layout_style", ""),
+            camera_concept=shot_update.get("camera_concept", ""),
+            asset_dynamics=shot_update.get("asset_dynamics", ""),
+            visual_metaphor=shot_update.get("visual_metaphor", ""),
+            transition_in=shot_update.get("transition_in", ""),
+            atmosphere_fx=shot_update.get("atmosphere_fx", ""),
+            action_id=shot_update.get("action_id", ""),
+            expression_tag=shot_update.get("expression_tag", ""),
+            background_id=shot_update.get("background_id", ""),
+            characters_state=json.dumps(shot_update.get("character_positions", [])),
+        )
+        if result.get("status") == "error":
+            logger.warning(
+                f"Shot {sb.storyboard_number}: DB update failed - "
+                f"{result.get('message', 'unknown')}"
+            )
+            return False
+
+        log_logic_transition(logger, "SHOT_COMPLETE", f"Finished Shot {sb.storyboard_number}")
+        return True
+
     total_shots = len(storyboards)
-    logger.info(f"🚀 ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})")
-    
+    logger.info(
+        f"🚀 ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})"
+    )
+
     for batch_idx in range(0, total_shots, BATCH_SIZE):
-        batch_shots = storyboards[batch_idx:batch_idx + BATCH_SIZE]
+        batch_shots = storyboards[batch_idx : batch_idx + BATCH_SIZE]
         batch_num = (batch_idx // BATCH_SIZE) + 1
         logger.info(f"📦 Batch {batch_num}: Processing {len(batch_shots)} shots")
-        
-        prev_sbs = [s for s in storyboards if s.storyboard_number < batch_shots[0].storyboard_number]
+
+        prev_sbs = [
+            s
+            for s in storyboards
+            if s.storyboard_number < batch_shots[0].storyboard_number
+        ]
         compact_history = _build_compact_history(prev_sbs)
-        
+
         prefetch_data = _prefetch_assets_for_batch(batch_shots)
-        
+
         prompt = _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data)
         log_logic_transition(logger, "ZERO_TOOL_CALL", f"Batch {batch_num}")
-        
-        res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
-        text = res.choices[0].message.content if res.choices else ""
+
+        try:
+            res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
+        except Exception as e:
+            logger.error(f"Batch {batch_num} LLM call failed: {e}")
+            continue
+
+        text = ""
+        if res and res.choices:
+            text = res.choices[0].message.content or ""
         log_ai_interaction(logger, SYSTEM_PROMPT, prompt, res)
-        
+
         updates = _parse_zero_tool_response(text)
-        
+
         for sb in batch_shots:
-            shot_update = next((u for u in updates if u.get("storyboard_id") == sb.id or u.get("shot_number") == sb.storyboard_number), None)
-            
-            if not shot_update:
-                logger.warning(f"No update data generated for shot {sb.storyboard_number}")
-                continue
-                
-            for key in ["action_id", "expression_tag", "background_id"]:
-                val = shot_update.get(key, "")
-                if val and val.startswith("MISSING:"):
-                    desc = val.replace("MISSING:", "").strip()
-                    report_missing_asset(sb.id, key.split('_')[0], desc, f"auto_{key}_{sb.id}")
-                    shot_update[key] = ""
-            
-            update_storyboard_visuals(
-                storyboard_id=sb.id,
-                layout_style=shot_update.get("layout_style", ""),
-                camera_concept=shot_update.get("camera_concept", ""),
-                asset_dynamics=shot_update.get("asset_dynamics", ""),
-                visual_metaphor=shot_update.get("visual_metaphor", ""),
-                transition_in=shot_update.get("transition_in", ""),
-                atmosphere_fx=shot_update.get("atmosphere_fx", ""),
-                action_id=shot_update.get("action_id", ""),
-                expression_tag=shot_update.get("expression_tag", ""),
-                background_id=shot_update.get("background_id", ""),
-                characters_state=json.dumps(shot_update.get("character_positions", []))
+            shot_update = next(
+                (
+                    u
+                    for u in updates
+                    if u.get("storyboard_id") == sb.id
+                    or u.get("shot_number") == sb.storyboard_number
+                ),
+                None,
             )
-            log_logic_transition(logger, "SHOT_COMPLETE", f"Finished Shot {sb.storyboard_number}")
+            _apply_shot_updates(sb, shot_update)
 
     db.close()
     return True
