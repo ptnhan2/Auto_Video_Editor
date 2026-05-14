@@ -31,7 +31,10 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
 
     shot1 = FakeShot("s1", 1, "hero dodge", [FakeChar("Hero")])
     shot2 = FakeShot("s2", 2, "hero attack", [FakeChar("Hero")])
-    mock_query.all.return_value = [shot1, shot2]
+    shot3 = FakeShot("s3", 3, "hero run", [FakeChar("Hero")])
+    shot4 = FakeShot("s4", 4, "hero jump", [FakeChar("Hero")])
+    shot5 = FakeShot("s5", 5, "hero land", [FakeChar("Hero")])
+    mock_query.all.return_value = [shot1, shot2, shot3, shot4, shot5]
 
     # Mock search
     mock_search.return_value = [{"id": "asset_1"}]
@@ -48,13 +51,36 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
           "shot_number": 1,
           "storyboard_id": "s1",
           "layout_style": "diorama",
-          "action_id": "asset_1"
+          "action_id": "asset_1",
+          "atmosphere_fx": ["film_grain", "light_leaks"]
         },
         {
           "shot_number": 2,
           "storyboard_id": "s2",
           "layout_style": "scrapbook",
-          "action_id": "MISSING: jump"
+          "action_id": "MISSING: jump",
+          "atmosphere_fx": "film_grain"
+        },
+        {
+          "shot_number": 3,
+          "storyboard_id": "s3",
+          "layout_style": "diorama",
+          "action_id": "asset_1",
+          "atmosphere_fx": []
+        },
+        {
+          "shot_number": 4,
+          "storyboard_id": "s4",
+          "layout_style": "diorama",
+          "action_id": "asset_1",
+          "atmosphere_fx": ["single"]
+        },
+        {
+          "shot_number": 5,
+          "storyboard_id": "s5",
+          "layout_style": "diorama",
+          "action_id": "asset_1",
+          "atmosphere_fx": null
         }
       ]
     }
@@ -73,12 +99,19 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
 
         assert result is True
         assert mock_gen.call_count == 1  # Only 1 LLM call for the batch
-        assert mock_update.call_count == 2  # Both shots updated in DB
+        assert mock_update.call_count == 5  # All 5 shots updated in DB
         # Verify MISSING asset was reported with correct casing ("Action", not "action")
         assert mock_report.call_count == 1
         report_args = mock_report.call_args
         assert report_args[0][1] == "Action"  # asset_type must be "Action", not "action"
         assert "jump" in report_args[0][2]  # description contains the missing ID
+        
+        # Verify atmosphere_fx sanitization
+        assert mock_update.call_args_list[0][1]['atmosphere_fx'] == "film_grain, light_leaks"
+        assert mock_update.call_args_list[1][1]['atmosphere_fx'] == "film_grain"
+        assert mock_update.call_args_list[2][1]['atmosphere_fx'] == ""
+        assert mock_update.call_args_list[3][1]['atmosphere_fx'] == "single"
+        assert mock_update.call_args_list[4][1]['atmosphere_fx'] == ""
     finally:
         # Cleanup temporary registry file
         if os.path.exists(registry_path):
