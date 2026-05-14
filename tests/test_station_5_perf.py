@@ -48,13 +48,15 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
           "shot_number": 1,
           "storyboard_id": "s1",
           "layout_style": "diorama",
-          "action_id": "asset_1"
+          "action_id": "asset_1",
+          "atmosphere_fx": ["film_grain", "light_leaks"]
         },
         {
           "shot_number": 2,
           "storyboard_id": "s2",
           "layout_style": "scrapbook",
-          "action_id": "MISSING: jump"
+          "action_id": "MISSING: jump",
+          "atmosphere_fx": "film_grain"
         }
       ]
     }
@@ -79,6 +81,10 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
         report_args = mock_report.call_args
         assert report_args[0][1] == "Action"  # asset_type must be "Action", not "action"
         assert "jump" in report_args[0][2]  # description contains the missing ID
+        
+        # Verify atmosphere_fx sanitization
+        assert mock_update.call_args_list[0][1]['atmosphere_fx'] == "film_grain, light_leaks"
+        assert mock_update.call_args_list[1][1]['atmosphere_fx'] == "film_grain"
     finally:
         # Cleanup temporary registry file
         if os.path.exists(registry_path):

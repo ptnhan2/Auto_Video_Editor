@@ -369,6 +369,10 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
                 report_missing_asset(sb.id, ASSET_TYPE_MAP[key], desc, f"auto_{key}_{sb.id}")
                 shot_update[key] = ""
 
+        atmosphere_fx = shot_update.get("atmosphere_fx", "")
+        if isinstance(atmosphere_fx, list):
+            atmosphere_fx = ", ".join(str(x) for x in atmosphere_fx if x is not None)
+
         result = update_storyboard_visuals(
             storyboard_id=sb.id,
             layout_style=shot_update.get("layout_style", ""),
@@ -376,7 +380,7 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
             asset_dynamics=shot_update.get("asset_dynamics", ""),
             visual_metaphor=shot_update.get("visual_metaphor", ""),
             transition_in=shot_update.get("transition_in", ""),
-            atmosphere_fx=shot_update.get("atmosphere_fx", ""),
+            atmosphere_fx=atmosphere_fx,
             action_id=shot_update.get("action_id", ""),
             expression_tag=shot_update.get("expression_tag", ""),
             background_id=shot_update.get("background_id", ""),
