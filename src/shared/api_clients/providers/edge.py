@@ -58,7 +58,7 @@ async def run_edge(text, voice, filepath, **kwargs):
     Render Edge TTS audio với retry logic.
 
     Retry strategy:
-    - Exponential backoff: 1s -> 2s -> 4s
+    - Exponential backoff: 1s -> 2s (MAX_RETRIES=3 => 2 sleep intervals)
     - Random jitter (0-0.5s) để tránh thundering herd khi retry đồng thời
     - Pre-call delay 100-500ms ngẫu nhiên để trải đều request
     - Catch NoAudioReceived cụ thể để phân biệt với lỗi khác
