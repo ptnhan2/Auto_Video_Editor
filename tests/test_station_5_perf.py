@@ -1,5 +1,4 @@
 import json
-import pytest
 from unittest.mock import MagicMock, patch
 
 class FakeShot:
@@ -61,7 +60,8 @@ def test_zero_tool_batch_processing(mock_update, mock_search, mock_gen, mock_db)
     # Run
     # Write a dummy registry file to satisfy the os.path.exists check
     import os
-    if not os.path.exists("public"): os.makedirs("public")
+    if not os.path.exists("public"):
+        os.makedirs("public")
     with open("public/test_registry.json", "w") as f:
         json.dump({"actions": [], "expressions": [], "backgrounds": []}, f)
         

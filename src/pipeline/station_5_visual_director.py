@@ -238,7 +238,8 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
                 try:
                     data = json.loads(s.character_position)
                     pos = ", ".join([f"{c.get('character_id', '')[:5]}: {c.get('position', '')}" for c in data])
-                except: pass
+                except Exception:
+                    pass
             history_lines.append(f"Shot {s.storyboard_number}: Layout={s.layout_style}, Cam={s.camera_concept}, Pos=[{pos}]")
         return "\n".join(history_lines)
 
@@ -256,7 +257,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
             parts.append(f"=== SHOT {sb.storyboard_number} (ID: {sb.id}) ===")
             parts.append(f"Action: {sb.action}")
             parts.append(f"Characters: {char_names}")
-            parts.append(f"Gợi ý Asset (Đã pre-fetch):")
+            parts.append("Gợi ý Asset (Đã pre-fetch):")
             parts.append(f" - Actions: [{actions_str}]")
             parts.append(f" - Expressions: [{expr_str}]")
             parts.append(f" - Backgrounds: [{bg_str}]\n")
