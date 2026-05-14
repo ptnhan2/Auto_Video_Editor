@@ -369,7 +369,7 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
                 report_missing_asset(sb.id, ASSET_TYPE_MAP[key], desc, f"auto_{key}_{sb.id}")
                 shot_update[key] = ""
 
-        atmosphere_fx = shot_update.get("atmosphere_fx", "")
+        atmosphere_fx = shot_update.get("atmosphere_fx") or ""
         if isinstance(atmosphere_fx, list):
             atmosphere_fx = ", ".join(str(x) for x in atmosphere_fx if x is not None)
 
