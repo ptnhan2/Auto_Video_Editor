@@ -164,90 +164,90 @@ def run_station_6_sound_vfx_engineer(episode_id: str, registry_path: str):
         return False
 
     db = SessionLocal()
-    storyboards = db.query(Storyboard).options(joinedload(Storyboard.characters)).filter(
-        Storyboard.episode_id == episode_id
-    ).order_by(Storyboard.storyboard_number).all()
+    try:
+        storyboards = db.query(Storyboard).options(joinedload(Storyboard.characters)).filter(
+            Storyboard.episode_id == episode_id
+        ).order_by(Storyboard.storyboard_number).all()
 
-    if not storyboards:
-        db.close()
-        logger.warning(f"⚠️ No storyboards found for episode {episode_id}.")
-        return False
+        if not storyboards:
+            logger.warning(f"⚠️ No storyboards found for episode {episode_id}.")
+            return False
 
-    model_name = get_model_for_station("station_6_vfx")
-    BATCH_SIZE = 10
-    ASSET_TYPE_MAP = {"sfx_id": "SFX", "vfx_tags": "VFX", "bgm_track": "BGM"}
+        model_name = get_model_for_station("station_6_vfx")
+        BATCH_SIZE = 10
+        ASSET_TYPE_MAP = {"sfx_id": "SFX", "vfx_tags": "VFX", "bgm_track": "BGM"}
 
-    # --- INNER HELPERS ---
+        # --- INNER HELPERS ---
 
-    def _prefetch_audio_assets_for_batch(batch_shots):
-        """Pre-fetch audio asset suggestions for each shot via embedding search.
-        
-        Searches SFX, VFX, and BGM registries so the LLM prompt includes concrete
-        asset IDs without any tool calling loop.
-        """
-        results = {}
-        for sb in batch_shots:
-            sfx = search_audio_vfx_registry(f"{sb.action} sound effect")
-            vfx = search_audio_vfx_registry(f"{sb.visual_metaphor or sb.action} visual effect")
-            bgm = search_audio_vfx_registry(f"{sb.atmosphere or ''} background music")
-            results[sb.id] = {
-                "sfx": [item for item in sfx if item.get("type") == "SFX"][:5],
-                "vfx": [item for item in vfx if item.get("type") == "VFX"][:5],
-                "bgm": [item for item in bgm if item.get("type") == "BGM"][:5],
-            }
-        return results
+        def _prefetch_audio_assets_for_batch(batch_shots):
+            """Pre-fetch audio asset suggestions for each shot via embedding search.
+            
+            Searches SFX, VFX, and BGM registries so the LLM prompt includes concrete
+            asset IDs without any tool calling loop.
+            """
+            results = {}
+            for sb in batch_shots:
+                sfx = search_audio_vfx_registry(f"{sb.action} sound effect")
+                vfx = search_audio_vfx_registry(f"{sb.visual_metaphor or sb.action} visual effect")
+                bgm = search_audio_vfx_registry(f"{sb.atmosphere or ''} background music")
+                results[sb.id] = {
+                    "sfx": [item for item in sfx if item.get("type") == "SFX"][:5],
+                    "vfx": [item for item in vfx if item.get("type") == "VFX"][:5],
+                    "bgm": [item for item in bgm if item.get("type") == "BGM"][:5],
+                }
+            return results
 
-    def _build_compact_history(previous_shots) -> str:
-        """Build compact audio history from shots already processed in earlier batches.
-        
-        Extracts SFX and BGM decisions to give the LLM continuity context.
-        """
-        if not previous_shots:
-            return "None"
-        history_lines = []
-        for s in previous_shots:
-            sfx = ""
-            if s.sound_effect:
-                try:
-                    data = json.loads(s.sound_effect)
-                    sfx = data.get("sfx_id", "None")
-                except Exception:
-                    sfx = s.sound_effect
-            history_lines.append(
-                f"Shot {s.storyboard_number}: SFX={sfx}, BGM={s.bgm_prompt or 'None'}"
-            )
-        return "\n".join(history_lines)
+        def _build_compact_history(previous_shots) -> str:
+            """Build compact audio history from shots already processed in earlier batches.
+            
+            Extracts SFX and BGM decisions to give the LLM continuity context.
+            """
+            if not previous_shots:
+                return "None"
+            history_lines = []
+            for s in previous_shots:
+                sfx = ""
+                if s.sound_effect:
+                    try:
+                        data = json.loads(s.sound_effect)
+                        sfx = data.get("sfx_id", "None")
+                    except Exception:
+                        sfx = s.sound_effect
+                history_lines.append(
+                    f"Shot {s.storyboard_number}: SFX={sfx}, BGM={s.bgm_prompt or 'None'}"
+                )
+            return "\n".join(history_lines)
 
-    def _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data):
-        """Build a single text prompt requesting all audio decisions for the entire batch.
-        
-        Includes pre-fetched asset suggestions so the LLM picks IDs directly.
-        """
-        parts = [
-            "Bạn là Kỹ sư Âm thanh & VFX. Bạn có cái nhìn toàn cảnh về các shot tiếp theo."
-        ]
-        parts.append(f"--- LỊCH SỬ TỪ BATCH TRƯỚC ---\n{compact_history}\n")
+        def _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data):
+            """Build a single text prompt requesting all audio decisions for the entire batch.
+            
+            Includes pre-fetched asset suggestions so the LLM picks IDs directly.
+            """
+            parts = [
+                "Bạn là Kỹ sư Âm thanh & VFX. Bạn có cái nhìn toàn cảnh về các shot tiếp theo."
+            ]
+            parts.append(f"--- LỊCH SỬ TỪ BATCH TRƯỚC ---\n{compact_history}\n")
 
-        for sb in batch_shots:
-            char_names = ", ".join([c.name for c in sb.characters]) if sb.characters else "None"
-            pf = prefetch_data.get(sb.id, {})
-            sfx_str = ", ".join([a.get("id", "") for a in pf.get("sfx", [])])
-            vfx_str = ", ".join([a.get("id", "") for a in pf.get("vfx", [])])
-            bgm_str = ", ".join([a.get("id", "") for a in pf.get("bgm", [])])
+            for sb in batch_shots:
+                char_names = ", ".join([c.name for c in sb.characters]) if sb.characters else "None"
+                pf = prefetch_data.get(sb.id, {})
+                sfx_str = ", ".join([a.get("id", "") for a in pf.get("sfx", [])])
+                vfx_str = ", ".join([a.get("id", "") for a in pf.get("vfx", [])])
+                bgm_str = ", ".join([a.get("id", "") for a in pf.get("bgm", [])])
 
-            parts.append(f"=== SHOT {sb.storyboard_number} (ID: {sb.id}) ===")
-            parts.append(f"Action: {sb.action}")
-            parts.append(f"Dialogue: {sb.dialogue or 'None'}")
-            parts.append(f"Atmosphere: {sb.atmosphere or 'None'}")
-            parts.append(f"Visual Metaphor: {sb.visual_metaphor or 'None'}")
-            parts.append(f"Characters: {char_names}")
-            parts.append("Gợi ý Asset (Đã pre-fetch):")
-            parts.append(f" - SFX: [{sfx_str}]")
-            parts.append(f" - VFX: [{vfx_str}]")
-            parts.append(f" - BGM: [{bgm_str}]\n")
+                parts.append(f"=== SHOT {sb.storyboard_number} (ID: {sb.id}) ===")
+                parts.append(f"Action: {sb.action}")
+                parts.append(f"Dialogue: {sb.dialogue or 'None'}")
+                parts.append(f"Atmosphere: {sb.atmosphere or 'None'}")
+                parts.append(f"Visual Metaphor: {sb.visual_metaphor or 'None'}")
+                parts.append(f"Characters: {char_names}")
+                parts.append("Gợi ý Asset (Đã pre-fetch):")
+                parts.append(f" - SFX: [{sfx_str}]")
+                parts.append(f" - VFX: [{vfx_str}]")
+                parts.append(f" - BGM: [{bgm_str}]\n")
 
-        parts.append(
-            """YÊU CẦU:
+            parts.append(
+                """YÊU CẦU:
 Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc có 2 phần:
 1. "reasoning_and_tracking": Mảng suy luận cho từng shot, ghi rõ lý do chọn mỗi asset.
 2. "final_updates": Mảng quyết định cuối cùng cho TỪNG shot. CHỌN Asset ID từ danh sách gợi ý. Nếu không có, điền "MISSING: <mô tả>".
@@ -271,144 +271,145 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
     }
   ]
 }"""
-        )
-        return "\n".join(parts)
+            )
+            return "\n".join(parts)
 
-    def _parse_zero_tool_response(text: str) -> list:
-        """Extract the 'final_updates' array from the LLM batch JSON response.
-        
-        Strips markdown code fences, finds JSON object via brace extraction,
-        and returns the final_updates list. Returns empty list on failure.
-        """
-        if not text:
-            return []
-        import re
-        stripped = re.sub(r"```(?:json)?\s*", "", text)
-        stripped = re.sub(r"\s*```", "", stripped)
-        try:
-            start = stripped.find("{")
-            end = stripped.rfind("}")
-            if start == -1 or end == -1:
-                logger.warning("No JSON object found in batch response")
+        def _parse_zero_tool_response(text: str) -> list:
+            """Extract the 'final_updates' array from the LLM batch JSON response.
+            
+            Strips markdown code fences, finds JSON object via brace extraction,
+            and returns the final_updates list. Returns empty list on failure.
+            """
+            if not text:
                 return []
-            json_str = stripped[start : end + 1]
-            data = json.loads(json_str)
-            return data.get("final_updates", [])
-        except (json.JSONDecodeError, ValueError, KeyError) as e:
-            logger.error(f"Failed to parse batch JSON: {e}")
-            return []
+            import re
+            stripped = re.sub(r"```(?:json)?\s*", "", text)
+            stripped = re.sub(r"\s*```", "", stripped)
+            try:
+                start = stripped.find("{")
+                end = stripped.rfind("}")
+                if start == -1 or end == -1:
+                    logger.warning("No JSON object found in batch response")
+                    return []
+                json_str = stripped[start : end + 1]
+                data = json.loads(json_str)
+                return data.get("final_updates", [])
+            except (json.JSONDecodeError, ValueError, KeyError) as e:
+                logger.error(f"Failed to parse batch JSON: {e}")
+                return []
 
-    def _apply_shot_audio_updates(sb, shot_update) -> bool:
-        """Apply parsed audio decisions to a single storyboard shot.
-        
-        Handles MISSING asset reporting for sfx_id, vfx_tags, and bgm_track.
-        Calls update_storyboard_audio() to persist changes.
-        Returns True on success.
-        """
-        if not shot_update:
-            logger.warning(f"No update data for shot {sb.storyboard_number}")
-            return False
+        def _apply_shot_audio_updates(sb, shot_update) -> bool:
+            """Apply parsed audio decisions to a single storyboard shot.
+            
+            Handles MISSING asset reporting for sfx_id, vfx_tags, and bgm_track.
+            Calls update_storyboard_audio() to persist changes.
+            Returns True on success.
+            """
+            if not shot_update:
+                logger.warning(f"No update data for shot {sb.storyboard_number}")
+                return False
 
-        sfx_id = shot_update.get("sfx_id", "")
-        vfx_tags = shot_update.get("vfx_tags", [])
-        bgm_track = shot_update.get("bgm_track", "")
+            sfx_id = shot_update.get("sfx_id", "")
+            vfx_tags = shot_update.get("vfx_tags", [])
+            bgm_track = shot_update.get("bgm_track", "")
 
-        # Normalize types
-        if not isinstance(vfx_tags, list):
-            vfx_tags = [vfx_tags] if vfx_tags else []
+            # Normalize types
+            if not isinstance(vfx_tags, list):
+                vfx_tags = [vfx_tags] if vfx_tags else []
 
-        # Handle MISSING for sfx_id
-        if sfx_id and str(sfx_id).startswith("MISSING:"):
-            desc = str(sfx_id).replace("MISSING:", "").strip()
-            report_missing_asset(sb.id, ASSET_TYPE_MAP["sfx_id"], desc, f"auto_sfx_{sb.id}")
-            sfx_id = ""
+            # Handle MISSING for sfx_id
+            if sfx_id and str(sfx_id).startswith("MISSING:"):
+                desc = str(sfx_id).replace("MISSING:", "").strip()
+                report_missing_asset(sb.id, ASSET_TYPE_MAP["sfx_id"], desc, f"auto_sfx_{sb.id}")
+                sfx_id = ""
 
-        # Handle MISSING for vfx_tags (each item)
-        cleaned_vfx = []
-        for vtag in vfx_tags:
-            vtag_str = str(vtag) if vtag else ""
-            if vtag_str.startswith("MISSING:"):
-                desc = vtag_str.replace("MISSING:", "").strip()
-                report_missing_asset(sb.id, ASSET_TYPE_MAP["vfx_tags"], desc, f"auto_vfx_{sb.id}")
-            else:
-                cleaned_vfx.append(vtag_str)
-        vfx_tags = cleaned_vfx
+            # Handle MISSING for vfx_tags (each item)
+            cleaned_vfx = []
+            for vtag in vfx_tags:
+                vtag_str = str(vtag) if vtag else ""
+                if vtag_str.startswith("MISSING:"):
+                    desc = vtag_str.replace("MISSING:", "").strip()
+                    report_missing_asset(sb.id, ASSET_TYPE_MAP["vfx_tags"], desc, f"auto_vfx_{sb.id}")
+                else:
+                    cleaned_vfx.append(vtag_str)
+            vfx_tags = cleaned_vfx
 
-        # Handle MISSING for bgm_track
-        if bgm_track and str(bgm_track).startswith("MISSING:"):
-            desc = str(bgm_track).replace("MISSING:", "").strip()
-            report_missing_asset(sb.id, ASSET_TYPE_MAP["bgm_track"], desc, f"auto_bgm_{sb.id}")
-            bgm_track = ""
+            # Handle MISSING for bgm_track
+            if bgm_track and str(bgm_track).startswith("MISSING:"):
+                desc = str(bgm_track).replace("MISSING:", "").strip()
+                report_missing_asset(sb.id, ASSET_TYPE_MAP["bgm_track"], desc, f"auto_bgm_{sb.id}")
+                bgm_track = ""
 
-        result = update_storyboard_audio(
-            storyboard_id=sb.id,
-            sfx_id=sfx_id,
-            vfx_tags=vfx_tags,
-            bgm_track=bgm_track,
-        )
-        if result.get("status") == "error" or result.get("error"):
-            logger.warning(
-                f"Shot {sb.storyboard_number}: DB update failed - "
-                f"{result.get('message', result.get('error', 'unknown'))}"
+            result = update_storyboard_audio(
+                storyboard_id=sb.id,
+                sfx_id=sfx_id,
+                vfx_tags=vfx_tags,
+                bgm_track=bgm_track,
             )
-            return False
+            if result.get("status") == "error" or result.get("error"):
+                logger.warning(
+                    f"Shot {sb.storyboard_number}: DB update failed - "
+                    f"{result.get('message', result.get('error', 'unknown'))}"
+                )
+                return False
 
-        log_logic_transition(logger, "SHOT_COMPLETE", f"Finished Shot {sb.storyboard_number}")
-        return True
+            log_logic_transition(logger, "SHOT_COMPLETE", f"Finished Shot {sb.storyboard_number}")
+            return True
 
-    # --- MAIN BATCH LOOP ---
-    total_shots = len(storyboards)
-    any_batch_failed = False
-    logger.info(f"🚀 ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})")
+        # --- MAIN BATCH LOOP ---
+        total_shots = len(storyboards)
+        any_batch_failed = False
+        logger.info(f"🚀 ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})")
 
-    for batch_idx in range(0, total_shots, BATCH_SIZE):
-        batch_shots = storyboards[batch_idx : batch_idx + BATCH_SIZE]
-        batch_num = (batch_idx // BATCH_SIZE) + 1
-        logger.info(f"📦 Batch {batch_num}: Processing {len(batch_shots)} shots")
+        for batch_idx in range(0, total_shots, BATCH_SIZE):
+            batch_shots = storyboards[batch_idx : batch_idx + BATCH_SIZE]
+            batch_num = (batch_idx // BATCH_SIZE) + 1
+            logger.info(f"📦 Batch {batch_num}: Processing {len(batch_shots)} shots")
 
-        prev_sbs = [
-            s for s in storyboards
-            if s.storyboard_number < batch_shots[0].storyboard_number
-        ]
-        compact_history = _build_compact_history(prev_sbs)
+            prev_sbs = [
+                s for s in storyboards
+                if s.storyboard_number < batch_shots[0].storyboard_number
+            ]
+            compact_history = _build_compact_history(prev_sbs)
 
-        prefetch_data = _prefetch_audio_assets_for_batch(batch_shots)
+            prefetch_data = _prefetch_audio_assets_for_batch(batch_shots)
 
-        prompt = _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data)
-        log_logic_transition(logger, "ZERO_TOOL_CALL", f"Batch {batch_num}")
+            prompt = _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data)
+            log_logic_transition(logger, "ZERO_TOOL_CALL", f"Batch {batch_num}")
 
-        try:
-            res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
-        except Exception as e:
-            logger.error(f"Batch {batch_num} LLM call failed: {e}")
-            any_batch_failed = True
-            continue
+            try:
+                res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
+            except Exception as e:
+                logger.error(f"Batch {batch_num} LLM call failed: {e}")
+                any_batch_failed = True
+                continue
 
-        text = ""
-        if res and res.choices:
-            text = res.choices[0].message.content or ""
-        log_ai_interaction(logger, SYSTEM_PROMPT, prompt, res)
+            text = ""
+            if res and res.choices:
+                text = res.choices[0].message.content or ""
+            log_ai_interaction(logger, SYSTEM_PROMPT, prompt, res)
 
-        updates = _parse_zero_tool_response(text)
+            updates = _parse_zero_tool_response(text)
 
-        for sb in batch_shots:
-            shot_update = next(
-                (
-                    u for u in updates
-                    if u.get("storyboard_id") == sb.id
-                    or u.get("shot_number") == sb.storyboard_number
-                ),
-                None,
-            )
-            _apply_shot_audio_updates(sb, shot_update)
+            for sb in batch_shots:
+                shot_update = next(
+                    (
+                        u for u in updates
+                        if u.get("storyboard_id") == sb.id
+                        or u.get("shot_number") == sb.storyboard_number
+                    ),
+                    None,
+                )
+                _apply_shot_audio_updates(sb, shot_update)
 
-        # Refresh ORM objects so _build_compact_history sees committed audio updates
-        # from previous batches (update_storyboard_audio uses a separate DB session).
-        db.expire_all()
+            # Refresh ORM objects so _build_compact_history sees committed audio updates
+            # from previous batches (update_storyboard_audio uses a separate DB session).
+            db.expire_all()
 
-    db.close()
-    logger.info(f"\n✨ [AI SUMMARY]\nHoàn thành thiết kế âm thanh cho Episode {episode_id}.\n")
-    return not any_batch_failed
+        logger.info(f"\n✨ [AI SUMMARY]\nHoàn thành thiết kế âm thanh cho Episode {episode_id}.\n")
+        return not any_batch_failed
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
