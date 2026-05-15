@@ -358,6 +358,7 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
 
     # --- MAIN BATCH LOOP ---
     total_shots = len(storyboards)
+    any_batch_failed = False
     logger.info(f"🚀 ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})")
 
     for batch_idx in range(0, total_shots, BATCH_SIZE):
@@ -380,6 +381,7 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
             res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
         except Exception as e:
             logger.error(f"Batch {batch_num} LLM call failed: {e}")
+            any_batch_failed = True
             continue
 
         text = ""
@@ -400,9 +402,13 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
             )
             _apply_shot_audio_updates(sb, shot_update)
 
+        # Refresh ORM objects so _build_compact_history sees committed audio updates
+        # from previous batches (update_storyboard_audio uses a separate DB session).
+        db.expire_all()
+
     db.close()
     logger.info(f"\n✨ [AI SUMMARY]\nHoàn thành thiết kế âm thanh cho Episode {episode_id}.\n")
-    return True
+    return not any_batch_failed
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
