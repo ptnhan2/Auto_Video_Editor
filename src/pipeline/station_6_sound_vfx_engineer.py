@@ -375,21 +375,34 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
             prefetch_data = _prefetch_audio_assets_for_batch(batch_shots)
 
             prompt = _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data)
+            import time
+
             log_logic_transition(logger, "ZERO_TOOL_CALL", f"Batch {batch_num}")
 
-            try:
-                res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
-            except Exception as e:
-                logger.error(f"Batch {batch_num} LLM call failed: {e}")
-                any_batch_failed = True
-                continue
+            MAX_RETRIES = 2
+            updates = []
 
-            text = ""
-            if res and res.choices:
-                text = res.choices[0].message.content or ""
-            log_ai_interaction(logger, SYSTEM_PROMPT, prompt, res)
+            for attempt in range(1, MAX_RETRIES + 1):
+                try:
+                    res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
+                except Exception as e:
+                    logger.error(f"Batch {batch_num} LLM call failed (attempt {attempt}/{MAX_RETRIES}): {e}")
+                    if attempt < MAX_RETRIES:
+                        time.sleep(2 * attempt)
+                    any_batch_failed = True
+                    continue
 
-            updates = _parse_zero_tool_response(text)
+                text = ""
+                if res and res.choices:
+                    text = res.choices[0].message.content or ""
+                log_ai_interaction(logger, SYSTEM_PROMPT, prompt, res)
+
+                updates = _parse_zero_tool_response(text)
+                if updates:
+                    break
+                logger.warning(f"Batch {batch_num}: JSON parse produced no updates (attempt {attempt}/{MAX_RETRIES})")
+                if attempt < MAX_RETRIES:
+                    time.sleep(2 * attempt)
 
             for sb in batch_shots:
                 shot_update = next(
