@@ -503,6 +503,10 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
             )
             _apply_shot_updates(sb, shot_update)
 
+        # Refresh ORM objects so _build_compact_history sees updated visual data
+        # from previous batches (update_storyboard_visuals uses a separate DB session).
+        db.expire_all()
+
     db.close()
     return True
 
