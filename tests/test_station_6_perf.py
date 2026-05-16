@@ -24,7 +24,7 @@ class FakeChar:
 
 
 @patch("src.pipeline.station_6_sound_vfx_engineer.SessionLocal")
-@patch("src.shared.api_clients.llm_client.generate_content")
+@patch("src.pipeline.station_6_sound_vfx_engineer.generate_content")
 @patch("src.pipeline.station_6_sound_vfx_engineer.search_audio_vfx_registry")
 @patch("src.pipeline.station_6_sound_vfx_engineer.report_missing_asset")
 @patch("src.pipeline.station_6_sound_vfx_engineer.update_storyboard_audio")
