@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import List
 
 from dotenv import load_dotenv
+from sqlalchemy.orm import joinedload
 
 # Ensure the parent directory is in the path
 sys.path.append(os.getcwd())
@@ -25,7 +26,9 @@ _schema = importlib.import_module('src.db.schema')
 Storyboard = _schema.Storyboard
 
 _llm = importlib.import_module('src.shared.api_clients.llm_client')
-start_chat = _llm.start_chat
+_config = importlib.import_module('src.config')
+get_model_for_station = _config.get_model_for_station
+generate_content = _llm.generate_content
 embed_texts = _llm.embed_texts
 
 load_dotenv(".env.local")
@@ -145,11 +148,6 @@ QUAN TRỌNG: Chọn Asset ID từ danh sách gợi ý. Xử lý THEO THỨ TỰ
 
 def run_station_6_sound_vfx_engineer(episode_id: str, registry_path: str):
     global available_sfx, available_vfx, available_bgm
-    from sqlalchemy.orm import joinedload
-    
-    _config = importlib.import_module('src.config')
-    get_model_for_station = _config.get_model_for_station
-    generate_content = _llm.generate_content
 
     log_logic_transition(logger, "AGENT_INIT", f"Sound/VFX Engineer (Batch) for Episode: {episode_id}")
     
