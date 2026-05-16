@@ -484,6 +484,12 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
                 feedback = build_validation_feedback(validation_errors)
                 prompt = original_prompt + "\n\n[SỬA LỖI] " + feedback
                 time.sleep(2)
+        else:
+            # Executed when loop completes without break (all retries exhausted)
+            logger.error(
+                f"Batch {batch_num}: ALL retries exhausted — "
+                f"applying best-effort updates with possible gaps"
+            )
 
         for sb in batch_shots:
             shot_update = next(
