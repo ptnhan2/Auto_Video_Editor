@@ -376,19 +376,35 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
 
             prompt = _build_zero_tool_prompt(batch_shots, compact_history, prefetch_data)
             import time
+            from src.shared.schema_validator import (
+                S6_SHOT_SCHEMA,
+                S6_JSON_SCHEMA,
+                validate_batch_updates,
+                build_validation_feedback,
+            )
 
             log_logic_transition(logger, "ZERO_TOOL_CALL", f"Batch {batch_num}")
 
             MAX_RETRIES = 2
             updates = []
+            original_prompt = prompt  # save for retry with feedback
 
             for attempt in range(1, MAX_RETRIES + 1):
                 try:
-                    res = generate_content(model_name, system_prompt=SYSTEM_PROMPT, contents=prompt)
+                    res = generate_content(
+                        model_name,
+                        system_prompt=SYSTEM_PROMPT,
+                        contents=prompt,
+                        response_format=S6_JSON_SCHEMA,
+                        enable_json_schema_validation=True,
+                    )
                 except Exception as e:
-                    logger.error(f"Batch {batch_num} LLM call failed (attempt {attempt}/{MAX_RETRIES}): {e}")
+                    logger.error(
+                        f"Batch {batch_num} LLM call failed "
+                        f"(attempt {attempt}/{MAX_RETRIES}): {e}"
+                    )
                     if attempt < MAX_RETRIES:
-                        time.sleep(2 * attempt)
+                        time.sleep(2)
                     any_batch_failed = True
                     continue
 
@@ -398,11 +414,42 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
                 log_ai_interaction(logger, SYSTEM_PROMPT, prompt, res)
 
                 updates = _parse_zero_tool_response(text)
-                if updates:
+                if not updates:
+                    logger.warning(
+                        f"Batch {batch_num}: JSON parse produced no updates "
+                        f"(attempt {attempt}/{MAX_RETRIES})"
+                    )
+                    if attempt < MAX_RETRIES:
+                        time.sleep(2)
+                    continue
+
+                # Layer 2+3: Client-side validation + smart feedback
+                is_valid, validation_errors = validate_batch_updates(
+                    updates, S6_SHOT_SCHEMA, len(batch_shots)
+                )
+                if is_valid:
+                    logger.info(
+                        f"Batch {batch_num}: Validation PASS (attempt {attempt})"
+                    )
                     break
-                logger.warning(f"Batch {batch_num}: JSON parse produced no updates (attempt {attempt}/{MAX_RETRIES})")
+
+                logger.warning(
+                    f"Batch {batch_num}: Validation FAIL "
+                    f"(attempt {attempt}/{MAX_RETRIES})"
+                )
+                for shot_idx, errs in validation_errors.items():
+                    logger.warning(f"  {shot_idx}: {errs}")
+
                 if attempt < MAX_RETRIES:
-                    time.sleep(2 * attempt)
+                    feedback = build_validation_feedback(validation_errors)
+                    prompt = original_prompt + "\n\n[SỬA LỖI] " + feedback
+                    time.sleep(2)
+            else:
+                # Executed when loop completes without break (all retries exhausted)
+                logger.error(
+                    f"Batch {batch_num}: ALL retries exhausted — "
+                    f"applying best-effort updates with possible gaps"
+                )
 
             for sb in batch_shots:
                 shot_update = next(
