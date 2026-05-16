@@ -42,7 +42,7 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
     # Mock update_storyboard_visuals to return success
     mock_update.return_value = {"status": "success"}
 
-    # Mock LLM — shot 2 has MISSING: jump
+    # Mock LLM — shot 2 has MISSING: jump; all fields valid for schema
     mock_res = MagicMock()
     mock_res.choices[0].message.content = """```json
     {
@@ -51,36 +51,66 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
           "shot_number": 1,
           "storyboard_id": "s1",
           "layout_style": "diorama",
+          "camera_concept": "endless_pan",
+          "asset_dynamics": "stop_motion_stutter",
+          "visual_metaphor": "red_string",
+          "transition_in": "paper_tear",
+          "atmosphere_fx": "film_grain",
           "action_id": "asset_1",
-          "atmosphere_fx": ["film_grain", "light_leaks"]
+          "expression_tag": "asset_1",
+          "background_id": "asset_1"
         },
         {
           "shot_number": 2,
           "storyboard_id": "s2",
           "layout_style": "scrapbook",
+          "camera_concept": "whip_pan",
+          "asset_dynamics": "spring_overshoot",
+          "visual_metaphor": "magnifying_glass",
+          "transition_in": "ink_bleed",
+          "atmosphere_fx": "light_leaks",
           "action_id": "MISSING: jump",
-          "atmosphere_fx": "film_grain"
+          "expression_tag": "asset_1",
+          "background_id": "asset_1"
         },
         {
           "shot_number": 3,
           "storyboard_id": "s3",
-          "layout_style": "diorama",
+          "layout_style": "split_screen",
+          "camera_concept": "crash_zoom",
+          "asset_dynamics": "wobble_jitter",
+          "visual_metaphor": "blueprint_overlay",
+          "transition_in": "object_wipe",
+          "atmosphere_fx": "drop_shadows",
           "action_id": "asset_1",
-          "atmosphere_fx": []
+          "expression_tag": "asset_1",
+          "background_id": "asset_1"
         },
         {
           "shot_number": 4,
           "storyboard_id": "s4",
-          "layout_style": "diorama",
+          "layout_style": "frame_in_frame",
+          "camera_concept": "dolly_zoom_2d",
+          "asset_dynamics": "float_drift",
+          "visual_metaphor": "polaroid_frame",
+          "transition_in": "page_flip",
+          "atmosphere_fx": "chromatic_aberration",
           "action_id": "asset_1",
-          "atmosphere_fx": ["single"]
+          "expression_tag": "asset_1",
+          "background_id": "asset_1"
         },
         {
           "shot_number": 5,
           "storyboard_id": "s5",
-          "layout_style": "diorama",
+          "layout_style": "continuous_scroll",
+          "camera_concept": "dutch_roll",
+          "asset_dynamics": "paper_fold",
+          "visual_metaphor": "kinetic_typography",
+          "transition_in": "burn_reveal",
+          "atmosphere_fx": "halftone_filter",
           "action_id": "asset_1",
-          "atmosphere_fx": null
+          "expression_tag": "asset_1",
+          "background_id": "asset_1"
         }
       ]
     }
@@ -106,12 +136,12 @@ def test_zero_tool_batch_processing(mock_update, mock_report, mock_search, mock_
         assert report_args[0][1] == "Action"  # asset_type must be "Action", not "action"
         assert "jump" in report_args[0][2]  # description contains the missing ID
         
-        # Verify atmosphere_fx sanitization
-        assert mock_update.call_args_list[0][1]['atmosphere_fx'] == "film_grain, light_leaks"
-        assert mock_update.call_args_list[1][1]['atmosphere_fx'] == "film_grain"
-        assert mock_update.call_args_list[2][1]['atmosphere_fx'] == ""
-        assert mock_update.call_args_list[3][1]['atmosphere_fx'] == "single"
-        assert mock_update.call_args_list[4][1]['atmosphere_fx'] == ""
+        # Verify atmosphere_fx passes through correctly as valid enum strings
+        assert mock_update.call_args_list[0][1]['atmosphere_fx'] == "film_grain"
+        assert mock_update.call_args_list[1][1]['atmosphere_fx'] == "light_leaks"
+        assert mock_update.call_args_list[2][1]['atmosphere_fx'] == "drop_shadows"
+        assert mock_update.call_args_list[3][1]['atmosphere_fx'] == "chromatic_aberration"
+        assert mock_update.call_args_list[4][1]['atmosphere_fx'] == "halftone_filter"
     finally:
         # Cleanup temporary registry file
         if os.path.exists(registry_path):
