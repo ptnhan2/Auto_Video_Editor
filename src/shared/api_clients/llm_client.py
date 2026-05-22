@@ -74,6 +74,7 @@ def _format_messages(
     return messages
 
 
+# ✏️ EDIT ZONE START — Issue #142: DeepSeek response_format compat
 # ---------------------------------------------------------------------------
 # Completion (single-turn)
 # ---------------------------------------------------------------------------
@@ -120,6 +121,7 @@ def completion(
 
     # Run the tool-calling loop (handles the first call internally).
     return run_tool_loop(messages, registry, _completion_fn)
+# ✏️ EDIT ZONE END — Issue #142
 
 
 def generate_content(
