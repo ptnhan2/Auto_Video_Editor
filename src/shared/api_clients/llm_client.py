@@ -79,6 +79,35 @@ def _format_messages(
 # Completion (single-turn)
 # ---------------------------------------------------------------------------
 
+
+def _ensure_response_format_compat(model: str, kwargs: dict) -> None:
+    """Downgrade json_schema → json_object for providers that lack support.
+
+    DeepSeek (and potentially other non-OpenAI providers) does not support
+    Structured Outputs (``response_format={"type": "json_schema"}``).  This
+    function pre-processes *kwargs* so callers can use ``json_schema`` freely
+    without knowing which backend will serve the request.
+
+    Mutates *kwargs* in-place.
+    """
+    resp_fmt = kwargs.get("response_format")
+    if not isinstance(resp_fmt, dict):
+        return
+    if resp_fmt.get("type") != "json_schema":
+        return
+    # Only downgrade for providers known to lack json_schema support.
+    if not model.startswith("deepseek/"):
+        return
+
+    logger.warning(
+        "DeepSeek does not support response_format=json_schema; "
+        "downgrading to json_object for model=%s",
+        model,
+    )
+    kwargs["response_format"] = {"type": "json_object"}
+    kwargs.pop("enable_json_schema_validation", None)
+
+
 def completion(
     model: str,
     messages: list[dict],
@@ -101,6 +130,9 @@ def completion(
         if max_rounds was exhausted; caller should check.
     """
     _configure_litellm()
+
+    # DeepSeek compatibility: downgrade json_schema → json_object (Issue #142)
+    _ensure_response_format_compat(model, kwargs)
 
     tool_schemas = build_tool_schemas(tools) if tools else None
     registry = tool_functions or (build_tool_registry(tools) if tools else {})
