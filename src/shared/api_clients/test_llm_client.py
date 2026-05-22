@@ -519,7 +519,7 @@ class TestResponseFormatCompat:
 
         from src.shared.api_clients.llm_client import completion
 
-        response = completion(
+        _response = completion(
             "deepseek/deepseek-chat",
             [{"role": "user", "content": "return JSON"}],
             response_format={
@@ -554,7 +554,7 @@ class TestResponseFormatCompat:
                 "schema": {"type": "object", "properties": {"x": {"type": "string"}}},
             },
         }
-        response = completion(
+        _response = completion(
             "gemini/gemini-2.5-flash",
             [{"role": "user", "content": "return JSON"}],
             response_format=original_format,
@@ -574,7 +574,7 @@ class TestResponseFormatCompat:
 
         from src.shared.api_clients.llm_client import completion
 
-        response = completion(
+        _response = completion(
             "deepseek/deepseek-chat",
             [{"role": "user", "content": "return JSON"}],
             response_format={"type": "json_object"},
@@ -592,7 +592,7 @@ class TestResponseFormatCompat:
 
         from src.shared.api_clients.llm_client import completion
 
-        response = completion(
+        _response = completion(
             "deepseek/deepseek-chat",
             [{"role": "user", "content": "hi"}],
         )
