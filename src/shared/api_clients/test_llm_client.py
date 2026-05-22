@@ -500,3 +500,102 @@ class TestRunToolLoop:
 
         # Assert — bị chặn ở MAX_TOOL_ROUNDS, không chạy vô hạn.
         assert call_count[0] == MAX_TOOL_ROUNDS
+
+
+# ===================================================================
+# Test Group 5: response_format compatibility (Issue #142)
+# ===================================================================
+
+
+class TestResponseFormatCompat:
+    """_ensure_response_format_compat — downgrade json_schema for DeepSeek."""
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_deepseek_json_schema_downgraded_to_json_object(
+        self, mock_completion, gemini_key_set
+    ):
+        """DeepSeek model + json_schema → kwargs get json_object instead."""
+        mock_completion.return_value = _make_text_response("{}")
+
+        from src.shared.api_clients.llm_client import completion
+
+        _response = completion(
+            "deepseek/deepseek-chat",
+            [{"role": "user", "content": "return JSON"}],
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "test",
+                    "schema": {"type": "object", "properties": {"x": {"type": "string"}}},
+                },
+            },
+        )
+
+        # Verify litellm was called with downgraded response_format
+        call_kwargs = mock_completion.call_args[1]
+        assert "response_format" in call_kwargs
+        assert call_kwargs["response_format"] == {"type": "json_object"}
+        # enable_json_schema_validation must NOT be present
+        assert "enable_json_schema_validation" not in call_kwargs
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_gemini_json_schema_passes_through_untouched(
+        self, mock_completion, gemini_key_set
+    ):
+        """Gemini model + json_schema → kwargs unchanged (Gemini supports it)."""
+        mock_completion.return_value = _make_text_response("{}")
+
+        from src.shared.api_clients.llm_client import completion
+
+        original_format = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "test",
+                "schema": {"type": "object", "properties": {"x": {"type": "string"}}},
+            },
+        }
+        _response = completion(
+            "gemini/gemini-2.5-flash",
+            [{"role": "user", "content": "return JSON"}],
+            response_format=original_format,
+        )
+
+        # Verify litellm received the original, untouched response_format
+        call_kwargs = mock_completion.call_args[1]
+        assert "response_format" in call_kwargs
+        assert call_kwargs["response_format"] == original_format
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_deepseek_json_object_passes_through_untouched(
+        self, mock_completion, gemini_key_set
+    ):
+        """DeepSeek + json_object → already compatible, no change needed."""
+        mock_completion.return_value = _make_text_response("{}")
+
+        from src.shared.api_clients.llm_client import completion
+
+        _response = completion(
+            "deepseek/deepseek-chat",
+            [{"role": "user", "content": "return JSON"}],
+            response_format={"type": "json_object"},
+        )
+
+        call_kwargs = mock_completion.call_args[1]
+        assert call_kwargs["response_format"] == {"type": "json_object"}
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_no_response_format_passes_through_untouched(
+        self, mock_completion, gemini_key_set
+    ):
+        """No response_format at all → nothing changes, no crash."""
+        mock_completion.return_value = _make_text_response("Hello")
+
+        from src.shared.api_clients.llm_client import completion
+
+        _response = completion(
+            "deepseek/deepseek-chat",
+            [{"role": "user", "content": "hi"}],
+        )
+
+        call_kwargs = mock_completion.call_args[1]
+        assert "response_format" not in call_kwargs
