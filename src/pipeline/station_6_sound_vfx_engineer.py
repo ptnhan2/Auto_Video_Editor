@@ -444,6 +444,7 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
                     time.sleep(2)
             else:
                 # Executed when loop completes without break (all retries exhausted)
+                any_batch_failed = True
                 logger.error(
                     f"Batch {batch_num}: ALL retries exhausted — "
                     f"applying best-effort updates with possible gaps"
