@@ -7,6 +7,68 @@ Layer 4 (Degradation): Handled in station-specific _apply_* functions.
 """
 
 # ---------------------------------------------------------------------------
+# Shared enum constants — single source of truth for both Layer 1 & Layer 2
+# ---------------------------------------------------------------------------
+
+LAYOUT_STYLE_ENUM = (
+    "diorama",
+    "scrapbook",
+    "split_screen",
+    "frame_in_frame",
+    "isometric",
+    "top_down",
+    "matchbox",
+    "continuous_scroll",
+)
+
+CAMERA_CONCEPT_ENUM = (
+    "endless_pan",
+    "micro_macro_zoom",
+    "whip_pan",
+    "camera_shake",
+    "crash_zoom",
+    "dutch_roll",
+    "dolly_zoom_2d",
+)
+
+ASSET_DYNAMICS_ENUM = (
+    "stop_motion_stutter",
+    "spring_overshoot",
+    "wobble_jitter",
+    "float_drift",
+    "paper_fold",
+    "hinge_rigging",
+    "smear_2d",
+)
+
+VISUAL_METAPHOR_ENUM = (
+    "red_string",
+    "highlight_redact",
+    "kinetic_typography",
+    "magnifying_glass",
+    "blueprint_overlay",
+    "polaroid_frame",
+)
+
+TRANSITION_IN_ENUM = (
+    "paper_tear",
+    "ink_bleed",
+    "object_wipe",
+    "graphic_match_cut",
+    "page_flip",
+    "burn_reveal",
+)
+
+ATMOSPHERE_FX_ENUM = (
+    "drop_shadows",
+    "halftone_filter",
+    "paper_texture",
+    "light_leaks",
+    "chromatic_aberration",
+    "film_grain",
+)
+
+# ---------------------------------------------------------------------------
 # Layer 1 — Provider-level JSON Schemas (OpenAI strict structured output)
 # ---------------------------------------------------------------------------
 
@@ -27,73 +89,27 @@ S5_JSON_SCHEMA = {
                             "storyboard_id": {"type": "string"},
                             "layout_style": {
                                 "type": "string",
-                                "enum": [
-                                    "diorama",
-                                    "scrapbook",
-                                    "split_screen",
-                                    "frame_in_frame",
-                                    "isometric",
-                                    "top_down",
-                                    "matchbox",
-                                    "continuous_scroll",
-                                ],
+                                "enum": list(LAYOUT_STYLE_ENUM),
                             },
                             "camera_concept": {
                                 "type": "string",
-                                "enum": [
-                                    "endless_pan",
-                                    "micro_macro_zoom",
-                                    "whip_pan",
-                                    "camera_shake",
-                                    "crash_zoom",
-                                    "dutch_roll",
-                                    "dolly_zoom_2d",
-                                ],
+                                "enum": list(CAMERA_CONCEPT_ENUM),
                             },
                             "asset_dynamics": {
                                 "type": "string",
-                                "enum": [
-                                    "stop_motion_stutter",
-                                    "spring_overshoot",
-                                    "wobble_jitter",
-                                    "float_drift",
-                                    "paper_fold",
-                                    "hinge_rigging",
-                                    "smear_2d",
-                                ],
+                                "enum": list(ASSET_DYNAMICS_ENUM),
                             },
                             "visual_metaphor": {
                                 "type": "string",
-                                "enum": [
-                                    "red_string",
-                                    "highlight_redact",
-                                    "kinetic_typography",
-                                    "magnifying_glass",
-                                    "blueprint_overlay",
-                                    "polaroid_frame",
-                                ],
+                                "enum": list(VISUAL_METAPHOR_ENUM),
                             },
                             "transition_in": {
                                 "type": "string",
-                                "enum": [
-                                    "paper_tear",
-                                    "ink_bleed",
-                                    "object_wipe",
-                                    "graphic_match_cut",
-                                    "page_flip",
-                                    "burn_reveal",
-                                ],
+                                "enum": list(TRANSITION_IN_ENUM),
                             },
                             "atmosphere_fx": {
                                 "type": "string",
-                                "enum": [
-                                    "drop_shadows",
-                                    "halftone_filter",
-                                    "paper_texture",
-                                    "light_leaks",
-                                    "chromatic_aberration",
-                                    "film_grain",
-                                ],
+                                "enum": list(ATMOSPHERE_FX_ENUM),
                             },
                             "action_id": {"type": "string"},
                             "expression_tag": {"type": "string"},
@@ -159,73 +175,27 @@ S6_JSON_SCHEMA = {
 S5_SHOT_SCHEMA = {
     "layout_style": {
         "required": True,
-        "enum": [
-            "diorama",
-            "scrapbook",
-            "split_screen",
-            "frame_in_frame",
-            "isometric",
-            "top_down",
-            "matchbox",
-            "continuous_scroll",
-        ],
+        "enum": list(LAYOUT_STYLE_ENUM),
     },
     "camera_concept": {
         "required": True,
-        "enum": [
-            "endless_pan",
-            "micro_macro_zoom",
-            "whip_pan",
-            "camera_shake",
-            "crash_zoom",
-            "dutch_roll",
-            "dolly_zoom_2d",
-        ],
+        "enum": list(CAMERA_CONCEPT_ENUM),
     },
     "asset_dynamics": {
         "required": True,
-        "enum": [
-            "stop_motion_stutter",
-            "spring_overshoot",
-            "wobble_jitter",
-            "float_drift",
-            "paper_fold",
-            "hinge_rigging",
-            "smear_2d",
-        ],
+        "enum": list(ASSET_DYNAMICS_ENUM),
     },
     "visual_metaphor": {
         "required": True,
-        "enum": [
-            "red_string",
-            "highlight_redact",
-            "kinetic_typography",
-            "magnifying_glass",
-            "blueprint_overlay",
-            "polaroid_frame",
-        ],
+        "enum": list(VISUAL_METAPHOR_ENUM),
     },
     "transition_in": {
         "required": True,
-        "enum": [
-            "paper_tear",
-            "ink_bleed",
-            "object_wipe",
-            "graphic_match_cut",
-            "page_flip",
-            "burn_reveal",
-        ],
+        "enum": list(TRANSITION_IN_ENUM),
     },
     "atmosphere_fx": {
         "required": True,
-        "enum": [
-            "drop_shadows",
-            "halftone_filter",
-            "paper_texture",
-            "light_leaks",
-            "chromatic_aberration",
-            "film_grain",
-        ],
+        "enum": list(ATMOSPHERE_FX_ENUM),
     },
     "action_id": {"required": True},
     "expression_tag": {"required": True},
