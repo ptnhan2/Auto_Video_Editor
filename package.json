@@ -11,7 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "studio": "npx remotion studio remotion/index.ts",
+    "studio": "npx @remotion/cli studio remotion/index.ts",
     "render:all": "tsx scripts/tools/render_all.ts",
     "factory": "npx tsx scripts/core/asset_factory.ts"
   },
