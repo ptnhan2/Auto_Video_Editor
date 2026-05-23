@@ -3,6 +3,7 @@ export const scriptFiles: string[] = [
   "chuong_2.json",
   "compiled_019d861bbf3ea9d3bfcdd25458dcdbef.json",
   "compiled_019e1b29210e5da702bf5f591cdbb62e.json",
+  "compiled_019e249d5cc2a5f8edee0a42bc472caf.json",
   "draft.json",
   "draft_ai.json",
   "reviewed_script.json",
