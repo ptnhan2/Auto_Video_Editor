@@ -385,3 +385,23 @@ class Asset(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     deleted_at = Column(DateTime, nullable=True)
+
+
+# ==========================================
+# ASSET FACTORY QUEUE (Phase 1 - Issue #148)
+# ==========================================
+
+class AssetQueue(Base):
+    __tablename__ = 'asset_queue'
+
+    id = Column(String, primary_key=True, default=generate_ulid)
+    asset_type = Column(String, nullable=False, index=True)
+    prompt = Column(Text, nullable=True)
+    hash_key = Column(String, nullable=False, index=True)
+    status = Column(String, nullable=False, default='PENDING', index=True)
+    result_asset_id = Column(String, nullable=True)
+    priority = Column(Integer, default=0)
+    error_msg = Column(Text, nullable=True)
+    retry_count = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
