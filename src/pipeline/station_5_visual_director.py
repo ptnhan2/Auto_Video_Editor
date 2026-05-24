@@ -3,6 +3,7 @@ import re
 import sys
 import json
 import math
+import hashlib
 import importlib
 from typing import List
 
@@ -25,6 +26,7 @@ SessionLocal = _db.SessionLocal
 
 _schema = importlib.import_module('src.db.schema')
 Storyboard = _schema.Storyboard
+AssetQueue = _schema.AssetQueue
 
 _config = importlib.import_module('src.config')
 get_model_for_station = _config.get_model_for_station
@@ -157,7 +159,26 @@ def update_storyboard_visuals(
 
 def report_missing_asset(storyboard_id: str, asset_type: str, description: str, suggested_id: str) -> dict:
     log_logic_transition(logger, "TOOL_START", "report_missing_asset", {"type": asset_type, "id": suggested_id})
-    return {"status": "reported"}
+    hash_key = hashlib.md5(f"{asset_type}{description}".encode()).hexdigest()
+    db = SessionLocal()
+    try:
+        entry = AssetQueue(
+            asset_type=asset_type,
+            prompt=description,
+            hash_key=hash_key,
+            status="PENDING",
+            priority=0,
+        )
+        db.add(entry)
+        db.commit()
+        log_db_operation(logger, "insert", "AssetQueue", {"asset_type": asset_type, "hash_key": hash_key})
+        return {"status": "reported", "queued": True, "hash_key": hash_key}
+    except Exception as e:
+        db.rollback()
+        logger.warning(f"Failed to queue asset request: {e}")
+        return {"status": "error", "message": str(e)}
+    finally:
+        db.close()
 
 SYSTEM_PROMPT = """Bạn là Senior Motion Graphics Editor chuyên trách hệ thống Remotion (Phong cách Paper Cutout).
 Nhiệm vụ của bạn là xử lý MỘT LƯỢT (single-pass) một batch các shot, xuất ra 1 JSON duy nhất chứa toàn bộ quyết định visual.
