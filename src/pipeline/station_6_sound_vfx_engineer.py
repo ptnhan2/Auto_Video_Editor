@@ -2,8 +2,8 @@ import os
 import sys
 import json
 import math
+import hashlib
 import importlib
-from datetime import datetime
 from typing import List
 
 from dotenv import load_dotenv
@@ -24,6 +24,7 @@ SessionLocal = _db.SessionLocal
 
 _schema = importlib.import_module('src.db.schema')
 Storyboard = _schema.Storyboard
+AssetQueue = _schema.AssetQueue
 
 _llm = importlib.import_module('src.shared.api_clients.llm_client')
 _config = importlib.import_module('src.config')
@@ -116,21 +117,32 @@ def update_storyboard_audio(storyboard_id: str, sfx_id: str, vfx_tags: list[str]
 
 def report_missing_asset(storyboard_id: str, asset_type: str, description: str, suggested_id: str) -> dict:
     log_logic_transition(logger, "TOOL_START", "report_missing_asset", {"type": asset_type, "id": suggested_id})
-    
-    backlog_path = os.path.join("public", "missing_assets_backlog.jsonl")
-    
-    entry = {
-        "storyboard_id": storyboard_id,
-        "asset_type": asset_type,
-        "description": description,
-        "suggested_id": suggested_id,
-        "reported_at": datetime.now().isoformat()
-    }
-    
-    with open(backlog_path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-        
-    return {"status": "reported"}
+    hash_key = hashlib.md5(f"{asset_type}{description}".encode()).hexdigest()
+    db = SessionLocal()
+    try:
+        # Dedup check: skip if hash_key already exists
+        existing = db.query(AssetQueue).filter(AssetQueue.hash_key == hash_key).first()
+        if existing:
+            log_db_operation(logger, "skip_duplicate", "AssetQueue", {"hash_key": hash_key})
+            return {"status": "already_queued", "hash_key": hash_key}
+
+        entry = AssetQueue(
+            asset_type=asset_type,
+            prompt=description,
+            hash_key=hash_key,
+            status="PENDING",
+            priority=0,
+        )
+        db.add(entry)
+        db.commit()
+        log_db_operation(logger, "insert", "AssetQueue", {"asset_type": asset_type, "hash_key": hash_key})
+        return {"status": "reported", "queued": True, "hash_key": hash_key}
+    except Exception as e:
+        db.rollback()
+        logger.warning(f"Failed to queue asset request: {e}")
+        return {"status": "error", "message": str(e)}
+    finally:
+        db.close()
 
 SYSTEM_PROMPT = """Bạn là Kỹ sư Âm thanh và VFX (Sound & VFX Engineer).
 Nhiệm vụ của bạn là xử lý MỘT LƯỢT (single-pass) một batch các shot, xuất ra 1 JSON duy nhất chứa toàn bộ quyết định âm thanh & VFX.
