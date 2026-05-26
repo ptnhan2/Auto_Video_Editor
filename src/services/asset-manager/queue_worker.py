@@ -53,6 +53,15 @@ _eg = _iu.module_from_spec(_gspec)  # noqa: E402
 _gspec.loader.exec_module(_eg)  # noqa: E402
 _audio_gen = _eg.generator  # real SFX/BGM generator
 
+# Phase 4: Real Google Imagen visual generator
+_vgpath = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "visual_generator.py"
+)
+_vgspec = _iu.spec_from_file_location("visual_generator", _vgpath)  # noqa: E402
+_vg = _iu.module_from_spec(_vgspec)  # noqa: E402
+_vgspec.loader.exec_module(_vg)  # noqa: E402
+_visual_gen = _vg.generator  # real background/expression generator
+
 
 def _mock_generator(asset_type, prompt, hash_key):
     """Mock generator — returns a dummy asset ID for Phase 2 testing."""
@@ -61,9 +70,9 @@ def _mock_generator(asset_type, prompt, hash_key):
 
 # Default registry maps known asset types to generators
 GENERATOR_REGISTRY = {
-    "background": _mock_generator,
+    "background": _visual_gen,
     "character_pose": _mock_generator,
-    "expression": _mock_generator,
+    "expression": _visual_gen,
     "item": _mock_generator,
     "sound_effect": _audio_gen,
     "sfx": _audio_gen,
