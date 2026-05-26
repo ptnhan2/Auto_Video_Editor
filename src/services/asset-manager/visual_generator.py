@@ -168,15 +168,17 @@ def _save_image(image_bytes, directory, filename):
 # ---------------------------------------------------------------------------
 
 
-def _update_registry_background(registry_path, asset_id, rel_path):
+def _update_registry_background(registry_path, asset_id, rel_path, description=""):
     """Append a background entry to asset_registry.json's 'backgrounds' array.
 
-    Entry format: {id: asset_id, path: rel_path}
+    Entry format: {id: asset_id, path: rel_path, description: description}
+    Backward-compatible: 'description' field matches existing registry entries.
 
     Args:
         registry_path: Absolute path to asset_registry.json.
         asset_id: Short asset ID (hash_key[:12]).
         rel_path: Relative path (e.g. 'background/abc123456789.jpg').
+        description: Human-readable description of the background.
     """
     try:
         if not os.path.exists(registry_path):
@@ -194,7 +196,7 @@ def _update_registry_background(registry_path, asset_id, rel_path):
             logger.info("Background %s already in registry, skipping", asset_id)
             return
 
-        entry = {"id": asset_id, "path": rel_path}
+        entry = {"id": asset_id, "path": rel_path, "description": description}
         registry["backgrounds"].append(entry)
 
         # Atomic write: tmp + os.replace to avoid corruption
@@ -209,15 +211,17 @@ def _update_registry_background(registry_path, asset_id, rel_path):
         logger.error("Failed to update registry (background): %s", e)
 
 
-def _update_registry_expression(registry_path, asset_id, rel_path):
+def _update_registry_expression(registry_path, asset_id, rel_path, description=""):
     """Append an expression entry to asset_registry.json's 'expressions' array.
 
-    Entry format: {id: asset_id, path: rel_path}
+    Entry format: {id: asset_id, path: rel_path, description: description}
+    Backward-compatible: 'description' field matches existing registry entries.
 
     Args:
         registry_path: Absolute path to asset_registry.json.
         asset_id: Short asset ID (hash_key[:12]).
         rel_path: Relative path (e.g. 'expressions/female_01/abc123456789.jpg').
+        description: Human-readable description of the expression.
     """
     try:
         if not os.path.exists(registry_path):
@@ -235,7 +239,7 @@ def _update_registry_expression(registry_path, asset_id, rel_path):
             logger.info("Expression %s already in registry, skipping", asset_id)
             return
 
-        entry = {"id": asset_id, "path": rel_path}
+        entry = {"id": asset_id, "path": rel_path, "description": description}
         registry["expressions"].append(entry)
 
         # Atomic write
@@ -292,7 +296,7 @@ def generate_background(asset_type, prompt, hash_key):
         return None
 
     rel_path = f"background/{asset_id}.jpg"
-    _update_registry_background(REGISTRY_PATH, asset_id, rel_path)
+    _update_registry_background(REGISTRY_PATH, asset_id, rel_path, description=prompt)
     return asset_id
 
 
@@ -336,7 +340,7 @@ def generate_expression(asset_type, prompt, hash_key):
         return None
 
     rel_path = f"expressions/female_01/{asset_id}.jpg"
-    _update_registry_expression(REGISTRY_PATH, asset_id, rel_path)
+    _update_registry_expression(REGISTRY_PATH, asset_id, rel_path, description=prompt)
     return asset_id
 
 
