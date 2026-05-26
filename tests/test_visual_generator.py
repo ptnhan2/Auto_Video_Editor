@@ -80,11 +80,10 @@ def mock_genai_client(fake_jpeg_bytes):
     mock_client = MagicMock()
     mock_client.models.generate_images.return_value = mock_response
 
-    with patch("google.genai.Client", return_value=mock_client), \
-         patch("google.genai.types.GenerateImagesConfig"), \
-         patch("google.genai.types.GenerateContentConfig"):
+    with patch("google.genai.Client", return_value=mock_client, create=True), \
+         patch("google.genai.types.GenerateImagesConfig", create=True), \
+         patch("google.genai.types.GenerateContentConfig", create=True):
         yield mock_client
-
 
 # ===========================================================================
 # AC1: _save_image — save JPEG bytes to disk
@@ -129,13 +128,16 @@ class TestUpdateRegistryBackground:
             json.dump({"backgrounds": []}, f)
 
         mod._update_registry_background(
-            registry_path, "abc123456789", "background/abc123456789.jpg"
+            registry_path, "abc123456789", "background/abc123456789.jpg",
+            description="sunset over mountains"
         )
 
         with open(registry_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         assert any(
-            e["id"] == "abc123456789" and e["path"] == "background/abc123456789.jpg"
+            e["id"] == "abc123456789"
+            and e["path"] == "background/abc123456789.jpg"
+            and e["description"] == "sunset over mountains"
             for e in data["backgrounds"]
         )
 
@@ -174,7 +176,8 @@ class TestUpdateRegistryExpression:
             json.dump({"expressions": []}, f)
 
         mod._update_registry_expression(
-            registry_path, "happy001", "expressions/female_01/happy001.jpg"
+            registry_path, "happy001", "expressions/female_01/happy001.jpg",
+            description="happy face"
         )
 
         with open(registry_path, "r", encoding="utf-8") as f:
@@ -182,6 +185,7 @@ class TestUpdateRegistryExpression:
         assert any(
             e["id"] == "happy001"
             and e["path"] == "expressions/female_01/happy001.jpg"
+            and e["description"] == "happy face"
             for e in data["expressions"]
         )
 
@@ -320,6 +324,73 @@ class TestGenerateBackground:
         assert "background" in prompt_used.lower()
         assert "forest" in prompt_used
         assert "cinematic" in prompt_used.lower()
+
+
+# ===========================================================================
+# AC4b: Gemini fallback when Imagen fails
+# ===========================================================================
+
+class TestGeminiFallback:
+    def test_falls_back_to_gemini_when_imagen_fails(
+        self, mod, mock_api_key, tmp_path, fake_jpeg_bytes
+    ):
+        """When Imagen generate_images raises, fallback calls generate_content."""
+        registry_path = os.path.join(str(tmp_path), "asset_registry.json")
+        with open(registry_path, "w") as f:
+            json.dump({"backgrounds": []}, f)
+        bg_dir = os.path.join(str(tmp_path), "background")
+
+        # Mock Imagen to fail, Gemini fallback to succeed
+        mock_inline_data = MagicMock()
+        mock_inline_data.mime_type = "image/jpeg"
+        mock_inline_data.data = fake_jpeg_bytes
+
+        mock_part = MagicMock()
+        mock_part.inline_data = mock_inline_data
+
+        mock_content = MagicMock()
+        mock_content.parts = [mock_part]
+
+        mock_candidate = MagicMock()
+        mock_candidate.content = mock_content
+
+        mock_fallback_response = MagicMock()
+        mock_fallback_response.candidates = [mock_candidate]
+
+        mock_client = MagicMock()
+        mock_client.models.generate_images.side_effect = Exception("Imagen down")
+        mock_client.models.generate_content.return_value = mock_fallback_response
+
+        with patch("google.genai.Client", return_value=mock_client, create=True), \
+             patch("google.genai.types.GenerateImagesConfig", create=True), \
+             patch("google.genai.types.GenerateContentConfig", create=True):
+            with patch.object(mod, "REGISTRY_PATH", registry_path), \
+                 patch.object(mod, "BACKGROUND_DIR", bg_dir):
+                result = mod.generate_background(
+                    "background", "forest", "hash1234567890"
+                )
+
+        assert result == "hash12345678"
+        # Verify generate_content was called (fallback path)
+        mock_client.models.generate_content.assert_called_once()
+
+    def test_fallback_also_fails_returns_none(self, mod, mock_api_key, tmp_path):
+        """When both Imagen and Gemini fail, returns None."""
+        bg_dir = os.path.join(str(tmp_path), "background")
+
+        mock_client = MagicMock()
+        mock_client.models.generate_images.side_effect = Exception("Imagen down")
+        mock_client.models.generate_content.side_effect = Exception("Gemini down")
+
+        with patch("google.genai.Client", return_value=mock_client, create=True), \
+             patch("google.genai.types.GenerateImagesConfig", create=True), \
+             patch("google.genai.types.GenerateContentConfig", create=True):
+            with patch.object(mod, "BACKGROUND_DIR", bg_dir):
+                result = mod.generate_background(
+                    "background", "forest", "hash1234567890"
+                )
+
+        assert result is None
 
 
 # ===========================================================================

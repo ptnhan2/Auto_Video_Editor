@@ -90,9 +90,9 @@ def mock_visual_genai(monkeypatch):
     mock_client = MagicMock()
     mock_client.models.generate_images.return_value = mock_response
 
-    with patch("google.genai.Client", return_value=mock_client), \
-         patch("google.genai.types.GenerateImagesConfig"), \
-         patch("google.genai.types.GenerateContentConfig"):
+    with patch("google.genai.Client", return_value=mock_client, create=True), \
+         patch("google.genai.types.GenerateImagesConfig", create=True), \
+         patch("google.genai.types.GenerateContentConfig", create=True):
         yield
 
 
