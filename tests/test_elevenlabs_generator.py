@@ -335,7 +335,8 @@ def test_registry_appends_sfx_entry(mod, mock_env_keys, mock_200_response):
         with patch("builtins.open", side_effect=mock_open):
             with patch("os.makedirs"):
                 with patch("os.path.exists", return_value=True):
-                    mod.generate_sfx("sound_effect", "punch hit", "u" * 32)
+                    with patch("os.replace"):
+                        mod.generate_sfx("sound_effect", "punch hit", "u" * 32)
 
     assert captured_json, "Registry was not written"
     registry = json.loads(captured_json)
@@ -378,7 +379,8 @@ def test_registry_appends_bgm_entry(mod, mock_env_keys, mock_200_response):
         with patch("builtins.open", side_effect=mock_open):
             with patch("os.makedirs"):
                 with patch("os.path.exists", return_value=True):
-                    mod.generate_bgm("bgm", "orchestral sadness", "v" * 32)
+                    with patch("os.replace"):
+                        mod.generate_bgm("bgm", "orchestral sadness", "v" * 32)
 
     assert captured_json, "Registry was not written"
     registry = json.loads(captured_json)
@@ -422,8 +424,9 @@ def test_registry_skips_duplicate_id(mod, mock_env_keys, mock_200_response):
         with patch("builtins.open", side_effect=mock_open):
             with patch("os.makedirs"):
                 with patch("os.path.exists", return_value=True):
-                    # hash_key[:12] will be "w"*12, same as existing
-                    mod.generate_sfx("sound_effect", "test", asset_id * 3)
+                    with patch("os.replace"):
+                        # hash_key[:12] will be "w"*12, same as existing
+                        mod.generate_sfx("sound_effect", "test", asset_id * 3)
 
     if captured_json:
         registry = json.loads(captured_json)

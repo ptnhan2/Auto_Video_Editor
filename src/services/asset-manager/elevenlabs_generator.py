@@ -270,8 +270,11 @@ def _update_asset_registry(asset_id, asset_type, prompt):
         }
         registry["audioTracks"].append(entry)
 
-        with open(REGISTRY_PATH, "w", encoding="utf-8") as f:
+        # Atomic write: tmp file first, then os.replace to avoid corruption
+        tmp_path = REGISTRY_PATH + ".tmp"
+        with open(tmp_path, "w", encoding="utf-8") as f:
             json.dump(registry, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, REGISTRY_PATH)
 
         logger.info(
             "Updated asset_registry.json with %s:%s", asset_type, asset_id
