@@ -599,3 +599,79 @@ class TestResponseFormatCompat:
 
         call_kwargs = mock_completion.call_args[1]
         assert "response_format" not in call_kwargs
+
+
+# ===================================================================
+# Test Group 6: ChatSession response_format compatibility (Issue #146)
+# ===================================================================
+
+
+class TestChatSessionResponseFormatCompat:
+    """ChatSession passes response_format through _ensure_response_format_compat."""
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_deepseek_json_schema_downgraded_in_chatsession(
+        self, mock_completion, gemini_key_set
+    ):
+        """ChatSession + DeepSeek + json_schema → downgraded to json_object."""
+        mock_completion.return_value = _make_text_response("{}")
+
+        from src.shared.api_clients.llm_client import ChatSession
+
+        session = ChatSession(
+            "deepseek/deepseek-chat",
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "test",
+                    "schema": {"type": "object", "properties": {"x": {"type": "string"}}},
+                },
+            },
+        )
+        session.send_message("return JSON")
+
+        call_kwargs = mock_completion.call_args[1]
+        assert "response_format" in call_kwargs
+        assert call_kwargs["response_format"] == {"type": "json_object"}
+        assert "enable_json_schema_validation" not in call_kwargs
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_gemini_json_schema_passes_through_in_chatsession(
+        self, mock_completion, gemini_key_set
+    ):
+        """ChatSession + Gemini + json_schema → unchanged (Gemini supports it)."""
+        mock_completion.return_value = _make_text_response("{}")
+
+        from src.shared.api_clients.llm_client import ChatSession
+
+        original_format = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "test",
+                "schema": {"type": "object", "properties": {"x": {"type": "string"}}},
+            },
+        }
+        session = ChatSession(
+            "gemini/gemini-2.5-flash",
+            response_format=original_format,
+        )
+        session.send_message("return JSON")
+
+        call_kwargs = mock_completion.call_args[1]
+        assert "response_format" in call_kwargs
+        assert call_kwargs["response_format"] == original_format
+
+    @patch("src.shared.api_clients.llm_client.litellm.completion")
+    def test_no_response_format_chatsession_noop(
+        self, mock_completion, gemini_key_set
+    ):
+        """ChatSession without response_format → no crash, nothing injected."""
+        mock_completion.return_value = _make_text_response("Hello")
+
+        from src.shared.api_clients.llm_client import ChatSession
+
+        session = ChatSession("deepseek/deepseek-chat")
+        session.send_message("hi")
+
+        call_kwargs = mock_completion.call_args[1]
+        assert "response_format" not in call_kwargs

@@ -216,6 +216,7 @@ class ChatSession:
         self.tool_functions = tool_functions or (build_tool_registry(tools) if tools else {})
         self.tool_schemas = build_tool_schemas(tools) if tools else None
         self.kwargs = kwargs
+        _ensure_response_format_compat(self.model, self.kwargs)
 
     def send_message(self, content: str) -> Any:
         """Send a user message and return the final assistant response.
