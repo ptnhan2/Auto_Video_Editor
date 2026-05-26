@@ -21,6 +21,7 @@ Architecture:
 
 import sys
 import os
+import importlib.util as _iu
 import logging
 from datetime import datetime
 
@@ -44,14 +45,12 @@ MAX_RETRIES = 3
 # Returns result_asset_id on success, None on failure.
 
 # Phase 3: Real ElevenLabs audio generator
-import importlib.util as _iu
-import os as _os
-_gpath = _os.path.join(
-    _os.path.dirname(_os.path.abspath(__file__)), "elevenlabs_generator.py"
+_gpath = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "elevenlabs_generator.py"
 )
-_gspec = _iu.spec_from_file_location("elevenlabs_generator", _gpath)
-_eg = _iu.module_from_spec(_gspec)
-_gspec.loader.exec_module(_eg)
+_gspec = _iu.spec_from_file_location("elevenlabs_generator", _gpath)  # noqa: E402
+_eg = _iu.module_from_spec(_gspec)  # noqa: E402
+_gspec.loader.exec_module(_eg)  # noqa: E402
 _audio_gen = _eg.generator  # real SFX/BGM generator
 
 
