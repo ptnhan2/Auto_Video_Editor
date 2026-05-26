@@ -38,11 +38,21 @@ logger = logging.getLogger("queue_worker")
 MAX_RETRIES = 3
 
 # ---------------------------------------------------------------------------
-# GENERATOR REGISTRY (Dependency Injection — Phase 2: Mock)
+# GENERATOR REGISTRY (Dependency Injection — Phase 2: Mock → Phase 3: Real)
 # ---------------------------------------------------------------------------
-# Phase 3/4 will replace these mocks with real generators.
 # Generator signature: def generator(asset_type, prompt, hash_key) -> str | None
 # Returns result_asset_id on success, None on failure.
+
+# Phase 3: Real ElevenLabs audio generator
+import importlib.util as _iu
+import os as _os
+_gpath = _os.path.join(
+    _os.path.dirname(_os.path.abspath(__file__)), "elevenlabs_generator.py"
+)
+_gspec = _iu.spec_from_file_location("elevenlabs_generator", _gpath)
+_eg = _iu.module_from_spec(_gspec)
+_gspec.loader.exec_module(_eg)
+_audio_gen = _eg.generator  # real SFX/BGM generator
 
 
 def _mock_generator(asset_type, prompt, hash_key):
@@ -50,13 +60,15 @@ def _mock_generator(asset_type, prompt, hash_key):
     return f"mock_{asset_type}_{hash_key[:8]}"
 
 
-# Default registry maps known asset types to mock generators
+# Default registry maps known asset types to generators
 GENERATOR_REGISTRY = {
     "background": _mock_generator,
     "character_pose": _mock_generator,
     "expression": _mock_generator,
     "item": _mock_generator,
-    "sound_effect": _mock_generator,
+    "sound_effect": _audio_gen,
+    "sfx": _audio_gen,
+    "bgm": _audio_gen,
 }
 
 
