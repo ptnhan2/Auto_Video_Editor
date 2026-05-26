@@ -17,6 +17,7 @@ import importlib.util
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest  # noqa: E402
+from unittest.mock import patch, MagicMock  # noqa: E402
 from sqlalchemy import create_engine  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 
@@ -62,6 +63,37 @@ def db_session(initialized_engine):
     yield session
     session.rollback()
     session.close()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def mock_visual_genai(monkeypatch):
+    """Mock google.genai.Client so queue_worker tests don't call real API.
+
+    Since Phase 4 wires visual_generator into GENERATOR_REGISTRY for
+    'background' and 'expression', queue_worker tests that use the default
+    registry would fail with 'No API key configured'. This autouse fixture
+    sets a dummy API key and patches google.genai.Client globally.
+    """
+    monkeypatch.setenv("GOOGLE_GENERATIVE_AI_API_KEY", "test-queue-worker-key")
+    fake_jpeg = b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00\xff\xdb"
+
+    mock_image = MagicMock()
+    mock_image.image_bytes = fake_jpeg
+    mock_image.mime_type = "image/jpeg"
+
+    mock_generated = MagicMock()
+    mock_generated.image = mock_image
+
+    mock_response = MagicMock()
+    mock_response.generated_images = [mock_generated]
+
+    mock_client = MagicMock()
+    mock_client.models.generate_images.return_value = mock_response
+
+    with patch("google.genai.Client", return_value=mock_client), \
+         patch("google.genai.types.GenerateImagesConfig"), \
+         patch("google.genai.types.GenerateContentConfig"):
+        yield
 
 
 # ---------------------------------------------------------------------------
@@ -265,7 +297,8 @@ def test_process_queue_dispatches_to_generator(db_session):
 
     db_session.refresh(task)
     assert task.status == "READY"
-    assert task.result_asset_id == "mock_background_beach_ha"
+    # Phase 4: visual generator returns hash_key[:12]
+    assert task.result_asset_id == "beach_hash"
     assert task.id in processed
 
 
@@ -291,9 +324,9 @@ def test_process_queue_happy_path_multiple_tasks(db_session):
     assert task1.status == "READY"
     assert task2.status == "READY"
     assert task3.status == "READY"
-    assert task1.result_asset_id == "mock_background_h1"
+    assert task1.result_asset_id == "h1"
     assert task2.result_asset_id == "mock_character_pose_h2"
-    assert task3.result_asset_id == "mock_expression_h3"
+    assert task3.result_asset_id == "h3"
 
 
 def test_process_queue_unknown_asset_type_fails(db_session):
