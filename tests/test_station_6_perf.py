@@ -161,3 +161,128 @@ def test_zero_tool_batch_audio_processing(mock_update, mock_report, mock_search,
     finally:
         if os.path.exists(registry_path):
             os.remove(registry_path)
+
+
+@patch("src.pipeline.station_6_sound_vfx_engineer.SessionLocal")
+@patch("src.pipeline.station_6_sound_vfx_engineer.generate_content")
+@patch("src.pipeline.station_6_sound_vfx_engineer.search_audio_vfx_registry")
+@patch("src.pipeline.station_6_sound_vfx_engineer.report_missing_asset")
+@patch("src.pipeline.station_6_sound_vfx_engineer.update_storyboard_audio")
+def test_multi_batch_cross_batch_history(mock_update, mock_report, mock_search, mock_gen, mock_db):
+    """Verify S6 multi-batch: 15 shots → 2 batches, cross-batch history, db.expire_all().
+
+    AC1: 15 shots → 2 LLM calls, 15 DB updates
+    AC2: _build_compact_history sees previous batch data after expire_all
+    """
+    from src.pipeline.station_6_sound_vfx_engineer import run_station_6_sound_vfx_engineer
+
+    # -- Mock DB session with expire_all tracking --
+    mock_session = MagicMock()
+    mock_db.return_value = mock_session
+
+    # Setup the full query chain: query(...).options(...).filter(...).order_by(...).all()
+    mock_query = mock_session.query.return_value.options.return_value.filter.return_value.order_by.return_value
+
+    # -- Build 15 FakeShot objects (2 batches: 10 + 5) --
+    atmospheres = ["tense", "action", "calm", "urgent", "hopeful"]
+    shots = []
+    for i in range(1, 16):
+        shots.append(FakeShot(
+            sid=f"s{i}",
+            num=i,
+            action=f"hero action {i}",
+            dialogue=f"Line {i}" if i % 3 == 0 else None,
+            atmosphere=atmospheres[i % 5],
+            visual_metaphor=f"vfx_{i}" if i % 2 == 0 else None,
+        ))
+    mock_query.all.return_value = shots
+
+    # -- Mock registry search --
+    mock_search.return_value = [
+        {"id": "sfx_woosh", "type": "SFX"},
+        {"id": "vfx_flash", "type": "VFX"},
+        {"id": "bgm_tense", "type": "BGM"},
+    ]
+
+    # -- Mock DB update always succeeds --
+    mock_update.return_value = {"status": "success"}
+
+    # -- Mock LLM: 2 responses (batch 1: 10 shots, batch 2: 5 shots) --
+    def _build_batch_response(start_num, count):
+        """Build valid JSON response for N shots starting at start_num."""
+        updates = []
+        for i in range(start_num, start_num + count):
+            updates.append({
+                "shot_number": i,
+                "storyboard_id": f"s{i}",
+                "sfx_id": "sfx_woosh",
+                "vfx_tags": ["vfx_flash"],
+                "bgm_track": "bgm_tense",
+            })
+        payload = json.dumps({
+            "reasoning_and_tracking": [
+                {"shot": i, "logic": f"Shot {i} logic", "audio_mood": "action"}
+                for i in range(start_num, start_num + count)
+            ],
+            "final_updates": updates,
+        }, ensure_ascii=False)
+
+        resp = MagicMock()
+        resp.choices[0].message.content = f"```json\n{payload}\n```"
+        return resp
+
+    mock_gen.side_effect = [
+        _build_batch_response(1, 10),   # Batch 1: shots 1-10
+        _build_batch_response(11, 5),   # Batch 2: shots 11-15
+    ]
+
+    # -- Setup registry file --
+    import os
+    registry_path = "public/test_multi_batch_registry.json"
+    with open(registry_path, "w") as f:
+        json.dump({
+            "sfx": [{"id": "sfx_woosh"}],
+            "vfx": [{"id": "vfx_flash"}],
+            "bgm": [{"id": "bgm_tense"}],
+        }, f)
+
+    try:
+        result = run_station_6_sound_vfx_engineer("ep_1", registry_path)
+
+        # --- AC1: 2 LLM calls, 15 DB updates ---
+        assert result is True
+        assert mock_gen.call_count == 2, (
+            f"Expected 2 LLM calls (2 batches), got {mock_gen.call_count}"
+        )
+        assert mock_update.call_count == 15, (
+            f"Expected 15 DB updates (1 per shot), got {mock_update.call_count}"
+        )
+
+        # --- AC2: db.expire_all() called between batches ---
+        # Called after each batch (batch 1 + batch 2 = 2 calls)
+        assert mock_session.expire_all.call_count >= 2, (
+            f"Expected expire_all() called at least 2 times (once per batch), "
+            f"got {mock_session.expire_all.call_count}"
+        )
+
+        # --- AC2: Cross-batch history in batch 2 prompt ---
+        batch2_prompt = mock_gen.call_args_list[1][1]["contents"]
+
+        # History section must exist
+        assert "LỊCH SỬ TỪ BATCH TRƯỚC" in batch2_prompt, (
+            "Batch 2 prompt must include cross-batch history section"
+        )
+
+        # Previous batch shots (1-10) referenced in history
+        for shot_num in range(1, 11):
+            assert f"Shot {shot_num}" in batch2_prompt, (
+                f"Batch 2 history must reference Shot {shot_num} from batch 1"
+            )
+
+        # Batch 2 shots themselves (11-15) appear in prompt body (not just history)
+        assert "SHOT 11" in batch2_prompt
+        assert "SHOT 15" in batch2_prompt
+
+    finally:
+        if os.path.exists(registry_path):
+            os.remove(registry_path)
