@@ -128,9 +128,8 @@ function useAssets() {
   // const { data, error, isLoading } = useSWR('/api/assets', fetcher)
   const [assets] = useState<Asset[]>(MOCK_ASSETS);
   const isLoading = false;
-  let error: Error | null = null;
 
-  return { assets, isLoading, error };
+  return { assets, isLoading, error: null as Error | null };
 }
 
 // ---------------------------------------------------------------------------
