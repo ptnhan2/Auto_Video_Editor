@@ -36,7 +36,6 @@
     "@tensorflow/tfjs-core": "^4.22.0",
     "@types/form-data": "^2.2.1",
     "ai": "^6.0.77",
-    "better-sqlite3": "^11.0.0",
     "axios": "^1.13.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -57,7 +56,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/better-sqlite3": "^7.6.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/ui": "^4.0.18",

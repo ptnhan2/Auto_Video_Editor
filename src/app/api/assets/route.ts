@@ -12,7 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ function isValidStatus(value: string): value is ValidStatus {
 
 interface AssetRow {
   id: string;
-  asset_type: string;
+  type: string;
   prompt: string | null;
   status: string;
   result_asset_id: string | null;
@@ -113,21 +113,21 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
   const dbPath = path.resolve(process.cwd(), DB_FILENAME);
-  let db: Database.Database | undefined;
+  let db: DatabaseSync | undefined;
 
   try {
-    db = new Database(dbPath, { readonly: true });
+    db = new DatabaseSync(dbPath, { open: true, readonly: true });
 
     // Count total matching rows (without pagination)
     const countSql = `SELECT COUNT(*) AS total FROM asset_queue ${whereClause}`;
     const countResult = db.prepare(countSql).get(params) as { total: number };
     const total = countResult.total;
 
-    // Fetch paginated rows
+    // Fetch paginated rows, aliasing asset_type → type for cleaner API
     const dataSql = `
       SELECT
         id,
-        asset_type,
+        asset_type AS type,
         prompt,
         status,
         result_asset_id,
