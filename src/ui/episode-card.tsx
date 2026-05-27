@@ -1,7 +1,7 @@
 // ✏️ EDIT ZONE START
 import { Clapperboard, Clock } from "lucide-react";
 import type { Episode } from "@/shared/types/episode";
-import { StatusBadge } from "./status-badge";
+import { PipelineStatusBadge } from "./pipeline-status-badge";
 
 export interface EpisodeCardProps {
   episode: Episode;
@@ -19,7 +19,7 @@ export function EpisodeCard({ episode }: EpisodeCardProps) {
             {episode.dramaTitle ?? "Unknown Drama"}
           </span>
         </div>
-        <StatusBadge status={episode.status} />
+        <PipelineStatusBadge status={episode.status} />
       </div>
       <h3 className="mt-2 text-base font-semibold text-card-foreground leading-snug">
         Ep {episode.episodeNumber}: {episode.title}

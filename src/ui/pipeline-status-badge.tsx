@@ -42,11 +42,11 @@ const statusLabelMap: Record<DramaStatus | EpisodeStatus, string> = {
   failed: "Failed",
 };
 
-export interface StatusBadgeProps {
+export interface PipelineStatusBadgeProps {
   status: DramaStatus | EpisodeStatus;
 }
 
-export function StatusBadge({ status }: StatusBadgeProps) {
+export function PipelineStatusBadge({ status }: PipelineStatusBadgeProps) {
   const variant = statusVariantMap[status] ?? "draft";
   const label = statusLabelMap[status] ?? status;
 
