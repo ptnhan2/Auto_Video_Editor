@@ -119,3 +119,17 @@ All agents MUST read their respective constitution before starting any task.
 ---
 
 _Last updated: May 2026_
+### Rule H: "Approved Runtime Dependencies"
+
+For SQLite access from Next.js API routes, the project standard is **
+ode:sqlite** (Node.js 22+ built-in, zero external deps). Requires --experimental-sqlite flag.
+
+**Pre-approved for all API route Workers:**
+- import { DatabaseSync } from "node:sqlite" — no plan re-approval needed
+- Type stubs at src/shared/types/node-sqlite.d.ts — auto-approved EDIT ZONE expansion
+
+**DO NOT use:**
+- Python subprocess for DB reads from API routes
+- etter-sqlite3 (replaced by 
+ode:sqlite)
+
