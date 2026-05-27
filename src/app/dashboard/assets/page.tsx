@@ -128,7 +128,7 @@ function useAssets() {
   // const { data, error, isLoading } = useSWR('/api/assets', fetcher)
   const [assets] = useState<Asset[]>(MOCK_ASSETS);
   const isLoading = false;
-  const error: Error | null = null;
+  let error: Error | null = null;
 
   return { assets, isLoading, error };
 }
@@ -203,13 +203,7 @@ export default function AssetDashboardPage() {
   if (error) {
     return (
       <AssetDashboardShell>
-        <ErrorState
-          message={
-            error instanceof Error
-              ? error.message
-              : "Failed to load assets"
-          }
-        />
+        <ErrorState message={error.message} />
       </AssetDashboardShell>
     );
   }
