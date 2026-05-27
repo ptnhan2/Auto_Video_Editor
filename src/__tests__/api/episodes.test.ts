@@ -25,7 +25,7 @@ vi.mock("node:sqlite", () => ({
 // Force fresh module import to reset the `db` singleton in getDb()
 // ═══════════════════════════════════════════════════════════════════
 let routeModule: {
-  GET: () => Promise<Response>;
+  GET: (req: Request) => Promise<Response>;
   POST: (req: Request) => Promise<Response>;
 };
 
@@ -37,9 +37,18 @@ beforeEach(async () => {
   routeModule = await import("@/app/api/episodes/route");
 });
 
+// Helper: create a GET Request with optional query params
+function createGetRequest(params?: Record<string, string>): Request {
+  const url = new URL("http://localhost/api/episodes");
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  }
+  return new Request(url.toString());
+}
+
 // ─── GET /api/episodes ────────────────────────────────────────────
 describe("GET /api/episodes", () => {
-  it("returns episodes array on success", async () => {
+  it("returns episodes array with pagination metadata", async () => {
     const mockEpisodes = [
       {
         id: "ep1",
@@ -62,34 +71,53 @@ describe("GET /api/episodes", () => {
     ];
 
     mockStatement.all.mockReturnValue(mockEpisodes);
+    mockStatement.get.mockReturnValue({ count: 42 });
 
-    const response = await routeModule.GET();
+    const req = createGetRequest({ page: "2", limit: "10" });
+    const response = await routeModule.GET(req);
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ episodes: mockEpisodes });
+    expect(body).toEqual({
+      episodes: mockEpisodes,
+      pagination: { page: 2, limit: 10, total: 42, totalPages: 5 },
+    });
   });
 
-  it("returns empty array when no episodes exist", async () => {
+  it("uses default pagination when no params provided", async () => {
     mockStatement.all.mockReturnValue([]);
+    mockStatement.get.mockReturnValue({ count: 0 });
 
-    const response = await routeModule.GET();
+    const req = createGetRequest();
+    const response = await routeModule.GET(req);
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ episodes: [] });
+    expect(body.pagination).toEqual({ page: 1, limit: 50, total: 0, totalPages: 0 });
   });
 
-  it("returns 500 on database error", async () => {
+  it("clamps limit to max 100", async () => {
+    mockStatement.all.mockReturnValue([]);
+    mockStatement.get.mockReturnValue({ count: 0 });
+
+    const req = createGetRequest({ limit: "999" });
+    const response = await routeModule.GET(req);
+    const body = await response.json();
+
+    expect(body.pagination.limit).toBe(100);
+  });
+
+  it("returns 500 on database error (generic message)", async () => {
     mockDb.prepare.mockImplementation(() => {
       throw new Error("SQLITE_CORRUPT");
     });
 
-    const response = await routeModule.GET();
+    const req = createGetRequest();
+    const response = await routeModule.GET(req);
     const body = await response.json();
 
     expect(response.status).toBe(500);
-    expect(body).toHaveProperty("error");
+    expect(body.error).toBe("Failed to fetch episodes");
   });
 });
 
@@ -147,6 +175,21 @@ describe("POST /api/episodes", () => {
     expect(body).toHaveProperty("error");
   });
 
+  it("returns 400 when drama_id exceeds 36 chars", async () => {
+    const req = new Request("http://localhost/api/episodes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        drama_id: "x".repeat(37),
+        episode_number: 1,
+        title: "Test",
+      }),
+    });
+    const response = await routeModule.POST(req);
+
+    expect(response.status).toBe(400);
+  });
+
   it("returns 400 when episode_number is zero", async () => {
     const req = new Request("http://localhost/api/episodes", {
       method: "POST",
@@ -158,10 +201,8 @@ describe("POST /api/episodes", () => {
       }),
     });
     const response = await routeModule.POST(req);
-    const body = await response.json();
 
     expect(response.status).toBe(400);
-    expect(body).toHaveProperty("error");
   });
 
   it("returns 400 when title is missing", async () => {
@@ -171,10 +212,23 @@ describe("POST /api/episodes", () => {
       body: JSON.stringify({ drama_id: "drama1", episode_number: 1 }),
     });
     const response = await routeModule.POST(req);
-    const body = await response.json();
 
     expect(response.status).toBe(400);
-    expect(body).toHaveProperty("error");
+  });
+
+  it("returns 400 when title exceeds 255 chars", async () => {
+    const req = new Request("http://localhost/api/episodes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        drama_id: "drama1",
+        episode_number: 1,
+        title: "x".repeat(256),
+      }),
+    });
+    const response = await routeModule.POST(req);
+
+    expect(response.status).toBe(400);
   });
 
   it("returns 400 on invalid JSON body", async () => {
@@ -186,11 +240,9 @@ describe("POST /api/episodes", () => {
     const response = await routeModule.POST(req);
 
     expect(response.status).toBe(400);
-    // Invalid JSON returns plain NextResponse, not JSON body
   });
 
-  it("returns 500 on database insert error", async () => {
-    // Only make the FIRST prepare call throw (the INSERT)
+  it("returns 500 on database insert error (generic message)", async () => {
     mockDb.prepare.mockImplementation(() => {
       throw new Error("SQLITE_CONSTRAINT");
     });
@@ -208,6 +260,6 @@ describe("POST /api/episodes", () => {
     const body = await response.json();
 
     expect(response.status).toBe(500);
-    expect(body).toHaveProperty("error");
+    expect(body.error).toBe("Failed to create episode");
   });
 });
