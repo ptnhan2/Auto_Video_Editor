@@ -94,11 +94,25 @@ After making changes, the agent MUST:
 - Manager reviews diff (not description) before approving
 - Tasks dispatched sequentially, never in parallel on the same module
 
+### Rule G: "Frontend Component Discipline"
+
+Applies to all Next.js/React/Remotion components. FE Dev Agent MUST follow these rules.
+
+1. **Pages only compose** — `/src/app/**/page.tsx` imports and arranges components only. No raw `<div className="flex...">` blocks in pages.
+2. **Design tokens only** — No hardcoded colors (`#fff`, `rgb(...)`). Use shadcn/ui CSS variables (`bg-primary`, `text-muted-foreground`).
+3. **1 component = 1 file** — One React component per file. Sub-components allowed only if truly private (not exported).
+4. **Props interface before JSX** — Interface/type must be defined before the function component.
+5. **Load taste-skill first** — Before designing any UI, FE Dev Agent MUST run `skill("taste-skill")` to avoid generic AI aesthetics.
+6. **Storybook for isolation** — Develop each component in Storybook before integrating into pages. Read existing `.stories.tsx` to discover available components.
+7. **GSAP for complex animation** — Use GSAP for scroll-trigger, stagger, and timeline animations. Use CSS transitions for simple hover states.
+8. **Chrome DevTools for debugging** — Use Chrome DevTools MCP tools to screenshot, inspect DOM, and verify visual output before submitting PR.
+
 #### Agent Constitutions
 
 Detailed agent rules are defined in:
 - `.kilo/agent/worker.md` — Worker agent rules
 - `.kilo/agent/manager.md` — Manager agent rules
+- `.kilo/agent/fe-dev.md` — Frontend Dev agent rules
 
 All agents MUST read their respective constitution before starting any task.
 
