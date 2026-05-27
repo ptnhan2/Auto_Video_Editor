@@ -11,7 +11,7 @@
  *   add `episode_id?` query param filter.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 
@@ -43,7 +43,7 @@ interface AssetRow {
 
 // ── Handler ────────────────────────────────────────────────────────────────
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(req: Request): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
 
   // -- Parse query params --

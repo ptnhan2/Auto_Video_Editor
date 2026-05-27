@@ -9,7 +9,6 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { NextRequest, NextResponse } from 'next/server';
 
 // ═══════════════════════════════════════════════════════════════════
 // Mock node:sqlite
@@ -37,7 +36,7 @@ vi.mock('node:sqlite', () => ({
 // ═══════════════════════════════════════════════════════════════════
 
 let routeModule: {
-  GET: (req: NextRequest) => Promise<NextResponse>;
+  GET: (req: Request) => Promise<Response>;
 };
 
 beforeEach(async () => {
