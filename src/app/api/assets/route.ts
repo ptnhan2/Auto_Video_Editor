@@ -12,28 +12,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import Database from 'better-sqlite3';
 import path from 'node:path';
-
-// ── Types for node:sqlite (not in @types/node@20) ──────────────────────────
-
-interface SqliteRow {
-  [column: string]: unknown;
-}
-
-interface SqliteStatement {
-  all(params?: Record<string, unknown>): SqliteRow[];
-  get(params?: Record<string, unknown>): SqliteRow;
-}
-
-interface SqliteDatabase {
-  prepare(sql: string): SqliteStatement;
-  close(): void;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { DatabaseSync } = require('node:sqlite') as {
-  DatabaseSync: new (path: string, opts?: { open?: boolean }) => SqliteDatabase;
-};
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -133,15 +113,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
   const dbPath = path.resolve(process.cwd(), DB_FILENAME);
-  let db: SqliteDatabase | undefined;
+  let db: Database.Database | undefined;
 
   try {
-    db = new DatabaseSync(dbPath, { open: true });
+    db = new Database(dbPath, { readonly: true });
 
     // Count total matching rows (without pagination)
     const countSql = `SELECT COUNT(*) AS total FROM asset_queue ${whereClause}`;
-    const countResult = db.prepare(countSql).get(params);
-    const total = Number(countResult.total);
+    const countResult = db.prepare(countSql).get(params) as { total: number };
+    const total = countResult.total;
 
     // Fetch paginated rows
     const dataSql = `
@@ -163,7 +143,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       ...params,
       limit,
       offset,
-    }) as AssetRow[];
+    }) as unknown as AssetRow[];
 
     return NextResponse.json({
       data: rows,

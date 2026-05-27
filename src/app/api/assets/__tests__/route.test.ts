@@ -7,125 +7,16 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import Database from 'better-sqlite3';
+
+// ── Test DB ─────────────────────────────────────────────────────────────────
+
+let db: Database.Database;
 
 // ── In-memory DB setup ─────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { DatabaseSync } = require('node:sqlite') as {
-  DatabaseSync: new (path: string) => { prepare: (sql: string) => { run: (params?: Record<string, unknown>) => void }; close: () => void };
-};
-
-let db: ReturnType<typeof DatabaseSync>;
-
-const SAMPLE_DATA = [
-  {
-    id: '01J001',
-    asset_type: 'background',
-    prompt: 'Sunset over mountains',
-    hash_key: 'abc001',
-    status: 'READY',
-    result_asset_id: 'bg_01J001',
-    priority: 0,
-    error_msg: null,
-    retry_count: 0,
-    created_at: '2026-05-25T10:00:00',
-    updated_at: '2026-05-25T10:00:00',
-  },
-  {
-    id: '01J002',
-    asset_type: 'background',
-    prompt: 'City skyline at night',
-    hash_key: 'abc002',
-    status: 'PENDING',
-    result_asset_id: null,
-    priority: 0,
-    error_msg: null,
-    retry_count: 0,
-    created_at: '2026-05-26T12:00:00',
-    updated_at: '2026-05-26T12:00:00',
-  },
-  {
-    id: '01J003',
-    asset_type: 'expression',
-    prompt: 'Happy face expression',
-    hash_key: 'abc003',
-    status: 'READY',
-    result_asset_id: 'exp_01J003',
-    priority: 0,
-    error_msg: null,
-    retry_count: 0,
-    created_at: '2026-05-27T08:00:00',
-    updated_at: '2026-05-27T08:00:00',
-  },
-  {
-    id: '01J004',
-    asset_type: 'sfx',
-    prompt: 'Punch sound effect',
-    hash_key: 'abc004',
-    status: 'FAILED',
-    result_asset_id: null,
-    priority: 0,
-    error_msg: 'Generation timed out',
-    retry_count: 3,
-    created_at: '2026-05-24T15:00:00',
-    updated_at: '2026-05-24T15:30:00',
-  },
-  {
-    id: '01J005',
-    asset_type: 'bgm',
-    prompt: 'Happy background music',
-    hash_key: 'abc005',
-    status: 'PROCESSING',
-    result_asset_id: null,
-    priority: 0,
-    error_msg: null,
-    retry_count: 0,
-    created_at: '2026-05-27T14:00:00',
-    updated_at: '2026-05-27T14:00:00',
-  },
-  {
-    id: '01J006',
-    asset_type: 'background',
-    prompt: 'Forest path',
-    hash_key: 'abc006',
-    status: 'READY',
-    result_asset_id: 'bg_01J006',
-    priority: 5,
-    error_msg: null,
-    retry_count: 0,
-    created_at: '2026-05-23T09:00:00',
-    updated_at: '2026-05-23T09:00:00',
-  },
-  {
-    id: '01J007',
-    asset_type: 'item',
-    prompt: 'Magic sword',
-    hash_key: 'abc007',
-    status: 'READY',
-    result_asset_id: 'item_01J007',
-    priority: 0,
-    error_msg: null,
-    retry_count: 0,
-    created_at: '2026-05-28T06:00:00',
-    updated_at: '2026-05-28T06:00:00',
-  },
-  {
-    id: '01J008',
-    asset_type: 'background',
-    prompt: 'Ocean view',
-    hash_key: 'abc008',
-    status: 'FAILED',
-    result_asset_id: null,
-    priority: 0,
-    error_msg: 'API quota exceeded',
-    retry_count: 2,
-    created_at: '2026-05-26T16:00:00',
-    updated_at: '2026-05-26T16:30:00',
-  },
-];
-
 beforeAll(() => {
-  db = new DatabaseSync(':memory:');
+  db = new Database(':memory:');
 
   // Create table matching AssetQueue schema
   db.prepare(`
@@ -144,6 +35,57 @@ beforeAll(() => {
     )
   `).run();
 
+  const SAMPLE_DATA = [
+    {
+      id: '01J001', asset_type: 'background', prompt: 'Sunset over mountains',
+      hash_key: 'abc001', status: 'READY', result_asset_id: 'bg_01J001',
+      priority: 0, error_msg: null, retry_count: 0,
+      created_at: '2026-05-25T10:00:00', updated_at: '2026-05-25T10:00:00',
+    },
+    {
+      id: '01J002', asset_type: 'background', prompt: 'City skyline at night',
+      hash_key: 'abc002', status: 'PENDING', result_asset_id: null,
+      priority: 0, error_msg: null, retry_count: 0,
+      created_at: '2026-05-26T12:00:00', updated_at: '2026-05-26T12:00:00',
+    },
+    {
+      id: '01J003', asset_type: 'expression', prompt: 'Happy face expression',
+      hash_key: 'abc003', status: 'READY', result_asset_id: 'exp_01J003',
+      priority: 0, error_msg: null, retry_count: 0,
+      created_at: '2026-05-27T08:00:00', updated_at: '2026-05-27T08:00:00',
+    },
+    {
+      id: '01J004', asset_type: 'sfx', prompt: 'Punch sound effect',
+      hash_key: 'abc004', status: 'FAILED', result_asset_id: null,
+      priority: 0, error_msg: 'Generation timed out', retry_count: 3,
+      created_at: '2026-05-24T15:00:00', updated_at: '2026-05-24T15:30:00',
+    },
+    {
+      id: '01J005', asset_type: 'bgm', prompt: 'Happy background music',
+      hash_key: 'abc005', status: 'PROCESSING', result_asset_id: null,
+      priority: 0, error_msg: null, retry_count: 0,
+      created_at: '2026-05-27T14:00:00', updated_at: '2026-05-27T14:00:00',
+    },
+    {
+      id: '01J006', asset_type: 'background', prompt: 'Forest path',
+      hash_key: 'abc006', status: 'READY', result_asset_id: 'bg_01J006',
+      priority: 5, error_msg: null, retry_count: 0,
+      created_at: '2026-05-23T09:00:00', updated_at: '2026-05-23T09:00:00',
+    },
+    {
+      id: '01J007', asset_type: 'item', prompt: 'Magic sword',
+      hash_key: 'abc007', status: 'READY', result_asset_id: 'item_01J007',
+      priority: 0, error_msg: null, retry_count: 0,
+      created_at: '2026-05-28T06:00:00', updated_at: '2026-05-28T06:00:00',
+    },
+    {
+      id: '01J008', asset_type: 'background', prompt: 'Ocean view',
+      hash_key: 'abc008', status: 'FAILED', result_asset_id: null,
+      priority: 0, error_msg: 'API quota exceeded', retry_count: 2,
+      created_at: '2026-05-26T16:00:00', updated_at: '2026-05-26T16:30:00',
+    },
+  ];
+
   // Insert sample data
   const insert = db.prepare(`
     INSERT INTO asset_queue
@@ -154,21 +96,21 @@ beforeAll(() => {
        :priority, :error_msg, :retry_count, :created_at, :updated_at)
   `);
 
-  for (const row of SAMPLE_DATA) {
-    insert.run(row);
-  }
+  const insertMany = db.transaction((rows: typeof SAMPLE_DATA) => {
+    for (const row of rows) {
+      insert.run(row);
+    }
+  });
+
+  insertMany(SAMPLE_DATA);
 });
 
 afterAll(() => {
   db.close();
 });
 
-// ── Test helper ─────────────────────────────────────────────────────────────
+// ── Types ───────────────────────────────────────────────────────────────────
 
-/**
- * Simulates the SQL queries the route handler runs against the in-memory DB.
- * Handles the same filtering, pagination, and ordering logic.
- */
 interface Row {
   id: string;
   asset_type: string;
@@ -179,6 +121,12 @@ interface Row {
   created_at: string;
 }
 
+// ── Test helper ─────────────────────────────────────────────────────────────
+
+/**
+ * Simulates the SQL queries the route handler runs against the in-memory DB.
+ * Handles the same filtering, pagination, and ordering logic.
+ */
 function queryAssets(filters: {
   status?: string;
   type?: string;
@@ -201,9 +149,9 @@ function queryAssets(filters: {
   const limit = filters.limit ?? 20;
   const offset = filters.offset ?? 0;
 
-  const total = Number(
-    db.prepare(`SELECT COUNT(*) AS total FROM asset_queue ${where}`).get(params).total,
-  );
+  const countResult = db
+    .prepare(`SELECT COUNT(*) AS total FROM asset_queue ${where}`)
+    .get(params) as { total: number };
 
   const rows = db
     .prepare(
@@ -212,9 +160,9 @@ function queryAssets(filters: {
        ORDER BY created_at DESC
        LIMIT :limit OFFSET :offset`,
     )
-    .all({ ...params, limit, offset }) as Row[];
+    .all({ ...params, limit, offset }) as unknown as Row[];
 
-  return { data: rows, total };
+  return { data: rows, total: countResult.total };
 }
 
 // ── Tests ───────────────────────────────────────────────────────────────────
@@ -223,7 +171,7 @@ describe('GET /api/assets — queryAssetQueue', () => {
   it('returns all assets when no filters are provided', () => {
     const result = queryAssets({});
     expect(result.data.length).toBeGreaterThanOrEqual(7);
-    expect(result.total).toBe(SAMPLE_DATA.length);
+    expect(result.total).toBe(8);
   });
 
   it('filters by status=READY', () => {
@@ -257,7 +205,7 @@ describe('GET /api/assets — queryAssetQueue', () => {
   it('paginates with limit', () => {
     const result = queryAssets({ limit: 3, offset: 0 });
     expect(result.data.length).toBeLessThanOrEqual(3);
-    expect(result.total).toBe(SAMPLE_DATA.length);
+    expect(result.total).toBe(8);
   });
 
   it('paginates with limit + offset (page 2)', () => {
@@ -274,7 +222,7 @@ describe('GET /api/assets — queryAssetQueue', () => {
   it('returns empty data when offset exceeds total', () => {
     const result = queryAssets({ offset: 999 });
     expect(result.data).toEqual([]);
-    expect(result.total).toBe(SAMPLE_DATA.length);
+    expect(result.total).toBe(8);
   });
 
   it('returns empty data for non-matching filter', () => {
