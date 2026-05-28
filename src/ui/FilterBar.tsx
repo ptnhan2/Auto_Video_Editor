@@ -92,12 +92,13 @@ function CounterChip({
 }: {
   label: string;
   count: number;
-  variant: "ready" | "pending" | "failed";
+  variant: "ready" | "pending" | "failed" | "total";
 }) {
   const variantClass = {
     ready: "bg-chart-2/10 text-chart-2",
     pending: "bg-chart-1/10 text-chart-1",
     failed: "bg-destructive/10 text-destructive",
+    total: "bg-muted text-muted-foreground",
   }[variant];
 
   return (
@@ -156,7 +157,7 @@ export function FilterBar({
       </div>
 
       <div className="flex items-center gap-2">
-        <CounterChip label="Total" count={counts.total} variant="ready" />
+        <CounterChip label="Total" count={counts.total} variant="total" />
         <CounterChip label="Ready" count={counts.ready} variant="ready" />
         <CounterChip
           label="Pending"

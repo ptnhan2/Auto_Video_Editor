@@ -181,7 +181,7 @@ export default function AssetDashboardPage() {
 
   const handleRetry = useCallback((assetId: string) => {
     // TODO: POST /api/assets/{assetId}/retry when endpoint is ready
-    alert(`Retry triggered for asset: ${assetId}`);
+    console.log(`Retry triggered for asset: ${assetId}`);
   }, []);
 
   const handleCloseModal = useCallback(() => {
