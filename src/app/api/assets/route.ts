@@ -41,6 +41,18 @@ interface AssetRow {
   created_at: string;
 }
 
+// ── Database connection (lazy singleton) ─────────────────────────────────
+
+let _db: DatabaseSync | null = null;
+
+function getDb(): DatabaseSync {
+  if (!_db) {
+    const dbPath = path.resolve(process.cwd(), DB_FILENAME);
+    _db = new DatabaseSync(dbPath, { open: true, readonly: true });
+  }
+  return _db;
+}
+
 // ── Handler ────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request): Promise<NextResponse> {
@@ -112,11 +124,8 @@ export async function GET(req: Request): Promise<NextResponse> {
   const whereClause =
     conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-  const dbPath = path.resolve(process.cwd(), DB_FILENAME);
-  let db: DatabaseSync | undefined;
-
   try {
-    db = new DatabaseSync(dbPath, { open: true, readonly: true });
+    const db = getDb();
 
     // Count total matching rows (without pagination)
     const countSql = `SELECT COUNT(*) AS total FROM asset_queue ${whereClause}`;
@@ -157,9 +166,5 @@ export async function GET(req: Request): Promise<NextResponse> {
       { error: 'Internal server error' },
       { status: 500 },
     );
-  } finally {
-    if (db) {
-      db.close();
-    }
   }
 }
