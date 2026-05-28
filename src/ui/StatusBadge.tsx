@@ -2,17 +2,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import type { DramaStatus, EpisodeStatus } from "@/shared/types/episode";
 
 export type AssetStatus = "READY" | "PENDING" | "FAILED";
-export type DramaStatus = "draft" | "in_progress" | "completed";
-export type EpisodeStatus =
-  | "draft"
-  | "pending"
-  | "scripting"
-  | "rendering"
-  | "completed"
-  | "failed";
-
+export type { DramaStatus, EpisodeStatus };
 export type StatusType = AssetStatus | DramaStatus | EpisodeStatus;
 
 interface StatusBadgeProps {
@@ -55,11 +48,11 @@ const statusConfig: Record<StatusType, StatusConfig> = {
     className:
       "bg-chart-2/15 text-chart-2 border-chart-2/30 dark:bg-chart-2/20",
   },
-  // Episode status
+  // Episode-only statuses (distinct from Drama draft)
   pending: {
     label: "Pending",
     className:
-      "bg-secondary/50 text-secondary-foreground/50 border-secondary dark:bg-secondary/30 dark:text-secondary-foreground/60",
+      "bg-muted/50 text-muted-foreground/60 border-muted/50 dark:bg-muted/25 dark:text-muted-foreground/50",
   },
   scripting: {
     label: "Scripting",
@@ -80,6 +73,20 @@ const statusConfig: Record<StatusType, StatusConfig> = {
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const config = statusConfig[status];
+
+  if (!config) {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
+          "bg-muted text-muted-foreground border-muted",
+          className,
+        )}
+      >
+        {status}
+      </span>
+    );
+  }
 
   return (
     <span
