@@ -1,7 +1,7 @@
 // ✏️ EDIT ZONE START
 import { Film } from "lucide-react";
 import type { Drama } from "@/shared/types/episode";
-import { PipelineStatusBadge } from "./pipeline-status-badge";
+import { StatusBadge } from "./StatusBadge";
 
 export interface DramaCardProps {
   drama: Drama;
@@ -24,7 +24,7 @@ export function DramaCard({ drama }: DramaCardProps) {
             </p>
           )}
         </div>
-        <PipelineStatusBadge status={drama.status} />
+        <StatusBadge status={drama.status} />
       </div>
       {drama.description && (
         <p className="mt-3 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
