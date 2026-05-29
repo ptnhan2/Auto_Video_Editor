@@ -4,8 +4,25 @@
 import { cn } from "@/lib/utils";
 import type { DramaStatus, EpisodeStatus } from "@/shared/types/episode";
 
+/**
+ * Status of an individual asset in the processing pipeline.
+ * - `"READY"` — asset is ready for use
+ * - `"PENDING"` — asset is awaiting processing
+ * - `"FAILED"` — asset processing encountered an error
+ */
 export type AssetStatus = "READY" | "PENDING" | "FAILED";
+
+/**
+ * Re-exported from `src/shared/types/episode.ts`.
+ * @see DramaStatus — Drama lifecycle status (`"draft" | "in_progress" | "completed"`)
+ * @see EpisodeStatus — Episode pipeline status (`"draft" | "pending" | "scripting" | "rendering" | "completed" | "failed"`)
+ */
 export type { DramaStatus, EpisodeStatus };
+
+/**
+ * Union of all possible status values across assets, dramas, and episodes.
+ * Used by {@link StatusBadge} to render consistent visual status indicators.
+ */
 export type StatusType = AssetStatus | DramaStatus | EpisodeStatus;
 
 interface StatusBadgeProps {
