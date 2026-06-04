@@ -19,6 +19,7 @@ function mapEpisodeRow(row: Record<string, unknown>): Episode {
   return {
     id: row.id as string,
     dramaId: (row.drama_id ?? "") as string,
+    dramaTitle: mockDramas.find((d) => d.id === (row.drama_id as string))?.title,
     episodeNumber: (row.episode_number ?? 1) as number,
     title: (row.title ?? "") as string,
     content: (row.content ?? null) as string | null,
@@ -48,7 +49,8 @@ export function LandingClient() {
         if (!cancelled) {
           setData({ status: "success", episodes, dramas: mockDramas });
         }
-      } catch {
+      } catch (err) {
+        console.error("[LandingClient] Failed to fetch episodes:", err);
         if (!cancelled) {
           setData({ status: "error", message: "Failed to load data." });
         }
