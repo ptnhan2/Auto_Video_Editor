@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Film, Loader2 } from "lucide-react";
 import type { Episode, Drama } from "@/shared/types/episode";
-import { mockEpisodes, mockDramas } from "./mock-data";
+import { mockDramas } from "./mock-data";
 import { DramaCard } from "./drama-card";
 import { EpisodeCard } from "./episode-card";
 import { CreateEpisodeForm } from "./create-episode-form";
@@ -14,48 +14,81 @@ type DataState =
   | { status: "error"; message: string }
   | { status: "success"; episodes: Episode[]; dramas: Drama[] };
 
+/** Map API snake_case row → camelCase Episode */
+function mapEpisodeRow(row: Record<string, unknown>): Episode {
+  return {
+    id: row.id as string,
+    dramaId: (row.drama_id ?? "") as string,
+    dramaTitle: mockDramas.find((d) => d.id === (row.drama_id as string))?.title,
+    episodeNumber: (row.episode_number ?? 1) as number,
+    title: (row.title ?? "") as string,
+    content: (row.content ?? null) as string | null,
+    scriptContent: (row.script_content ?? null) as string | null,
+    description: (row.description ?? null) as string | null,
+    duration: (row.duration ?? 0) as number,
+    status: (row.status ?? "draft") as Episode["status"],
+    videoUrl: (row.video_url ?? null) as string | null,
+    thumbnail: (row.thumbnail ?? null) as string | null,
+    createdAt: (row.created_at ?? "") as string,
+    updatedAt: (row.updated_at ?? "") as string,
+  };
+}
+
 export function LandingClient() {
   const [data, setData] = useState<DataState>({ status: "loading" });
 
   useEffect(() => {
-    // TODO(#163): Replace with fetch("/api/episodes") when API is ready
-    const timer = setTimeout(() => {
+    let cancelled = false;
+
+    async function load() {
       try {
-        setData({
-          status: "success",
-          episodes: mockEpisodes,
-          dramas: mockDramas,
-        });
-      } catch {
-        setData({
-          status: "error",
-          message: "Failed to load data.",
-        });
+        const res = await fetch("/api/episodes?limit=50");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const episodes: Episode[] = (json.episodes ?? []).map(mapEpisodeRow);
+        if (!cancelled) {
+          setData({ status: "success", episodes, dramas: mockDramas });
+        }
+      } catch (err) {
+        console.error("[LandingClient] Failed to fetch episodes:", err);
+        if (!cancelled) {
+          setData({ status: "error", message: "Failed to load data." });
+        }
       }
-    }, 600);
-    return () => clearTimeout(timer);
+    }
+
+    load();
+    return () => { cancelled = true; };
   }, []);
 
   const handleCreateEpisode = async (dramaId: string, title: string) => {
-    // TODO(#163): Replace with POST /api/episodes when API is ready
-    // Simulate network delay for visual feedback
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    const newEpisode: Episode = {
-      id: `ep_mock_${Date.now()}`,
-      dramaId,
-      dramaTitle: mockDramas.find((d) => d.id === dramaId)?.title ?? "Unknown",
-      episodeNumber: 1,
-      title,
-      content: null,
-      scriptContent: null,
-      description: null,
-      duration: 0,
-      status: "draft",
-      videoUrl: null,
-      thumbnail: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    // Determine next episode number from existing episodes
+    let nextNumber = 1;
+    if (data.status === "success") {
+      const existingNums = data.episodes
+        .filter((ep) => ep.dramaId === dramaId)
+        .map((ep) => ep.episodeNumber);
+      nextNumber = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 1;
+    }
+
+    const res = await fetch("/api/episodes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        drama_id: dramaId,
+        episode_number: nextNumber,
+        title,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error((err as { error?: string }).error ?? `HTTP ${res.status}`);
+    }
+
+    const json = await res.json();
+    const newEpisode = mapEpisodeRow(json.episode);
+
     setData((prev) => {
       if (prev.status !== "success") return prev;
       return {
