@@ -367,7 +367,7 @@ class Asset(Base):
     storyboard_num = Column(Integer, nullable=True)
     name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
-    type = Column(String, nullable=True)
+    type = Column(String, nullable=True, index=True)
     category = Column(String, nullable=True)
     url = Column(String, nullable=True)
     thumbnail_url = Column(String, nullable=True)
@@ -384,7 +384,7 @@ class Asset(Base):
     view_count = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    deleted_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime, nullable=True, index=True)
 
 
 # ==========================================
