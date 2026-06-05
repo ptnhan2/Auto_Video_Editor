@@ -56,7 +56,10 @@ function createGetRequest(params?: Record<string, string>): Request {
   return new Request(url.toString());
 }
 
-// Sample asset rows matching AssetRow interface
+// Sample asset rows matching AssetRow interface.
+// NOTE: The `status` field represents SQL-computed output from route.ts:
+//   CASE WHEN deleted_at IS NULL THEN 'READY' ELSE 'FAILED' END AS status
+// These are NOT raw DB columns — they simulate what db.prepare().all() returns.
 const sampleAssets = [
   {
     id: '01J001',
@@ -154,6 +157,32 @@ describe('GET /api/assets', () => {
     expect(response.status).toBe(200);
     expect(body.data.every((r: { status: string }) => r.status === 'READY')).toBe(true);
     expect(body.total).toBe(2);
+  });
+
+  it('returns empty when filtering by status=PENDING', async () => {
+    mockStatement.all.mockReturnValue([]);
+    mockStatement.get.mockReturnValue({ total: 0 });
+
+    const req = createGetRequest({ status: 'PENDING' });
+    const response = await routeModule.GET(req);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.data).toEqual([]);
+    expect(body.total).toBe(0);
+  });
+
+  it('filters by status=FAILED', async () => {
+    const failed = sampleAssets.filter((a) => a.status === 'FAILED');
+    mockStatement.all.mockReturnValue(failed);
+    mockStatement.get.mockReturnValue({ total: failed.length });
+
+    const req = createGetRequest({ status: 'FAILED' });
+    const response = await routeModule.GET(req);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.data.every((r: { status: string }) => r.status === 'FAILED')).toBe(true);
   });
 
   it('returns 400 for invalid status value', async () => {
