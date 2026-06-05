@@ -63,8 +63,6 @@ export async function GET(req: Request): Promise<NextResponse> {
   const limitStr = searchParams.get('limit');
   const offsetStr = searchParams.get('offset');
 
-  // episode_id accepted but not yet filterable — see TODO at top of file
-
   // -- Validate status --
 
   if (rawStatus !== null && !isValidStatus(rawStatus)) {
