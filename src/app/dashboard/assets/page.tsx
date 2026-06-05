@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import type { AssetType, AssetFilterStatus } from "@/ui/FilterBar";
 import { FilterBar } from "@/ui/FilterBar";
 import type { TableAsset } from "@/ui/AssetTable";
@@ -26,110 +26,78 @@ interface Asset {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data — swap with /api/assets when Worker #164 delivers the endpoint
+// Data fetching — real /api/assets endpoint
 // ---------------------------------------------------------------------------
 
-const MOCK_ASSETS: Asset[] = [
-  {
-    id: "ast-001",
-    type: "Background",
-    prompt: "Sunset city skyline with warm orange tones and silhoutted buildings",
-    status: "READY",
-    createdAt: "2026-05-20T08:30:00Z",
-    url: "https://picsum.photos/seed/sunset-city/800/450",
-  },
-  {
-    id: "ast-002",
-    type: "Background",
-    prompt: "Cozy coffee shop interior with soft morning light through windows",
-    status: "READY",
-    createdAt: "2026-05-19T14:15:00Z",
-    url: "https://picsum.photos/seed/cozy-coffee/800/450",
-  },
-  {
-    id: "ast-003",
-    type: "Background",
-    prompt: "Futuristic neon-lit alleyway after rain, cyberpunk aesthetic",
-    status: "PENDING",
-    createdAt: "2026-05-25T09:00:00Z",
-  },
-  {
-    id: "ast-004",
-    type: "Background",
-    prompt: "Medieval castle ruins on a foggy hillside at dawn",
-    status: "FAILED",
-    createdAt: "2026-05-18T22:45:00Z",
-  },
-  {
-    id: "ast-005",
-    type: "BGM",
-    prompt: "Upbeat lo-fi chillhop instrumental with jazzy piano and light drums",
-    status: "READY",
-    createdAt: "2026-05-21T11:00:00Z",
-  },
-  {
-    id: "ast-006",
-    type: "BGM",
-    prompt: "Suspenseful orchestral buildup with strings and low brass",
-    status: "PENDING",
-    createdAt: "2026-05-26T07:20:00Z",
-  },
-  {
-    id: "ast-007",
-    type: "BGM",
-    prompt: "Gentle acoustic guitar ambient pad for nature documentary",
-    status: "FAILED",
-    createdAt: "2026-05-17T16:30:00Z",
-  },
-  {
-    id: "ast-008",
-    type: "SFX",
-    prompt: "Heavy wooden door creaking open slowly, reverb tail",
-    status: "READY",
-    createdAt: "2026-05-22T13:45:00Z",
-  },
-  {
-    id: "ast-009",
-    type: "SFX",
-    prompt: "Digital glitch stutter effect for tech transition",
-    status: "READY",
-    createdAt: "2026-05-23T10:10:00Z",
-  },
-  {
-    id: "ast-010",
-    type: "SFX",
-    prompt: "Magical sparkle burst with rising chime tones",
-    status: "FAILED",
-    createdAt: "2026-05-15T19:00:00Z",
-  },
-  {
-    id: "ast-011",
-    type: "Expression",
-    prompt: "Character smile variant — warm, genuine, eyes slightly squinted",
-    status: "READY",
-    createdAt: "2026-05-24T08:55:00Z",
-    url: "https://picsum.photos/seed/warm-smile/400/400",
-  },
-  {
-    id: "ast-012",
-    type: "Expression",
-    prompt: "Surprised expression with raised eyebrows and wide eyes",
-    status: "PENDING",
-    createdAt: "2026-05-27T06:00:00Z",
-  },
-];
+interface ApiAssetRow {
+  id: string;
+  type: string;
+  prompt: string | null;
+  status: string;
+  result_asset_id: string | null;
+  hash_key: string;
+  created_at: string;
+}
 
-// ---------------------------------------------------------------------------
-// Custom hook — simulates /api/assets fetch
-// ---------------------------------------------------------------------------
+interface ApiAssetsResponse {
+  data: ApiAssetRow[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+function mapApiAsset(row: ApiAssetRow): Asset {
+  return {
+    id: row.id,
+    type: row.type as AssetType,
+    prompt: row.prompt ?? "",
+    status: row.status as AssetStatus,
+    url: row.result_asset_id ?? undefined,
+    createdAt: row.created_at,
+  };
+}
 
 function useAssets() {
-  // In production, replace with:
-  // const { data, error, isLoading } = useSWR('/api/assets', fetcher)
-  const [assets] = useState<Asset[]>(MOCK_ASSETS);
-  const isLoading = false;
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  return { assets, isLoading, error: null as Error | null };
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const res = await fetch("/api/assets?limit=100");
+        if (!res.ok) {
+          throw new Error(`Failed to fetch assets (HTTP ${res.status})`);
+        }
+
+        const json: ApiAssetsResponse = await res.json();
+        if (!cancelled) {
+          setAssets(json.data.map(mapApiAsset));
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err : new Error(String(err)));
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { assets, isLoading, error };
 }
 
 // ---------------------------------------------------------------------------

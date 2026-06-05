@@ -1,14 +1,12 @@
 /**
- * GET /api/assets — Query AssetQueue with filter + pagination.
+ * GET /api/assets — Query assets table with filter + pagination.
  *
  * Query params:
- *   status?      - Filter by status: PENDING, PROCESSING, READY, FAILED
- *   type?        - Filter by asset_type: background, expression, item, sfx, bgm, ...
+ *   status?      - Filter by derived status: READY (deleted_at IS NULL), FAILED (deleted_at IS NOT NULL),
+ *                  PENDING/PROCESSING returns empty (not applicable)
+ *   type?        - Filter by asset type: background, expression, item, sfx, bgm, ...
  *   limit?       - Max items per page (default 20, max 100)
  *   offset?      - Pagination offset (default 0)
- *
- * TODO(#164-episode): When AssetQueue schema gains an `episode_id` column,
- *   add `episode_id?` query param filter.
  */
 
 import { NextResponse } from 'next/server';
@@ -65,8 +63,6 @@ export async function GET(req: Request): Promise<NextResponse> {
   const limitStr = searchParams.get('limit');
   const offsetStr = searchParams.get('offset');
 
-  // episode_id accepted but not yet filterable — see TODO at top of file
-
   // -- Validate status --
 
   if (rawStatus !== null && !isValidStatus(rawStatus)) {
@@ -112,12 +108,19 @@ export async function GET(req: Request): Promise<NextResponse> {
   const params: Record<string, unknown> = {};
 
   if (rawStatus !== null) {
-    conditions.push('status = :status');
-    params.status = rawStatus;
+    if (rawStatus === 'READY') {
+      conditions.push('deleted_at IS NULL');
+    } else if (rawStatus === 'FAILED') {
+      conditions.push('deleted_at IS NOT NULL');
+    } else {
+      conditions.push('1 = 0');
+    }
+  } else {
+    conditions.push('deleted_at IS NULL');
   }
 
   if (assetType !== null) {
-    conditions.push('asset_type = :type');
+    conditions.push('type = :type');
     params.type = assetType;
   }
 
@@ -128,21 +131,21 @@ export async function GET(req: Request): Promise<NextResponse> {
     const db = getDb();
 
     // Count total matching rows (without pagination)
-    const countSql = `SELECT COUNT(*) AS total FROM asset_queue ${whereClause}`;
+    const countSql = `SELECT COUNT(*) AS total FROM assets ${whereClause}`;
     const countResult = db.prepare(countSql).get(params) as { total: number };
     const total = countResult.total;
 
-    // Fetch paginated rows, aliasing asset_type → type for cleaner API
+    // Fetch paginated rows from assets table
     const dataSql = `
       SELECT
         id,
-        asset_type AS type,
-        prompt,
-        status,
-        result_asset_id,
-        hash_key,
+        type,
+        COALESCE(description, name, '') AS prompt,
+        CASE WHEN deleted_at IS NULL THEN 'READY' ELSE 'FAILED' END AS status,
+        COALESCE(image_gen_id, video_gen_id, url) AS result_asset_id,
+        id AS hash_key,
         created_at
-      FROM asset_queue
+      FROM assets
       ${whereClause}
       ORDER BY created_at DESC
       LIMIT :limit OFFSET :offset
