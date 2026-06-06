@@ -32,7 +32,6 @@ const TYPE_OPTIONS: { value: AssetType | "ALL"; label: string }[] = [
 const STATUS_OPTIONS: { value: AssetFilterStatus; label: string }[] = [
   { value: "ALL", label: "All Status" },
   { value: "READY", label: "Ready" },
-  { value: "PENDING", label: "Pending" },
   { value: "FAILED", label: "Failed" },
 ];
 
@@ -159,11 +158,6 @@ export function FilterBar({
       <div className="flex items-center gap-2">
         <CounterChip label="Total" count={counts.total} variant="total" />
         <CounterChip label="Ready" count={counts.ready} variant="ready" />
-        <CounterChip
-          label="Pending"
-          count={counts.pending}
-          variant="pending"
-        />
         <CounterChip label="Failed" count={counts.failed} variant="failed" />
       </div>
     </div>
