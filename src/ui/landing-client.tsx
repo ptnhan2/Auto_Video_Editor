@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Film, Loader2 } from "lucide-react";
 import type { Episode, Drama } from "@/shared/types/episode";
 import { mockDramas } from "./mock-data";
@@ -154,7 +155,9 @@ function ContentBody({
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {episodes.map((ep) => (
-              <EpisodeCard key={ep.id} episode={ep} />
+              <Link key={ep.id} href={`/episodes/${ep.id}`} className="block">
+                <EpisodeCard episode={ep} />
+              </Link>
             ))}
           </div>
         )}
