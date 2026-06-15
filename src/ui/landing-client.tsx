@@ -184,7 +184,9 @@ function ContentBody({
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {dramas.map((drama) => (
-              <DramaCard key={drama.id} drama={drama} />
+              <Link key={drama.id} href={`/dramas/${drama.id}`} className="block">
+                <DramaCard drama={drama} />
+              </Link>
             ))}
           </div>
         )}
