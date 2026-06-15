@@ -111,21 +111,24 @@ export default function EditorPage({ params }: EditorPageProps) {
   }, []);
 
   const handleTimelineDrop = useCallback(
-    (frame: number, trackId: string) => {
+    (frame: number, trackId: string, assetData: Record<string, unknown>) => {
+      const name = String(assetData.name ?? `Clip ${clips.length + 1}`);
+      const type = (assetData.type as TimelineClip["type"]) ?? (trackId === "audio" ? "audio" : "video");
+      const durationFrames = Number(assetData.defaultDuration) || 150;
       setClips((prev) => [
         ...prev,
         {
           id: nextClipId(),
-          assetId: `dropped_${Date.now()}`,
-          name: `New Clip ${prev.length + 1}`,
-          type: trackId === "audio" ? "audio" : "video",
+          assetId: String(assetData.assetId ?? `drop_${Date.now()}`),
+          name,
+          type,
           trackId,
           startFrame: frame,
-          durationFrames: 150,
+          durationFrames,
         },
       ]);
     },
-    [],
+    [clips.length],
   );
 
   const handleDeleteSelected = useCallback(() => {

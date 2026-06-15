@@ -29,8 +29,8 @@ export interface TimelineControlsProps {
   onTimelineSeek: (frame: number) => void;
   /** Callback khi clip bị kéo di chuyển */
   onClipMove?: (clipId: string, newStartFrame: number) => void;
-  /** Callback khi drop asset vào timeline */
-  onTimelineDrop?: (frame: number, trackId: string) => void;
+  /** Callback khi drop asset vào timeline — nhận frame, trackId, và asset data */
+  onTimelineDrop?: (frame: number, trackId: string, assetData: Record<string, unknown>) => void;
 }
 
 interface TrackDef {
@@ -87,7 +87,7 @@ export function TimelineControls({
   const [mutedTracks, setMutedTracks] = useState<Set<string>>(new Set());
   const [hiddenTracks, setHiddenTracks] = useState<Set<string>>(new Set());
   const [draggingClip, setDraggingClip] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
+  const dragOffsetRef = useRef(0);
   const [dropIndicator, setDropIndicator] = useState<{ frame: number; trackId: string } | null>(null);
 
   const rafRef = useRef<number | null>(null);
@@ -186,21 +186,21 @@ export function TimelineControls({
       onSelectClip(clipId);
       const clip = clips.find((c) => c.id === clipId);
       if (!clip) return;
-      const rect = (e.currentTarget as HTMLElement).parentElement!.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
+      const trackRect = (e.currentTarget as HTMLElement).parentElement!.getBoundingClientRect();
+      const clickX = e.clientX - trackRect.left;
       const clipStartX = clip.startFrame * pxPerFrame;
-      setDragOffset(clickX - clipStartX);
+      dragOffsetRef.current = clickX - clipStartX;
       setDraggingClip(clipId);
 
       const handleMouseMove = (ev: MouseEvent) => {
-        const newX = ev.clientX - rect.left - dragOffset;
+        const newX = ev.clientX - trackRect.left - dragOffsetRef.current;
         const newFrame = Math.max(0, Math.round(newX / pxPerFrame));
         setCurrentFrame(newFrame);
       };
       const handleMouseUp = (ev: MouseEvent) => {
-        const newX = ev.clientX - rect.left - dragOffset;
+        const newX = ev.clientX - trackRect.left - dragOffsetRef.current;
         const newFrame = Math.max(0, Math.round(newX / pxPerFrame));
-        if (onClipMove && Math.abs(newFrame - clip.startFrame) > 0) {
+        if (onClipMove && newFrame !== clip.startFrame) {
           onClipMove(clipId, newFrame);
         }
         setDraggingClip(null);
@@ -212,33 +212,47 @@ export function TimelineControls({
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     },
-    [clips, pxPerFrame, dragOffset, onSelectClip, onClipMove],
+    [clips, pxPerFrame, onSelectClip, onClipMove],
   );
 
   // ── Drop handling ──────────────────────────────────────────────
+  // Drag events handled on the parent tracks container so we can
+  // determine which track to drop on from absolute Y position.
+  const tracksContainerRef = useRef<HTMLDivElement>(null);
+
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
-      const frame = frameFromEvent(e as unknown as React.MouseEvent<HTMLDivElement>);
-      // Determine which track to drop on based on Y position
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      const y = e.clientY - rect.top - RULER_HEIGHT;
-      const trackIdx = Math.max(0, Math.min(TRACKS.length - 1, Math.floor(y / TRACK_HEIGHT)));
+      const container = tracksContainerRef.current;
+      if (!container) return;
+      const containerRect = container.getBoundingClientRect();
+      const frame = Math.max(0, Math.min(totalFrames, Math.round((e.clientX - containerRect.left) / pxPerFrame)));
+      const yInContainer = e.clientY - containerRect.top - RULER_HEIGHT;
+      const trackIdx = Math.max(0, Math.min(TRACKS.length - 1, Math.floor(yInContainer / TRACK_HEIGHT)));
       setDropIndicator({ frame, trackId: TRACKS[trackIdx].id });
     },
-    [frameFromEvent],
+    [totalFrames, pxPerFrame],
   );
 
-  const handleDragLeave = useCallback(() => {
-    setDropIndicator(null);
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    // Only clear if actually leaving the container (not entering a child)
+    const container = tracksContainerRef.current;
+    if (container && !container.contains(e.relatedTarget as Node)) {
+      setDropIndicator(null);
+    }
   }, []);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       if (!dropIndicator || !onTimelineDrop) return;
-      onTimelineDrop(dropIndicator.frame, dropIndicator.trackId);
+      let assetData: Record<string, unknown> = {};
+      try {
+        const raw = e.dataTransfer.getData("application/json");
+        if (raw) assetData = JSON.parse(raw);
+      } catch { /* ignore parse errors */ }
+      onTimelineDrop(dropIndicator.frame, dropIndicator.trackId, assetData);
       setDropIndicator(null);
     },
     [dropIndicator, onTimelineDrop],
@@ -287,8 +301,10 @@ export function TimelineControls({
   const clipsByTrack = useMemo(() => {
     const map: Record<string, TimelineClip[]> = {};
     for (const t of TRACKS) map[t.id] = [];
-    for (const clip of clips) {
-      if (map[clip.trackId]) map[clip.trackId].push(clip);
+    if (Array.isArray(clips)) {
+      for (const clip of clips) {
+        if (map[clip.trackId]) map[clip.trackId].push(clip);
+      }
     }
     return map;
   }, [clips]);
@@ -386,7 +402,13 @@ export function TimelineControls({
             </div>
 
             {/* ── Timeline content ── */}
-            <div className="flex-1">
+            <div
+              className="flex-1"
+              ref={tracksContainerRef}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
               {/* ── Ruler ── */}
               <div
                 className="relative cursor-crosshair border-b border-border bg-muted/20"
@@ -426,9 +448,6 @@ export function TimelineControls({
                   className={`relative border-b border-border/30 ${track.color} ${hiddenTracks.has(track.id) ? "opacity-20" : ""}`}
                   style={{ height: TRACK_HEIGHT, width: timelineWidth }}
                   onClick={handleTimelineClick}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
                 >
                   {/* Clips on this track */}
                   {clipsByTrack[track.id]?.map((clip) => (
