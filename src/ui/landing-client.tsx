@@ -95,7 +95,8 @@ export function LandingClient() {
     }
 
     const json = await res.json();
-    const newEpisode = mapEpisodeRow(json.episode);
+    const currentDramas = data.status === "success" ? data.dramas : [];
+    const newEpisode = mapEpisodeRow(json.episode, currentDramas);
 
     setData((prev) => {
       if (prev.status !== "success") return prev;
