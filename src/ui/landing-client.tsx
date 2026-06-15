@@ -2,9 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Film, Loader2 } from "lucide-react";
 import type { Episode, Drama } from "@/shared/types/episode";
-import { mockDramas } from "./mock-data";
+import { mapEpisodeRow } from "@/shared/mappers";
 import { DramaCard } from "./drama-card";
 import { EpisodeCard } from "./episode-card";
 import { CreateEpisodeForm } from "./create-episode-form";
@@ -14,25 +15,6 @@ type DataState =
   | { status: "error"; message: string }
   | { status: "success"; episodes: Episode[]; dramas: Drama[] };
 
-/** Map API snake_case row → camelCase Episode */
-function mapEpisodeRow(row: Record<string, unknown>): Episode {
-  return {
-    id: row.id as string,
-    dramaId: (row.drama_id ?? "") as string,
-    dramaTitle: mockDramas.find((d) => d.id === (row.drama_id as string))?.title,
-    episodeNumber: (row.episode_number ?? 1) as number,
-    title: (row.title ?? "") as string,
-    content: (row.content ?? null) as string | null,
-    scriptContent: (row.script_content ?? null) as string | null,
-    description: (row.description ?? null) as string | null,
-    duration: (row.duration ?? 0) as number,
-    status: (row.status ?? "draft") as Episode["status"],
-    videoUrl: (row.video_url ?? null) as string | null,
-    thumbnail: (row.thumbnail ?? null) as string | null,
-    createdAt: (row.created_at ?? "") as string,
-    updatedAt: (row.updated_at ?? "") as string,
-  };
-}
 
 export function LandingClient() {
   const [data, setData] = useState<DataState>({ status: "loading" });
@@ -42,12 +24,20 @@ export function LandingClient() {
 
     async function load() {
       try {
-        const res = await fetch("/api/episodes?limit=50");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const episodes: Episode[] = (json.episodes ?? []).map(mapEpisodeRow);
+        const [epRes, dramaRes] = await Promise.all([
+          fetch("/api/episodes?limit=50"),
+          fetch("/api/dramas"),
+        ]);
+        if (!epRes.ok) throw new Error(`HTTP ${epRes.status}`);
+        const json = await epRes.json();
+        const dramas: Drama[] = dramaRes.ok
+          ? (await dramaRes.json()).dramas ?? []
+          : [];
+        const episodes: Episode[] = (json.episodes ?? []).map((r: Record<string, unknown>) =>
+          mapEpisodeRow(r, dramas),
+        );
         if (!cancelled) {
-          setData({ status: "success", episodes, dramas: mockDramas });
+          setData({ status: "success", episodes, dramas });
         }
       } catch (err) {
         console.error("[LandingClient] Failed to fetch episodes:", err);
@@ -87,7 +77,8 @@ export function LandingClient() {
     }
 
     const json = await res.json();
-    const newEpisode = mapEpisodeRow(json.episode);
+    const currentDramas = data.status === "success" ? data.dramas : [];
+    const newEpisode = mapEpisodeRow(json.episode, currentDramas);
 
     setData((prev) => {
       if (prev.status !== "success") return prev;
@@ -154,7 +145,9 @@ function ContentBody({
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {episodes.map((ep) => (
-              <EpisodeCard key={ep.id} episode={ep} />
+              <Link key={ep.id} href={`/episodes/${ep.id}`} className="block">
+                <EpisodeCard episode={ep} />
+              </Link>
             ))}
           </div>
         )}
@@ -174,7 +167,9 @@ function ContentBody({
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {dramas.map((drama) => (
-              <DramaCard key={drama.id} drama={drama} />
+              <Link key={drama.id} href={`/dramas/${drama.id}`} className="block">
+                <DramaCard drama={drama} />
+              </Link>
             ))}
           </div>
         )}
