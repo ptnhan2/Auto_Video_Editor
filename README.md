@@ -1,49 +1,43 @@
-# 🎬 Auto Video Editor — AI-Powered Video Production Pipeline
+# 🎬 Auto Video Editor — AI-Powered Video Production Platform
 
 > **🌍 Language:** [Tiếng Việt bên dưới ↓](#tiếng-việt)
 
-**Auto Video Editor** turns raw scripts into fully rendered MP4 videos using an AI-driven multi-station pipeline. From script rewriting to voice generation, visual directing, sound design, and final video rendering — the entire process is automated end-to-end.
-
-The system is designed for AI agents (LLM Function Calling) to orchestrate, with a human-in-the-loop UI for quality control.
+**Auto Video Editor** is an AI-driven video production platform. From script input to final MP4 output, the entire pipeline is automated. AI agents control the editing process via API, with a human-in-the-loop web UI for review and refinement.
 
 ---
 
-## 🏗️ Architecture (Station Pipeline)
+## 🏗️ Architecture
 
 ```
-S0: Indexer  →  S1: Script Rewriter  →  S2: Extractor  →  S3: Storyboard Breaker
-    ↓
-S4: Audio (TTS)  →  S5: Visual Director  →  S6: Sound & VFX  →  S7: Video Compiler
-    ↓
-S8: Remotion Render → 🎥 MP4 Output
+┌─────────────────────────────────────────────────┐
+│              WEB PLATFORM (Next.js)              │
+│  Landing Page │ Episode Detail │ Asset Dashboard │
+│  /api/episodes │ /api/assets │ /api/dramas       │
+├─────────────────────────────────────────────────┤
+│              PIPELINE (Python)                   │
+│  S1-S7: Script → Storyboard → Audio → Visual    │
+│  → Video Compiler → Output ready for Editor     │
+├─────────────────────────────────────────────────┤
+│              EDITOR (OpenCut)                    │
+│  Multi-track Timeline │ Preview │ Effects        │
+│  Export MP4 │ AI Bridge API (coming)             │
+├─────────────────────────────────────────────────┤
+│              DATABASE (SQLite)                   │
+│  dramas │ episodes │ assets │ pipeline_status    │
+└─────────────────────────────────────────────────┘
 ```
-
-- **Backend (Python):** SQLite + SQLAlchemy, AI-driven stations S0–S7
-- **Frontend (Remotion/React):** Renders JSON output from S7 into video
-- **UI Tools (Next.js):** Human-in-the-loop editors at `/tools`
-- **CI/CD:** GitHub Actions — Python lint (`ruff`) + TypeScript check (`tsc`)
-
----
-
-## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Backend Pipeline | Python 3.10+, SQLAlchemy, SQLite |
-| AI & LLM | Gemini (Google), DeepSeek, ElevenLabs (TTS/SFX) |
-| Video Rendering | Remotion 4.0, React 19, TypeScript |
-| UI Tools | Next.js 16, Tailwind CSS, Zustand |
-| Testing | Vitest (frontend), ruff (Python lint), tsc (type check) |
-| CI/CD | GitHub Actions |
+| **Web Platform** | Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui |
+| **Pipeline** | Python 3.10+, SQLAlchemy, SQLite, Gemini/DeepSeek LLM |
+| **AI & TTS** | Gemini, DeepSeek, ElevenLabs, Edge-TTS |
+| **Editor** | OpenCut (MIT) — multi-track timeline, effects, export |
+| **Database** | SQLite (via node:sqlite for API routes, SQLAlchemy for pipeline) |
+| **Testing** | Vitest (frontend), pytest (Python), ruff (lint), tsc (type check) |
+| **CI/CD** | GitHub Actions — Python + TypeScript Gatekeeper |
 
----
-
-## 📋 Prerequisites
-
-- **Python 3.10+** (with `pip`)
-- **Node.js 20+** (with `npm`)
-- **Git**
-- A **Gemini API key** ([get one here](https://aistudio.google.com/apikey))
+> **⚠️ Technology Pivot (2026-06-15):** Remotion has been removed. See [AGENTS.md Rule J](AGENTS.md) for details. OpenCut is the new editor engine.
 
 ---
 
@@ -58,7 +52,7 @@ cd Auto_Video_Editor
 
 **Python dependencies:**
 ```bash
-pip install sqlalchemy
+pip install -r requirements.txt
 ```
 
 **Node.js dependencies:**
@@ -68,49 +62,36 @@ npm install
 
 ### 2. Environment Variables
 
-Copy the example file and fill in your keys:
-
 ```bash
 cp .env.example .env.local
 ```
 
-Required variables in `.env.local`:
-
 | Variable | Description |
 |----------|-------------|
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini API key for AI generation |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini API key |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` (default) |
-| `DEEPSEEK_API_KEY` | (Optional) DeepSeek fallback LLM |
+| `DEEPSEEK_API_KEY` | (Optional) DeepSeek fallback |
 
 ### 3. Seed Test Data
 
 ```bash
-# Standard test data (1 drama, 1 episode, 2 characters)
 python scripts/seed_test_data.py
-
-# Edge-case test suites (optional — stress-test pipeline)
-python scripts/seed_edge_cases.py
+python scripts/seed_edge_cases.py   # Optional: stress-test data
 ```
 
 ### 4. Run the Pipeline
 
 ```bash
-# Run full pipeline for an episode
 python scripts/run_pipeline.py <episode_id>
-
-# Example with the standard seed data:
-python scripts/run_pipeline.py 019d861bbf3ea9d3bfcdd25458dcdbef
 ```
 
-### 5. Render Video
+### 5. Start the Web Platform
 
 ```bash
-# Via Remotion Studio (preview)
-npm run studio
-
-# Or CLI render
-npm run render:all <episode_id>
+npm run dev
 ```
+
+Open http://localhost:3000 — browse dramas, create episodes, view pipeline status.
 
 ---
 
@@ -118,10 +99,10 @@ npm run render:all <episode_id>
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Start Next.js dev server (UI tools) |
-| `npm run studio` | Start Remotion Studio (video preview) |
-| `npm run build` | Build Next.js app |
-| `npm test` | Run Vitest suite |
+| `npm run dev` | Start Next.js dev server |
+| `npm run build` | Build Next.js for production |
+| `npm run start` | Start production server |
+| `npm test` | Run Vitest test suite |
 | `npm run lint` | Run ESLint |
 | `npx tsc --noEmit` | TypeScript type check |
 | `ruff check .` | Python lint |
@@ -133,40 +114,34 @@ npm run render:all <episode_id>
 ```
 / (Root)
 ├── src/
-│   ├── app/          # Next.js pages & UI tools
-│   ├── pipeline/     # Backend stations (S0–S7)
+│   ├── app/          # Next.js pages & API routes
+│   ├── pipeline/     # Python stations (S1–S7)
 │   ├── services/     # Domain logic (AI, character, assets, video)
-│   ├── shared/       # Types, API clients, utilities
+│   ├── shared/       # Types, API clients, mappers
 │   └── ui/           # Reusable React components
-├── remotion/         # Video rendering (compositions, components)
 ├── scripts/          # CLI entry points (thin wrappers)
-├── public/           # Static assets & compiled JSON outputs
-└── docs/             # Architecture plans & documentation
+├── public/           # Static assets
+├── docs/             # Architecture plans & docs
+├── .archive/         # Deprecated code (Remotion, old tools)
+└── AGENTS.md         # AI agent constitution & rules
 ```
 
 > See `AGENTS.md` for strict directory rules enforced on all AI agents.
 
 ---
 
-## 🤖 CI/CD (Gatekeeper)
+## 🤖 CI/CD
 
-Every push to `main` triggers GitHub Actions:
+Every push to `main` triggers:
 
-- **🐍 Python Gatekeeper:** `ruff check .` — catches syntax errors & undefined variables
-- **⚛️ TypeScript Gatekeeper:** `npx tsc --noEmit` — catches type errors in React/Remotion
-
-Look for ✅ green checkmarks on commits. Any ❌ red cross means a commit broke something.
+- **🐍 Python Gatekeeper:** `ruff check .`
+- **⚛️ TypeScript Gatekeeper:** `npx tsc --noEmit`
 
 ---
 
 ## 🧑‍💻 Contributing
 
-This project uses a **Manager-Worker** workflow with Kilo Agent Manager:
-
-- **Manager:** Reviews PRs, merges code, writes Journal, updates Kanban
-- **Worker:** Writes code for a single issue, creates PR, reports results
-
-Full workflow details: [`WORKFLOW.md`](WORKFLOW.md)
+Manager-Worker workflow via Kilo Agent Manager. Full workflow: `AGENTS.md`.
 
 ---
 
@@ -179,50 +154,44 @@ Proprietary. All rights reserved.
 ---
 
 <a name="tiếng-việt"></a>
-# 🇻🇳 Auto Video Editor — Xưởng Phim AI Tự Động
+# 🇻🇳 Auto Video Editor — Nền Tảng Sản Xuất Video AI
 
-**Auto Video Editor** biến kịch bản thô thành video MP4 hoàn chỉnh bằng hệ thống AI đa trạm. Từ viết lại kịch bản, tạo giọng nói, đạo diễn hình ảnh, thiết kế âm thanh cho đến render video cuối cùng — toàn bộ đều tự động hóa.
-
-Hệ thống được thiết kế để AI agent (LLM Function Calling) vận hành, kèm giao diện Human-in-the-loop để kiểm soát chất lượng.
+**Auto Video Editor** là nền tảng sản xuất video tự động bằng AI. Từ kịch bản đầu vào đến video MP4 hoàn chỉnh, toàn bộ pipeline được tự động hóa. AI agent điều khiển quá trình edit qua API, với giao diện web human-in-the-loop để kiểm duyệt và tinh chỉnh.
 
 ---
 
-## 🏗️ Kiến Trúc (Pipeline Các Trạm)
+## 🏗️ Kiến Trúc
 
 ```
-S0: Lập chỉ mục  →  S1: Viết lại kịch bản  →  S2: Trích xuất  →  S3: Phân cảnh
-    ↓
-S4: Audio (TTS)  →  S5: Đạo diễn hình ảnh  →  S6: Âm thanh & VFX  →  S7: Biên dịch Video
-    ↓
-S8: Render Remotion → 🎥 Xuất MP4
+┌─────────────────────────────────────────────────┐
+│              WEB PLATFORM (Next.js)              │
+│  Trang Chủ │ Chi Tiết Tập │ Dashboard Asset      │
+│  /api/episodes │ /api/assets │ /api/dramas       │
+├─────────────────────────────────────────────────┤
+│              PIPELINE (Python)                   │
+│  S1-S7: Kịch bản → Phân cảnh → Audio → Hình ảnh │
+│  → Biên dịch Video → Output cho Editor          │
+├─────────────────────────────────────────────────┤
+│              EDITOR (OpenCut)                    │
+│  Timeline đa track │ Preview │ Hiệu ứng          │
+│  Xuất MP4 │ API Bridge cho AI (sắp có)           │
+├─────────────────────────────────────────────────┤
+│              DATABASE (SQLite)                   │
+│  dramas │ episodes │ assets │ pipeline_status    │
+└─────────────────────────────────────────────────┘
 ```
-
-- **Backend (Python):** SQLite + SQLAlchemy, các trạm AI từ S0–S7
-- **Frontend (Remotion/React):** Render JSON đầu ra từ S7 thành video
-- **UI Tools (Next.js):** Công cụ Human-in-the-loop tại `/tools`
-- **CI/CD:** GitHub Actions — kiểm tra Python (`ruff`) + kiểm tra TypeScript (`tsc`)
-
----
-
-## 🛠️ Công Nghệ
 
 | Lớp | Công nghệ |
 |-----|----------|
-| Backend Pipeline | Python 3.10+, SQLAlchemy, SQLite |
-| AI & LLM | Gemini (Google), DeepSeek, ElevenLabs (TTS/SFX) |
-| Render Video | Remotion 4.0, React 19, TypeScript |
-| UI Tools | Next.js 16, Tailwind CSS, Zustand |
-| Kiểm thử | Vitest (frontend), ruff (Python lint), tsc (type check) |
-| CI/CD | GitHub Actions |
+| **Web Platform** | Next.js 16, React 19, TypeScript, Tailwind CSS, shadcn/ui |
+| **Pipeline** | Python 3.10+, SQLAlchemy, SQLite, Gemini/DeepSeek |
+| **AI & TTS** | Gemini, DeepSeek, ElevenLabs, Edge-TTS |
+| **Editor** | OpenCut (MIT) — timeline đa track, hiệu ứng, xuất file |
+| **Database** | SQLite (node:sqlite cho API routes, SQLAlchemy cho pipeline) |
+| **Kiểm thử** | Vitest (frontend), pytest (Python), ruff (lint), tsc (type check) |
+| **CI/CD** | GitHub Actions — Python + TypeScript Gatekeeper |
 
----
-
-## 📋 Yêu Cầu Hệ Thống
-
-- **Python 3.10+** (có `pip`)
-- **Node.js 20+** (có `npm`)
-- **Git**
-- **Gemini API key** ([lấy tại đây](https://aistudio.google.com/apikey))
+> **⚠️ Chuyển đổi công nghệ (2026-06-15):** Remotion đã bị loại bỏ. Xem [AGENTS.md Rule J](AGENTS.md). OpenCut là editor engine mới.
 
 ---
 
@@ -237,7 +206,7 @@ cd Auto_Video_Editor
 
 **Python:**
 ```bash
-pip install sqlalchemy
+pip install -r requirements.txt
 ```
 
 **Node.js:**
@@ -247,49 +216,36 @@ npm install
 
 ### 2. Biến Môi Trường
 
-Copy file mẫu và điền API key:
-
 ```bash
 cp .env.example .env.local
 ```
 
-Các biến bắt buộc trong `.env.local`:
-
 | Biến | Mô tả |
 |------|-------|
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini API key để gọi AI |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini API key |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` (mặc định) |
-| `DEEPSEEK_API_KEY` | (Tùy chọn) DeepSeek LLM dự phòng |
+| `DEEPSEEK_API_KEY` | (Tùy chọn) DeepSeek dự phòng |
 
 ### 3. Nạp Dữ Liệu Mẫu
 
 ```bash
-# Dữ liệu mẫu chuẩn (1 drama, 1 tập, 2 nhân vật)
 python scripts/seed_test_data.py
-
-# Dữ liệu edge case (tùy chọn — kiểm thử giới hạn pipeline)
-python scripts/seed_edge_cases.py
+python scripts/seed_edge_cases.py   # Tùy chọn: dữ liệu kiểm thử giới hạn
 ```
 
 ### 4. Chạy Pipeline
 
 ```bash
-# Chạy toàn bộ pipeline cho 1 tập phim
 python scripts/run_pipeline.py <episode_id>
-
-# Ví dụ với dữ liệu mẫu chuẩn:
-python scripts/run_pipeline.py 019d861bbf3ea9d3bfcdd25458dcdbef
 ```
 
-### 5. Xuất Video
+### 5. Khởi Động Web Platform
 
 ```bash
-# Xem preview qua Remotion Studio
-npm run studio
-
-# Hoặc render trực tiếp qua CLI
-npm run render:all <episode_id>
+npm run dev
 ```
+
+Mở http://localhost:3000 — duyệt drama, tạo tập phim, xem trạng thái pipeline.
 
 ---
 
@@ -297,13 +253,13 @@ npm run render:all <episode_id>
 
 | Lệnh | Mục đích |
 |------|---------|
-| `npm run dev` | Chạy Next.js dev server (UI tools) |
-| `npm run studio` | Chạy Remotion Studio (xem preview video) |
-| `npm run build` | Build Next.js app |
+| `npm run dev` | Chạy Next.js dev server |
+| `npm run build` | Build Next.js production |
+| `npm run start` | Chạy production server |
 | `npm test` | Chạy Vitest |
 | `npm run lint` | Chạy ESLint |
-| `npx tsc --noEmit` | Kiểm tra lỗi TypeScript |
-| `ruff check .` | Kiểm tra lỗi Python |
+| `npx tsc --noEmit` | Kiểm tra TypeScript |
+| `ruff check .` | Kiểm tra Python |
 
 ---
 
@@ -312,40 +268,34 @@ npm run render:all <episode_id>
 ```
 / (Root)
 ├── src/
-│   ├── app/          # Next.js pages & UI tools
-│   ├── pipeline/     # Backend stations (S0–S7)
+│   ├── app/          # Next.js pages & API routes
+│   ├── pipeline/     # Python stations (S1–S7)
 │   ├── services/     # Domain logic (AI, character, assets, video)
-│   ├── shared/       # Types, API clients, utilities
+│   ├── shared/       # Types, API clients, mappers
 │   └── ui/           # Reusable React components
-├── remotion/         # Video rendering (compositions, components)
 ├── scripts/          # CLI entry points (thin wrappers)
-├── public/           # Static assets & compiled JSON outputs
-└── docs/             # Architecture plans & documentation
+├── public/           # Static assets
+├── docs/             # Tài liệu kiến trúc & kế hoạch
+├── .archive/         # Code cũ (Remotion, tools đã deprecated)
+└── AGENTS.md         # Quy tắc cho AI agent
 ```
 
 > Xem `AGENTS.md` để biết quy tắc thư mục nghiêm ngặt áp dụng cho mọi AI agent.
 
 ---
 
-## 🤖 CI/CD (Gatekeeper)
+## 🤖 CI/CD
 
-Mỗi lần push lên `main`, GitHub Actions tự động:
+Mỗi lần push lên `main`:
 
-- **🐍 Python Gatekeeper:** `ruff check .` — bắt lỗi cú pháp & biến không xác định
-- **⚛️ TypeScript Gatekeeper:** `npx tsc --noEmit` — bắt lỗi kiểu dữ liệu React/Remotion
-
-Dấu ✅ xanh = code an toàn. Dấu ❌ đỏ = có lỗi cần sửa trước khi merge.
+- **🐍 Python Gatekeeper:** `ruff check .`
+- **⚛️ TypeScript Gatekeeper:** `npx tsc --noEmit`
 
 ---
 
 ## 🧑‍💻 Đóng Góp
 
-Dự án dùng mô hình **Manager-Worker** với Kilo Agent Manager:
-
-- **Manager:** Review PR, merge code, ghi Journal, cập nhật Kanban
-- **Worker:** Viết code cho 1 issue, tạo PR, báo cáo kết quả
-
-Chi tiết quy trình: [`WORKFLOW.md`](WORKFLOW.md)
+Mô hình Manager-Worker qua Kilo Agent Manager. Quy trình đầy đủ: `AGENTS.md`.
 
 ---
 
