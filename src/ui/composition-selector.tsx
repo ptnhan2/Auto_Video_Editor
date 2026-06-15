@@ -14,9 +14,11 @@ export interface CompositionSelectorProps {
 }
 
 /**
- * Dropdown chọn Remotion composition từ danh sách hardcode.
- * Hiển thị label dễ đọc, đánh dấu item đang chọn bằng icon Check.
- * Tự đóng khi click bên ngoài dropdown.
+ * Dropdown chọn Remotion composition.
+ *
+ * Tự đóng khi click bên ngoài. Hiển thị label dễ đọc,
+ * đánh dấu item đang chọn bằng icon Check.
+ * Style gọn nhẹ phù hợp với toolbar.
  */
 export function CompositionSelector({
   compositions,
@@ -26,7 +28,6 @@ export function CompositionSelector({
   const [open, setOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Close dropdown khi click bên ngoài
   React.useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -47,15 +48,15 @@ export function CompositionSelector({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-card-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+        className="flex items-center gap-1.5 rounded-md border border-border/60 bg-card px-2.5 py-1 text-xs text-card-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="min-w-0 truncate">
-          {selectedItem?.label ?? "Select composition"}
+        <span className="min-w-0 max-w-[180px] truncate">
+          {selectedItem?.label ?? "Select"}
         </span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+          className={`h-3 w-3 shrink-0 text-muted-foreground transition-transform ${
             open ? "rotate-180" : ""
           }`}
         />
@@ -64,7 +65,7 @@ export function CompositionSelector({
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 z-50 mt-1 w-full min-w-[260px] overflow-hidden rounded-lg border border-border bg-card shadow-lg"
+          className="absolute right-0 z-50 mt-1 w-64 overflow-hidden rounded-lg border border-border bg-card shadow-xl"
         >
           {compositions.map((comp) => {
             const isSelected = comp.id === selectedId;
@@ -77,14 +78,14 @@ export function CompositionSelector({
                   onSelect(comp.id);
                   setOpen(false);
                 }}
-                className={`flex cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
+                className={`flex cursor-pointer items-center justify-between px-3 py-2 text-xs transition-colors hover:bg-accent hover:text-accent-foreground ${
                   isSelected
                     ? "bg-accent text-accent-foreground font-medium"
                     : "text-card-foreground"
                 }`}
               >
                 <span>{comp.label}</span>
-                {isSelected && <Check className="h-4 w-4 shrink-0" />}
+                {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
               </li>
             );
           })}
