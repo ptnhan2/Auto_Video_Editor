@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Episode, Drama } from "@/shared/types/episode";
-import { mockDramas } from "./mock-data";
 import { StatusBadge } from "./StatusBadge";
 
 // ── Pipeline step types ──
@@ -94,11 +93,11 @@ type DataState =
   | { status: "success"; episode: Episode; drama: Drama | null };
 
 /** Map API snake_case row → camelCase Episode */
-function mapEpisodeRow(row: Record<string, unknown>): Episode {
+function mapEpisodeRow(row: Record<string, unknown>, dramas: Drama[]): Episode {
   return {
     id: row.id as string,
     dramaId: (row.drama_id ?? "") as string,
-    dramaTitle: mockDramas.find((d) => d.id === (row.drama_id as string))?.title,
+    dramaTitle: dramas.find((d) => d.id === (row.drama_id as string))?.title,
     episodeNumber: (row.episode_number ?? 1) as number,
     title: (row.title ?? "") as string,
     content: (row.content ?? null) as string | null,
@@ -131,9 +130,15 @@ export function EpisodeDetail({ episodeId }: EpisodeDetailProps) {
 
     async function load() {
       try {
-        const res = await fetch("/api/episodes?limit=100");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
+        const [epRes, dramaRes] = await Promise.all([
+          fetch("/api/episodes?limit=100"),
+          fetch("/api/dramas"),
+        ]);
+        if (!epRes.ok) throw new Error(`HTTP ${epRes.status}`);
+        const json = await epRes.json();
+        const dramas: Drama[] = dramaRes.ok
+          ? (await dramaRes.json()).dramas ?? []
+          : [];
         const rows: Record<string, unknown>[] = json.episodes ?? [];
         const found = rows.find((r) => r.id === episodeId);
 
@@ -144,8 +149,8 @@ export function EpisodeDetail({ episodeId }: EpisodeDetailProps) {
           return;
         }
 
-        const episode = mapEpisodeRow(found);
-        const drama = mockDramas.find((d) => d.id === episode.dramaId) ?? null;
+        const episode = mapEpisodeRow(found, dramas);
+        const drama = dramas.find((d) => d.id === episode.dramaId) ?? null;
 
         if (!cancelled) {
           setData({ status: "success", episode, drama });
