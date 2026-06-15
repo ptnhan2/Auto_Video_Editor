@@ -1,272 +1,474 @@
 // ✏️ EDIT ZONE START
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Play, Pause, SkipBack, SkipForward, ZoomIn, ZoomOut } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { Play, Pause, SkipBack, SkipForward, Eye, EyeOff, Volume2, VolumeX } from "lucide-react";
 import type { PlayerRef } from "@remotion/player";
 
-export interface TimelineControlsProps {
-  /** PlayerRef từ Remotion Player để gọi play()/pause()/seekTo() */
-  playerRef: React.RefObject<PlayerRef | null>;
-  /** Tổng số frame của composition hiện tại */
-  durationInFrames: number;
+// ── Types ────────────────────────────────────────────────────────
+export interface TimelineClip {
+  id: string;
+  assetId: string;
+  name: string;
+  type: "video" | "image" | "audio" | "text";
+  trackId: string;
+  startFrame: number;
+  durationFrames: number;
 }
 
+export interface TimelineControlsProps {
+  playerRef: React.RefObject<PlayerRef | null>;
+  durationInFrames: number;
+  /** Các clip đang có trên timeline */
+  clips: TimelineClip[];
+  /** ID clip đang được chọn */
+  selectedClipId: string | null;
+  /** Callback khi user click chọn clip */
+  onSelectClip: (clipId: string | null) => void;
+  /** Callback khi user click vào vùng timeline trống để seek */
+  onTimelineSeek: (frame: number) => void;
+  /** Callback khi clip bị kéo di chuyển */
+  onClipMove?: (clipId: string, newStartFrame: number) => void;
+  /** Callback khi drop asset vào timeline */
+  onTimelineDrop?: (frame: number, trackId: string) => void;
+}
+
+interface TrackDef {
+  id: string;
+  name: string;
+  color: string;
+  icon: React.ReactNode;
+}
+
+const TRACKS: TrackDef[] = [
+  { id: "video", name: "Video", color: "bg-blue-500/50", icon: <Eye className="h-3 w-3" /> },
+  { id: "audio", name: "Audio", color: "bg-green-500/50", icon: <Volume2 className="h-3 w-3" /> },
+];
+
+const CLIP_COLORS: Record<TimelineClip["type"], string> = {
+  video: "bg-blue-500",
+  image: "bg-purple-500",
+  audio: "bg-green-500",
+  text: "bg-yellow-500",
+};
+
+const TRACK_HEIGHT = 40;
+const RULER_HEIGHT = 22;
+const LABEL_WIDTH = 56;
+const PX_PER_FRAME_DEFAULT = 0.6;
+
 /**
- * Bộ điều khiển timeline chuyên nghiệp cho Remotion Player.
+ * Timeline tương tác chuyên nghiệp kiểu CapCut/OpenCut.
  *
- * Gồm:
- * - Nút Play/Pause (icon tự đổi theo trạng thái)
- * - Nút skip tới/lui 1 frame
- * - Thanh timeline trực quan hiển thị các track lane
- * - Timecode hiển thị frame hiện tại / tổng frame
- * - Zoom timeline
- *
- * State được poll liên tục từ PlayerRef qua requestAnimationFrame.
- * Khắc phục lỗi polling loop chết khi Player chưa mount: luôn schedule
- * frame tiếp theo kể cả khi ref đang null.
+ * Tính năng:
+ * - Ruler thời gian với markers
+ * - Track lanes hiển thị clip dưới dạng rectangle màu
+ * - Click vào clip → chọn (viền sáng)
+ * - Click vào vùng trống → seek đến vị trí đó
+ * - Kéo clip để di chuyển trên timeline
+ * - Playhead dọc di chuyển theo currentFrame
+ * - Transport controls: Play/Pause, Skip, Timecode
+ * - Keyboard shortcuts: Space, ←, →
+ * - Drop zone cho kéo thả asset từ sidebar
  */
 export function TimelineControls({
   playerRef,
   durationInFrames,
+  clips,
+  selectedClipId,
+  onSelectClip,
+  onTimelineSeek,
+  onClipMove,
+  onTimelineDrop,
 }: TimelineControlsProps) {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [mutedTracks, setMutedTracks] = useState<Set<string>>(new Set());
+  const [hiddenTracks, setHiddenTracks] = useState<Set<string>>(new Set());
+  const [draggingClip, setDraggingClip] = useState<string | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [dropIndicator, setDropIndicator] = useState<{ frame: number; trackId: string } | null>(null);
+
   const rafRef = useRef<number | null>(null);
   const isPollingRef = useRef(false);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const tracksScrollRef = useRef<HTMLDivElement>(null);
 
   const totalFrames = Math.max(durationInFrames, 1);
-  const maxZoom = 10;
-  const minZoom = 0.5;
+  const pxPerFrame = PX_PER_FRAME_DEFAULT * zoom;
+  const timelineWidth = totalFrames * pxPerFrame;
 
-  // ── Polling loop ──────────────────────────────────────────────
+  // ── Polling ────────────────────────────────────────────────────
   const pollFrame = useCallback(() => {
     const ref = playerRef.current;
     if (ref) {
       setCurrentFrame(ref.getCurrentFrame());
       setIsPlaying(ref.isPlaying());
     }
-    // LUÔN schedule frame tiếp theo — kể cả khi ref đang null
-    // Fix bug: polling loop chết nếu Player chưa mount
     rafRef.current = requestAnimationFrame(pollFrame);
   }, [playerRef]);
 
-  const startPolling = useCallback(() => {
+  useEffect(() => {
     if (isPollingRef.current) return;
     isPollingRef.current = true;
     rafRef.current = requestAnimationFrame(pollFrame);
+    return () => {
+      isPollingRef.current = false;
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
   }, [pollFrame]);
 
-  const stopPolling = useCallback(() => {
-    isPollingRef.current = false;
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-  }, []);
-
+  // ── Keyboard shortcuts ─────────────────────────────────────────
   useEffect(() => {
-    startPolling();
-    return () => stopPolling();
-  }, [startPolling, stopPolling]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      const ref = playerRef.current;
+      if (!ref) return;
 
-  // ── Handlers ──────────────────────────────────────────────────
+      if (e.code === "Space") {
+        e.preventDefault();
+        ref.isPlaying() ? ref.pause() : ref.play();
+      } else if (e.code === "ArrowLeft") {
+        e.preventDefault();
+        ref.seekTo(Math.max(0, ref.getCurrentFrame() - 1));
+      } else if (e.code === "ArrowRight") {
+        e.preventDefault();
+        ref.seekTo(Math.min(totalFrames - 1, ref.getCurrentFrame() + 1));
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [playerRef, totalFrames]);
+
+  // ── Transport handlers ─────────────────────────────────────────
   const handlePlayPause = useCallback(() => {
     const ref = playerRef.current;
     if (!ref) return;
-    if (ref.isPlaying()) {
-      ref.pause();
-    } else {
-      ref.play();
-    }
+    ref.isPlaying() ? ref.pause() : ref.play();
   }, [playerRef]);
 
   const handleSkipBack = useCallback(() => {
     const ref = playerRef.current;
     if (!ref) return;
-    const frame = Math.max(0, ref.getCurrentFrame() - 1);
-    ref.seekTo(frame);
+    ref.seekTo(Math.max(0, ref.getCurrentFrame() - 1));
   }, [playerRef]);
 
   const handleSkipForward = useCallback(() => {
     const ref = playerRef.current;
     if (!ref) return;
-    const frame = Math.min(totalFrames - 1, ref.getCurrentFrame() + 1);
-    ref.seekTo(frame);
+    ref.seekTo(Math.min(totalFrames - 1, ref.getCurrentFrame() + 1));
   }, [playerRef, totalFrames]);
 
-  const handleSeek = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const frame = Number(e.target.value);
-      setCurrentFrame(frame);
-      playerRef.current?.seekTo(frame);
+  // ── Timeline click → seek ──────────────────────────────────────
+  const frameFromEvent = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      return Math.max(0, Math.min(totalFrames, Math.round(x / pxPerFrame)));
     },
-    [playerRef],
+    [totalFrames, pxPerFrame],
   );
 
-  const handleZoomIn = useCallback(() => {
-    setZoom((z) => Math.min(maxZoom, z + 0.5));
+  const handleTimelineClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (draggingClip) return;
+      const frame = frameFromEvent(e);
+      onTimelineSeek(frame);
+    },
+    [draggingClip, frameFromEvent, onTimelineSeek],
+  );
+
+  // ── Clip drag ──────────────────────────────────────────────────
+  const handleClipMouseDown = useCallback(
+    (e: React.MouseEvent, clipId: string) => {
+      e.stopPropagation();
+      onSelectClip(clipId);
+      const clip = clips.find((c) => c.id === clipId);
+      if (!clip) return;
+      const rect = (e.currentTarget as HTMLElement).parentElement!.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clipStartX = clip.startFrame * pxPerFrame;
+      setDragOffset(clickX - clipStartX);
+      setDraggingClip(clipId);
+
+      const handleMouseMove = (ev: MouseEvent) => {
+        const newX = ev.clientX - rect.left - dragOffset;
+        const newFrame = Math.max(0, Math.round(newX / pxPerFrame));
+        setCurrentFrame(newFrame);
+      };
+      const handleMouseUp = (ev: MouseEvent) => {
+        const newX = ev.clientX - rect.left - dragOffset;
+        const newFrame = Math.max(0, Math.round(newX / pxPerFrame));
+        if (onClipMove && Math.abs(newFrame - clip.startFrame) > 0) {
+          onClipMove(clipId, newFrame);
+        }
+        setDraggingClip(null);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.body.style.cursor = "";
+      };
+      document.body.style.cursor = "grabbing";
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    },
+    [clips, pxPerFrame, dragOffset, onSelectClip, onClipMove],
+  );
+
+  // ── Drop handling ──────────────────────────────────────────────
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      const frame = frameFromEvent(e as unknown as React.MouseEvent<HTMLDivElement>);
+      // Determine which track to drop on based on Y position
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const y = e.clientY - rect.top - RULER_HEIGHT;
+      const trackIdx = Math.max(0, Math.min(TRACKS.length - 1, Math.floor(y / TRACK_HEIGHT)));
+      setDropIndicator({ frame, trackId: TRACKS[trackIdx].id });
+    },
+    [frameFromEvent],
+  );
+
+  const handleDragLeave = useCallback(() => {
+    setDropIndicator(null);
   }, []);
 
-  const handleZoomOut = useCallback(() => {
-    setZoom((z) => Math.max(minZoom, z - 0.5));
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!dropIndicator || !onTimelineDrop) return;
+      onTimelineDrop(dropIndicator.frame, dropIndicator.trackId);
+      setDropIndicator(null);
+    },
+    [dropIndicator, onTimelineDrop],
+  );
+
+  const toggleMuteTrack = useCallback((trackId: string) => {
+    setMutedTracks((prev) => {
+      const next = new Set(prev);
+      next.has(trackId) ? next.delete(trackId) : next.add(trackId);
+      return next;
+    });
   }, []);
 
-  // ── Derived ───────────────────────────────────────────────────
+  const toggleHideTrack = useCallback((trackId: string) => {
+    setHiddenTracks((prev) => {
+      const next = new Set(prev);
+      next.has(trackId) ? next.delete(trackId) : next.add(trackId);
+      return next;
+    });
+  }, []);
+
+  // ── Derived values ─────────────────────────────────────────────
   const fps = 30;
-  const currentSeconds = Math.floor(currentFrame / fps);
-  const currentFrames = currentFrame % fps;
-  const totalSeconds = Math.floor(totalFrames / fps);
-  const totalFramesMod = totalFrames % fps;
-  const timecode = `${String(currentSeconds).padStart(2, "0")}:${String(currentFrames).padStart(2, "0")}`;
-  const durationTc = `${String(totalSeconds).padStart(2, "0")}:${String(totalFramesMod).padStart(2, "0")}`;
-  const progressPercent = totalFrames > 0 ? (currentFrame / (totalFrames - 1)) * 100 : 0;
+  const timecode = useMemo(() => {
+    const s = Math.floor(currentFrame / fps);
+    const f = currentFrame % fps;
+    const ts = Math.floor(totalFrames / fps);
+    const tf = totalFrames % fps;
+    return `${String(s).padStart(2, "0")}:${String(f).padStart(2, "0")} / ${String(ts).padStart(2, "0")}:${String(tf).padStart(2, "0")}`;
+  }, [currentFrame, totalFrames, fps]);
 
-  // Track lanes visualization
-  const trackLanes = [
-    { name: "Video", color: "bg-blue-500/40", frames: totalFrames },
-    { name: "Audio", color: "bg-green-500/40", frames: totalFrames },
-  ];
+  const rulerMarkers = useMemo(() => {
+    const markers: { frame: number; label: string; major: boolean }[] = [];
+    const step = zoom < 1.5 ? 60 : zoom < 3 ? 30 : 10;
+    for (let f = 0; f <= totalFrames; f += step) {
+      markers.push({
+        frame: f,
+        label: `${(f / fps).toFixed(0)}s`,
+        major: f % (step * 2) === 0,
+      });
+    }
+    return markers;
+  }, [totalFrames, fps, zoom]);
+
+  // Group clips by track
+  const clipsByTrack = useMemo(() => {
+    const map: Record<string, TimelineClip[]> = {};
+    for (const t of TRACKS) map[t.id] = [];
+    for (const clip of clips) {
+      if (map[clip.trackId]) map[clip.trackId].push(clip);
+    }
+    return map;
+  }, [clips]);
 
   return (
-    <div className="select-none space-y-2 rounded-lg border border-border bg-card">
-      {/* ── Top bar: transport controls ── */}
-      <div className="flex items-center gap-1.5 border-b border-border px-3 py-2">
-        {/* Play/Pause */}
+    <div className="select-none rounded-lg border border-border bg-card">
+      {/* ═══ Transport bar ═══ */}
+      <div className="flex items-center gap-1.5 border-b border-border px-3 py-1.5">
         <button
-          type="button"
-          onClick={handlePlayPause}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-all hover:opacity-90 active:scale-95"
+          type="button" onClick={handlePlayPause}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-all hover:opacity-90 active:scale-95"
           aria-label={isPlaying ? "Pause" : "Play"}
-          title={isPlaying ? "Pause" : "Play"}
         >
-          {isPlaying ? (
-            <Pause className="h-3.5 w-3.5" />
-          ) : (
-            <Play className="h-3.5 w-3.5" />
-          )}
+          {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
         </button>
-
-        {/* Skip back */}
         <button
-          type="button"
-          onClick={handleSkipBack}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          aria-label="Previous frame"
-          title="Previous frame"
+          type="button" onClick={handleSkipBack}
+          className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          title="Frame back (←)"
         >
-          <SkipBack className="h-3.5 w-3.5" />
+          <SkipBack className="h-3 w-3" />
         </button>
-
-        {/* Skip forward */}
         <button
-          type="button"
-          onClick={handleSkipForward}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          aria-label="Next frame"
-          title="Next frame"
+          type="button" onClick={handleSkipForward}
+          className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          title="Frame forward (→)"
         >
-          <SkipForward className="h-3.5 w-3.5" />
+          <SkipForward className="h-3 w-3" />
         </button>
 
-        {/* Divider */}
-        <div className="mx-1 h-5 w-px bg-border" />
+        <div className="mx-1 h-4 w-px bg-border" />
 
-        {/* Timecode */}
-        <span className="min-w-[110px] text-center text-xs font-mono tabular-nums text-foreground">
-          <span className="text-muted-foreground">{timecode}</span>
-          <span className="mx-0.5 text-muted-foreground/50">/</span>
-          {durationTc}
+        <span className="min-w-[140px] text-center text-[11px] font-mono tabular-nums text-foreground">
+          {timecode}
         </span>
 
-        {/* Frame counter */}
-        <span className="text-xs tabular-nums text-muted-foreground">
-          Frame {currentFrame} / {totalFrames}
+        <span className="text-[10px] tabular-nums text-muted-foreground">
+          Frame {currentFrame}/{totalFrames}
         </span>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Zoom controls */}
-        <button
-          type="button"
-          onClick={handleZoomOut}
-          disabled={zoom <= minZoom}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-30"
-          aria-label="Zoom out"
-          title="Zoom out"
-        >
-          <ZoomOut className="h-3 w-3" />
-        </button>
-
-        <span className="min-w-[36px] text-center text-xs tabular-nums text-muted-foreground">
-          {zoom.toFixed(1)}×
-        </span>
-
-        <button
-          type="button"
-          onClick={handleZoomIn}
-          disabled={zoom >= maxZoom}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-30"
-          aria-label="Zoom in"
-          title="Zoom in"
-        >
-          <ZoomIn className="h-3 w-3" />
-        </button>
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <button onClick={() => setZoom((z) => Math.max(0.3, z - 0.3))} className="hover:text-foreground px-1">−</button>
+          <span className="min-w-[32px] text-center tabular-nums">{zoom.toFixed(1)}×</span>
+          <button onClick={() => setZoom((z) => Math.min(5, z + 0.3))} className="hover:text-foreground px-1">+</button>
+        </div>
       </div>
 
-      {/* ── Timeline track area ── */}
-      <div className="px-3 pb-3">
-        {/* Track labels + lanes */}
-        <div className="mb-1.5 space-y-0.5">
-          {trackLanes.map((track) => (
-            <div key={track.name} className="flex items-center gap-2">
-              <span className="w-12 shrink-0 text-right text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                {track.name}
-              </span>
-              <div className="relative h-5 flex-1 overflow-hidden rounded-sm bg-muted/50">
-                {/* Track lane fill */}
+      {/* ═══ Timeline area ═══ */}
+      <div
+        ref={timelineRef}
+        className="relative overflow-hidden"
+        style={{ height: RULER_HEIGHT + TRACKS.length * TRACK_HEIGHT + 8 }}
+      >
+        {/* Scrollable inner */}
+        <div
+          ref={tracksScrollRef}
+          className="h-full overflow-auto"
+        >
+          <div className="flex" style={{ minWidth: timelineWidth + 100 }}>
+            {/* ── Track labels ── */}
+            <div className="sticky left-0 z-20 shrink-0 bg-card" style={{ width: LABEL_WIDTH }}>
+              {/* Ruler spacer */}
+              <div className="border-b border-border" style={{ height: RULER_HEIGHT }} />
+              {TRACKS.map((track) => (
                 <div
-                  className={`absolute inset-y-0 left-0 rounded-sm ${track.color}`}
-                  style={{ width: `${progressPercent}%` }}
-                />
+                  key={track.id}
+                  className="flex items-center gap-1 border-b border-border/50 px-2"
+                  style={{ height: TRACK_HEIGHT }}
+                >
+                  <button
+                    onClick={() => toggleMuteTrack(track.id)}
+                    className={`shrink-0 rounded p-0.5 transition-colors ${
+                      mutedTracks.has(track.id) ? "text-destructive" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    title={mutedTracks.has(track.id) ? "Unmute" : "Mute"}
+                  >
+                    {mutedTracks.has(track.id) ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
+                  </button>
+                  <button
+                    onClick={() => toggleHideTrack(track.id)}
+                    className={`shrink-0 rounded p-0.5 transition-colors ${
+                      hiddenTracks.has(track.id) ? "text-muted-foreground/30" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    title={hiddenTracks.has(track.id) ? "Show" : "Hide"}
+                  >
+                    {hiddenTracks.has(track.id) ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                  </button>
+                  <span className="truncate text-[10px] font-medium text-muted-foreground">
+                    {track.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Timeline content ── */}
+            <div className="flex-1">
+              {/* ── Ruler ── */}
+              <div
+                className="relative cursor-crosshair border-b border-border bg-muted/20"
+                style={{ height: RULER_HEIGHT, width: timelineWidth }}
+                onClick={handleTimelineClick}
+              >
+                {rulerMarkers.map((m) => (
+                  <div
+                    key={m.frame}
+                    className="absolute bottom-0 flex flex-col items-center"
+                    style={{ left: m.frame * pxPerFrame }}
+                  >
+                    <div
+                      className={m.major ? "h-full w-px bg-border" : "h-1/2 w-px bg-border/40"}
+                    />
+                    {m.major && (
+                      <span className="absolute top-0.5 text-[9px] tabular-nums text-muted-foreground/60">
+                        {m.label}
+                      </span>
+                    )}
+                  </div>
+                ))}
+
                 {/* Playhead */}
                 <div
-                  className="absolute inset-y-0 w-0.5 bg-primary shadow-[0_0_4px_var(--primary)]"
-                  style={{ left: `${progressPercent}%` }}
-                />
+                  className="pointer-events-none absolute inset-y-0 z-30 w-px bg-destructive shadow-[0_0_6px_var(--destructive)]"
+                  style={{ left: currentFrame * pxPerFrame }}
+                >
+                  <div className="absolute -top-0.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-destructive" />
+                </div>
               </div>
+
+              {/* ── Tracks ── */}
+              {TRACKS.map((track) => (
+                <div
+                  key={track.id}
+                  className={`relative border-b border-border/30 ${track.color} ${hiddenTracks.has(track.id) ? "opacity-20" : ""}`}
+                  style={{ height: TRACK_HEIGHT, width: timelineWidth }}
+                  onClick={handleTimelineClick}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  {/* Clips on this track */}
+                  {clipsByTrack[track.id]?.map((clip) => (
+                    <div
+                      key={clip.id}
+                      className={`absolute inset-y-1 cursor-grab rounded-sm border ${
+                        clip.id === selectedClipId
+                          ? "border-white ring-1 ring-white/40"
+                          : "border-white/20 hover:border-white/50"
+                      } ${CLIP_COLORS[clip.type]} ${draggingClip === clip.id ? "z-40 opacity-80 shadow-xl" : "z-10"}`}
+                      style={{
+                        left: clip.startFrame * pxPerFrame,
+                        width: Math.max(4, clip.durationFrames * pxPerFrame),
+                      }}
+                      onMouseDown={(e) => handleClipMouseDown(e, clip.id)}
+                      title={clip.name}
+                    >
+                      <span className="block truncate px-1.5 text-[10px] font-medium leading-[28px] text-white/90">
+                        {clip.name}
+                      </span>
+                    </div>
+                  ))}
+
+                  {/* Drop indicator */}
+                  {dropIndicator?.trackId === track.id && (
+                    <div
+                      className="pointer-events-none absolute inset-y-0 z-50 w-0.5 bg-primary shadow-[0_0_8px_var(--primary)]"
+                      style={{ left: dropIndicator.frame * pxPerFrame }}
+                    />
+                  )}
+
+                  {/* Playhead on track */}
+                  <div
+                    className="pointer-events-none absolute inset-y-0 z-30 w-px bg-destructive shadow-[0_0_4px_var(--destructive)]"
+                    style={{ left: currentFrame * pxPerFrame }}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* Seek bar */}
-        <input
-          type="range"
-          min={0}
-          max={totalFrames - 1}
-          value={currentFrame}
-          onChange={handleSeek}
-          className="h-1 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125"
-          aria-label="Seek timeline"
-        />
-
-        {/* Frame markers */}
-        <div className="mt-0.5 flex justify-between px-0.5">
-          <span className="text-[9px] tabular-nums text-muted-foreground/50">0</span>
-          <span className="text-[9px] tabular-nums text-muted-foreground/50">
-            {Math.floor(totalFrames / 4)}f
-          </span>
-          <span className="text-[9px] tabular-nums text-muted-foreground/50">
-            {Math.floor(totalFrames / 2)}f
-          </span>
-          <span className="text-[9px] tabular-nums text-muted-foreground/50">
-            {Math.floor((totalFrames * 3) / 4)}f
-          </span>
-          <span className="text-[9px] tabular-nums text-muted-foreground/50">
-            {totalFrames}f
-          </span>
+          </div>
         </div>
       </div>
     </div>
