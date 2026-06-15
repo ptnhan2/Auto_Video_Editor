@@ -150,7 +150,7 @@ class Storyboard(Base):
     image_prompt = Column(Text, nullable=True)
     video_prompt = Column(Text, nullable=True) # Legacy - Will be replaced by tech specs
     
-    # Technical Specifications for Remotion (Graphic Editor Paradigm)
+    # Technical Specifications for Video Editor Engine (Graphic Editor Paradigm)
     layout_style = Column(String, nullable=True)     # diorama, scrapbook, split_grid...
     camera_concept = Column(String, nullable=True)   # micro_macro_zoom, endless_pan...
     asset_dynamics = Column(String, nullable=True)   # JSON string for all assets in shot

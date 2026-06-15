@@ -58,7 +58,7 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
     return dot_product / (magnitude_a * magnitude_b)
 
 def search_animation_registry(query: str) -> list:
-    """Tìm kiếm Action, Expression và Background trong kho."""
+    """TÃ¬m kiáº¿m Action, Expression vÃ  Background trong kho."""
     log_logic_transition(logger, "TOOL_START", "search_animation_registry", {"query": query})
     
     all_items = (
@@ -143,7 +143,7 @@ def update_storyboard_visuals(
                     for char in states:
                         last_known_positions[char['character_id']] = char['position']
             except Exception as e:
-                logger.warning(f"⚠️ Failed to update raccord tracking: {e}")
+                logger.warning(f"âš ï¸ Failed to update raccord tracking: {e}")
 
         db.commit()
         res = {"status": "success", "message": f"Updated shot {storyboard_id} successfully."}
@@ -180,18 +180,18 @@ def report_missing_asset(storyboard_id: str, asset_type: str, description: str, 
     finally:
         db.close()
 
-SYSTEM_PROMPT = """Bạn là Senior Motion Graphics Editor chuyên trách hệ thống Remotion (Phong cách Paper Cutout).
-Nhiệm vụ của bạn là xử lý MỘT LƯỢT (single-pass) một batch các shot, xuất ra 1 JSON duy nhất chứa toàn bộ quyết định visual.
+SYSTEM_PROMPT = """Báº¡n lÃ  Senior Motion Graphics Editor chuyÃªn trÃ¡ch há»‡ thá»‘ng Remotion (Phong cÃ¡ch Paper Cutout).
+Nhiá»‡m vá»¥ cá»§a báº¡n lÃ  xá»­ lÃ½ Má»˜T LÆ¯á»¢T (single-pass) má»™t batch cÃ¡c shot, xuáº¥t ra 1 JSON duy nháº¥t chá»©a toÃ n bá»™ quyáº¿t Ä‘á»‹nh visual.
 
-QUY TRÌNH XỬ LÝ BATCH (1 BƯỚC DUY NHẤT):
-Bạn nhận được danh sách các shot (đã có gợi ý asset pre-fetch). Với MỖI shot, thực hiện:
-1. [Phân tích] Xét action + nhân vật + continuity từ shot trước → chốt mood.
-2. [Thiết kế] Chọn `layout_style` + `camera_concept` + `asset_dynamics` phù hợp.
-3. [Dàn cảnh] Đặt nhân vật vào 9-grid + chọn `visual_metaphor`, `transition_in`, `atmosphere_fx`.
-4. [Chọn Asset] Chọn action_id, expression_tag, background_id từ danh sách gợi ý. Nếu không có asset phù hợp, điền "MISSING: <mô tả>".
-QUAN TRỌNG: Suy luận THEO THỨ TỰ shot, dùng state_tracker để theo dõi quỹ đạo nhân vật (raccord).
+QUY TRÃŒNH Xá»¬ LÃ BATCH (1 BÆ¯á»šC DUY NHáº¤T):
+Báº¡n nháº­n Ä‘Æ°á»£c danh sÃ¡ch cÃ¡c shot (Ä‘Ã£ cÃ³ gá»£i Ã½ asset pre-fetch). Vá»›i Má»–I shot, thá»±c hiá»‡n:
+1. [PhÃ¢n tÃ­ch] XÃ©t action + nhÃ¢n váº­t + continuity tá»« shot trÆ°á»›c â†’ chá»‘t mood.
+2. [Thiáº¿t káº¿] Chá»n `layout_style` + `camera_concept` + `asset_dynamics` phÃ¹ há»£p.
+3. [DÃ n cáº£nh] Äáº·t nhÃ¢n váº­t vÃ o 9-grid + chá»n `visual_metaphor`, `transition_in`, `atmosphere_fx`.
+4. [Chá»n Asset] Chá»n action_id, expression_tag, background_id tá»« danh sÃ¡ch gá»£i Ã½. Náº¿u khÃ´ng cÃ³ asset phÃ¹ há»£p, Ä‘iá»n "MISSING: <mÃ´ táº£>".
+QUAN TRá»ŒNG: Suy luáº­n THEO THá»¨ Tá»° shot, dÃ¹ng state_tracker Ä‘á»ƒ theo dÃµi quá»¹ Ä‘áº¡o nhÃ¢n váº­t (raccord).
 
-CÁC TRỤC SÁNG TẠO:
+CÃC TRá»¤C SÃNG Táº O:
 - Layout: diorama, scrapbook, split_screen, frame_in_frame, isometric, top_down, matchbox, continuous_scroll.
 - Camera Concept: endless_pan, micro_macro_zoom, whip_pan, camera_shake, crash_zoom, dutch_roll, dolly_zoom_2d.
 - Asset Dynamics: stop_motion_stutter, spring_overshoot, wobble_jitter, float_drift, paper_fold, hinge_rigging, smear_2d.
@@ -199,9 +199,9 @@ CÁC TRỤC SÁNG TẠO:
 - Transition: paper_tear, ink_bleed, object_wipe, graphic_match_cut, page_flip, burn_reveal.
 - Atmosphere: drop_shadows, halftone_filter, paper_texture, light_leaks, chromatic_aberration, film_grain.
 
-QUY TẮC QUẢN LÝ NHÂN VẬT:
-- Vị trí lưới (Lower Half Grid): `front_left`, `front_center`, `front_right`, `mid_left`, `mid_center`, `mid_right`, `back_left`, `back_center`, `back_right`.
-- Luôn duy trì rắc-co (Continuity): dùng state_tracker để ghi nhận vị trí mới của từng nhân vật sau mỗi shot.
+QUY Táº®C QUáº¢N LÃ NHÃ‚N Váº¬T:
+- Vá»‹ trÃ­ lÆ°á»›i (Lower Half Grid): `front_left`, `front_center`, `front_right`, `mid_left`, `mid_center`, `mid_right`, `back_left`, `back_center`, `back_right`.
+- LuÃ´n duy trÃ¬ ráº¯c-co (Continuity): dÃ¹ng state_tracker Ä‘á»ƒ ghi nháº­n vá»‹ trÃ­ má»›i cá»§a tá»«ng nhÃ¢n váº­t sau má»—i shot.
 """
 
 def run_station_5_visual_director(episode_id: str, registry_path: str):
@@ -213,7 +213,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
     log_environment_info(logger)
     
     if not os.path.exists(registry_path):
-        logger.error(f"❌ Registry not found: {registry_path}")
+        logger.error(f"âŒ Registry not found: {registry_path}")
         return False
         
     with open(registry_path, "r", encoding="utf-8") as f:
@@ -221,7 +221,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
     available_actions = registry.get("actions", [])
     available_expressions = registry.get("expressions", [])
     available_backgrounds = registry.get("backgrounds", [])
-    logger.info(f"📚 Loaded registry: {len(available_actions)} actions, {len(available_expressions)} expressions.")
+    logger.info(f"ðŸ“š Loaded registry: {len(available_actions)} actions, {len(available_expressions)} expressions.")
 
     db = SessionLocal()
     log_db_operation(logger, "query", "Storyboard", {"episode_id": episode_id})
@@ -230,7 +230,7 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
 
     if not storyboards:
         db.close()
-        logger.warning(f"⚠️ No storyboards found for episode {episode_id}.")
+        logger.warning(f"âš ï¸ No storyboards found for episode {episode_id}.")
         return False
 
     model_name = get_model_for_station("station_5_visual")
@@ -291,9 +291,9 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
         without any tool calling loop.
         """
         parts = [
-            "Bạn là Đạo diễn Hình ảnh. Bạn có cái nhìn toàn cảnh về các shot tiếp theo."
+            "Báº¡n lÃ  Äáº¡o diá»…n HÃ¬nh áº£nh. Báº¡n cÃ³ cÃ¡i nhÃ¬n toÃ n cáº£nh vá» cÃ¡c shot tiáº¿p theo."
         ]
-        parts.append(f"--- LỊCH SỬ TỪ BATCH TRƯỚC ---\n{compact_history}\n")
+        parts.append(f"--- Lá»ŠCH Sá»¬ Tá»ª BATCH TRÆ¯á»šC ---\n{compact_history}\n")
 
         for sb in batch_shots:
             char_names = ", ".join([c.name for c in sb.characters])
@@ -305,24 +305,24 @@ def run_station_5_visual_director(episode_id: str, registry_path: str):
             parts.append(f"=== SHOT {sb.storyboard_number} (ID: {sb.id}) ===")
             parts.append(f"Action: {sb.action}")
             parts.append(f"Characters: {char_names}")
-            parts.append("Gợi ý Asset (Đã pre-fetch):")
+            parts.append("Gá»£i Ã½ Asset (ÄÃ£ pre-fetch):")
             parts.append(f" - Actions: [{actions_str}]")
             parts.append(f" - Expressions: [{expr_str}]")
             parts.append(f" - Backgrounds: [{bg_str}]\n")
 
         parts.append(
-            """YÊU CẦU:
-Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc có 2 phần:
-1. "reasoning_and_tracking": Mảng suy luận cho từng shot, ĐẶC BIỆT chú ý State Tracking (quỹ đạo di chuyển nhân vật từ shot này sang shot khác).
-2. "final_updates": Mảng quyết định cuối cùng cho TỪNG shot. CHỌN Asset ID từ danh sách gợi ý. Nếu không có, điền "MISSING: <mô tả>".
+            """YÃŠU Cáº¦U:
+Thá»±c hiá»‡n tÆ° duy cho Cáº¢ BATCH vÃ  xuáº¥t 1 JSON duy nháº¥t. Báº¯t buá»™c cÃ³ 2 pháº§n:
+1. "reasoning_and_tracking": Máº£ng suy luáº­n cho tá»«ng shot, Äáº¶C BIá»†T chÃº Ã½ State Tracking (quá»¹ Ä‘áº¡o di chuyá»ƒn nhÃ¢n váº­t tá»« shot nÃ y sang shot khÃ¡c).
+2. "final_updates": Máº£ng quyáº¿t Ä‘á»‹nh cuá»‘i cÃ¹ng cho Tá»ªNG shot. CHá»ŒN Asset ID tá»« danh sÃ¡ch gá»£i Ã½. Náº¿u khÃ´ng cÃ³, Ä‘iá»n "MISSING: <mÃ´ táº£>".
 
-Định dạng JSON:
+Äá»‹nh dáº¡ng JSON:
 {
   "reasoning_and_tracking": [
     {
       "shot": 1,
-      "logic": "<lý do chọn layout/camera và asset>",
-      "state_tracker": {"<char>": "<position_mới>"}
+      "logic": "<lÃ½ do chá»n layout/camera vÃ  asset>",
+      "state_tracker": {"<char>": "<position_má»›i>"}
     }
   ],
   "final_updates": [
@@ -335,9 +335,9 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
       "visual_metaphor": "<enum>",
       "transition_in": "<enum>",
       "atmosphere_fx": "<enum>",
-      "action_id": "<asset_id_hoặc_MISSING>",
-      "expression_tag": "<asset_id_hoặc_MISSING>",
-      "background_id": "<asset_id_hoặc_MISSING>",
+      "action_id": "<asset_id_hoáº·c_MISSING>",
+      "expression_tag": "<asset_id_hoáº·c_MISSING>",
+      "background_id": "<asset_id_hoáº·c_MISSING>",
       "character_positions": [{"character_id": "<id>", "position": "<9-grid>"}]
     }
   ]
@@ -419,13 +419,13 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
 
     total_shots = len(storyboards)
     logger.info(
-        f"🚀 ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})"
+        f"ðŸš€ ZERO-TOOL Batch processing {total_shots} shots (size={BATCH_SIZE})"
     )
 
     for batch_idx in range(0, total_shots, BATCH_SIZE):
         batch_shots = storyboards[batch_idx : batch_idx + BATCH_SIZE]
         batch_num = (batch_idx // BATCH_SIZE) + 1
-        logger.info(f"📦 Batch {batch_num}: Processing {len(batch_shots)} shots")
+        logger.info(f"ðŸ“¦ Batch {batch_num}: Processing {len(batch_shots)} shots")
 
         prev_sbs = [
             s
@@ -503,12 +503,12 @@ Thực hiện tư duy cho CẢ BATCH và xuất 1 JSON duy nhất. Bắt buộc 
 
             if attempt < MAX_RETRIES:
                 feedback = build_validation_feedback(validation_errors)
-                prompt = original_prompt + "\n\n[SỬA LỖI] " + feedback
+                prompt = original_prompt + "\n\n[Sá»¬A Lá»–I] " + feedback
                 time.sleep(2)
         else:
             # Executed when loop completes without break (all retries exhausted)
             logger.error(
-                f"Batch {batch_num}: ALL retries exhausted — "
+                f"Batch {batch_num}: ALL retries exhausted â€” "
                 f"applying best-effort updates with possible gaps"
             )
 

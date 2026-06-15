@@ -4,58 +4,58 @@ import { VideoScriptSchema, VideoScriptData } from "../../shared/types/ai-schema
 import { CHARACTERS, ACTIONS, EXPRESSIONS, BACKGROUNDS, AUDIO_TRACKS, EFFECTS } from "../../config/asset-registry";
 
 /**
- * Hàm này chịu trách nhiệm gửi kịch bản thô (text) lên Gemini
- * và yêu cầu Gemini đóng vai Đạo diễn (AI Director),
- * sinh ra cấu trúc dữ liệu JSON chuẩn xác 100% để nạp vào Remotion.
+ * HÃ m nÃ y chá»‹u trÃ¡ch nhiá»‡m gá»­i ká»‹ch báº£n thÃ´ (text) lÃªn Gemini
+ * vÃ  yÃªu cáº§u Gemini Ä‘Ã³ng vai Äáº¡o diá»…n (AI Director),
+ * sinh ra cáº¥u trÃºc dá»¯ liá»‡u JSON chuáº©n xÃ¡c 100% Ä‘á»ƒ náº¡p vÃ o Remotion.
  */
 export async function generateVideoScript(storyText: string): Promise<VideoScriptData> {
   
-  // Chuẩn bị thông tin "Từ điển tài nguyên" để nhắc nhở AI trong System Prompt
+  // Chuáº©n bá»‹ thÃ´ng tin "Tá»« Ä‘iá»ƒn tÃ i nguyÃªn" Ä‘á»ƒ nháº¯c nhá»Ÿ AI trong System Prompt
   const contextPrompt = `
-    Bạn là một Đạo diễn Phim Hoạt Hình 2D chuyên nghiệp.
-    Nhiệm vụ của bạn là chuyển đổi kịch bản truyện sau đây thành một chuỗi các cảnh quay (Scenes) chi tiết.
-    Hệ thống render (Remotion) chỉ hiểu được một cấu trúc JSON đặc biệt.
+    Báº¡n lÃ  má»™t Äáº¡o diá»…n Phim Hoáº¡t HÃ¬nh 2D chuyÃªn nghiá»‡p.
+    Nhiá»‡m vá»¥ cá»§a báº¡n lÃ  chuyá»ƒn Ä‘á»•i ká»‹ch báº£n truyá»‡n sau Ä‘Ã¢y thÃ nh má»™t chuá»—i cÃ¡c cáº£nh quay (Scenes) chi tiáº¿t.
+    Há»‡ thá»‘ng render (Remotion) chá»‰ hiá»ƒu Ä‘Æ°á»£c má»™t cáº¥u trÃºc JSON Ä‘áº·c biá»‡t.
 
-    QUAN TRỌNG NHẤT: Bạn KHÔNG ĐƯỢC PHÉP "sáng tạo" ra bất kỳ tài nguyên nào (nhân vật, hành động, biểu cảm, âm thanh, bối cảnh) không có trong danh sách dưới đây.
+    QUAN TRá»ŒNG NHáº¤T: Báº¡n KHÃ”NG ÄÆ¯á»¢C PHÃ‰P "sÃ¡ng táº¡o" ra báº¥t ká»³ tÃ i nguyÃªn nÃ o (nhÃ¢n váº­t, hÃ nh Ä‘á»™ng, biá»ƒu cáº£m, Ã¢m thanh, bá»‘i cáº£nh) khÃ´ng cÃ³ trong danh sÃ¡ch dÆ°á»›i Ä‘Ã¢y.
     
-    TÀI NGUYÊN HIỆN CÓ TRONG HỆ THỐNG:
-    - Nhân vật (Characters): ${CHARACTERS.map(c => `${c.id} (${c.name}: ${c.description})`).join(", ")}
-    - Hành động (Actions): ${ACTIONS.map(a => `${a.id} (${a.description})`).join(", ")}
-    - Biểu cảm (Expressions): ${EXPRESSIONS.map(e => `${e.id} (${e.description})`).join(", ")}
-    - Bối cảnh (Backgrounds): ${BACKGROUNDS.map(b => `${b.id} (${b.description})`).join(", ")}
-    - Nhạc nền (BGM): ${AUDIO_TRACKS.filter(a => a.type === "bgm").map(a => `${a.id} (${a.description})`).join(", ")}
-    - Hiệu ứng âm thanh (SFX): ${AUDIO_TRACKS.filter(a => a.type === "sfx").map(a => `${a.id} (${a.description})`).join(", ")}
-    - Góc máy/Kỹ xảo (Camera/VFX): ${EFFECTS.map(e => `${e.id} (${e.description})`).join(", ")}
+    TÃ€I NGUYÃŠN HIá»†N CÃ“ TRONG Há»† THá»NG:
+    - NhÃ¢n váº­t (Characters): ${CHARACTERS.map(c => `${c.id} (${c.name}: ${c.description})`).join(", ")}
+    - HÃ nh Ä‘á»™ng (Actions): ${ACTIONS.map(a => `${a.id} (${a.description})`).join(", ")}
+    - Biá»ƒu cáº£m (Expressions): ${EXPRESSIONS.map(e => `${e.id} (${e.description})`).join(", ")}
+    - Bá»‘i cáº£nh (Backgrounds): ${BACKGROUNDS.map(b => `${b.id} (${b.description})`).join(", ")}
+    - Nháº¡c ná»n (BGM): ${AUDIO_TRACKS.filter(a => a.type === "bgm").map(a => `${a.id} (${a.description})`).join(", ")}
+    - Hiá»‡u á»©ng Ã¢m thanh (SFX): ${AUDIO_TRACKS.filter(a => a.type === "sfx").map(a => `${a.id} (${a.description})`).join(", ")}
+    - GÃ³c mÃ¡y/Ká»¹ xáº£o (Camera/VFX): ${EFFECTS.map(e => `${e.id} (${e.description})`).join(", ")}
 
-    YÊU CẦU ĐẠO DIỄN:
-    1. Bóc tách câu chuyện thành từng phân cảnh nhỏ (Scenes). Mỗi cảnh khoảng 3-10 giây.
-    2. Chọn bối cảnh (backgroundId) phù hợp.
-    3. Đặt các nhân vật (actors) vào cảnh.
-    4. Chỉ định hành động (actionId) và biểu cảm (expressionId) phù hợp với ngữ cảnh câu thoại.
-    5. Chỉ định hướng mặt (facing) để hai nhân vật nói chuyện nhìn vào nhau. Ví dụ nam bên trái (facing right), nữ bên phải (facing left).
-    6. Trích xuất chính xác câu thoại (dialogue) của nhân vật.
-    7. Thêm nhạc nền (bgmId) hoặc hiệu ứng âm thanh (sfxId) nếu thấy phù hợp để tăng cảm xúc.
+    YÃŠU Cáº¦U Äáº O DIá»„N:
+    1. BÃ³c tÃ¡ch cÃ¢u chuyá»‡n thÃ nh tá»«ng phÃ¢n cáº£nh nhá» (Scenes). Má»—i cáº£nh khoáº£ng 3-10 giÃ¢y.
+    2. Chá»n bá»‘i cáº£nh (backgroundId) phÃ¹ há»£p.
+    3. Äáº·t cÃ¡c nhÃ¢n váº­t (actors) vÃ o cáº£nh.
+    4. Chá»‰ Ä‘á»‹nh hÃ nh Ä‘á»™ng (actionId) vÃ  biá»ƒu cáº£m (expressionId) phÃ¹ há»£p vá»›i ngá»¯ cáº£nh cÃ¢u thoáº¡i.
+    5. Chá»‰ Ä‘á»‹nh hÆ°á»›ng máº·t (facing) Ä‘á»ƒ hai nhÃ¢n váº­t nÃ³i chuyá»‡n nhÃ¬n vÃ o nhau. VÃ­ dá»¥ nam bÃªn trÃ¡i (facing right), ná»¯ bÃªn pháº£i (facing left).
+    6. TrÃ­ch xuáº¥t chÃ­nh xÃ¡c cÃ¢u thoáº¡i (dialogue) cá»§a nhÃ¢n váº­t.
+    7. ThÃªm nháº¡c ná»n (bgmId) hoáº·c hiá»‡u á»©ng Ã¢m thanh (sfxId) náº¿u tháº¥y phÃ¹ há»£p Ä‘á»ƒ tÄƒng cáº£m xÃºc.
   `;
 
-  console.log("🎬 [AI Director] Đang phân tích kịch bản và dựng cấu trúc phim...");
+  console.log("ðŸŽ¬ [AI Director] Äang phÃ¢n tÃ­ch ká»‹ch báº£n vÃ  dá»±ng cáº¥u trÃºc phim...");
 
   try {
-    // Sử dụng Vercel AI SDK 'generateObject'
-    // Hàm này tự động wrap Zod Schema thành JSON Schema và ép model trả về đúng format.
-    // Nó cũng tích hợp sẵn cơ chế auto-retry (thử lại) nếu model trả về sai JSON.
+    // Sá»­ dá»¥ng Vercel AI SDK 'generateObject'
+    // HÃ m nÃ y tá»± Ä‘á»™ng wrap Zod Schema thÃ nh JSON Schema vÃ  Ã©p model tráº£ vá» Ä‘Ãºng format.
+    // NÃ³ cÅ©ng tÃ­ch há»£p sáºµn cÆ¡ cháº¿ auto-retry (thá»­ láº¡i) náº¿u model tráº£ vá» sai JSON.
     const { object } = await generateObject({
       model: google("gemini-3-flash-preview"),
       schema: VideoScriptSchema,
       system: contextPrompt,
-      prompt: `Kịch bản truyện cần đạo diễn:\n\n"""\n${storyText}\n"""`,
-      // Mặc định Vercel AI SDK có cơ chế maxRetries để tự sửa lỗi JSON
+      prompt: `Ká»‹ch báº£n truyá»‡n cáº§n Ä‘áº¡o diá»…n:\n\n"""\n${storyText}\n"""`,
+      // Máº·c Ä‘á»‹nh Vercel AI SDK cÃ³ cÆ¡ cháº¿ maxRetries Ä‘á»ƒ tá»± sá»­a lá»—i JSON
     });
 
-    console.log("✅ [AI Director] Dựng phim hoàn tất!");
+    console.log("âœ… [AI Director] Dá»±ng phim hoÃ n táº¥t!");
     return object;
 
   } catch (error) {
-    console.error("❌ [AI Director] Thất bại trong việc sinh kịch bản JSON:", error);
+    console.error("âŒ [AI Director] Tháº¥t báº¡i trong viá»‡c sinh ká»‹ch báº£n JSON:", error);
     throw error;
   }
 }

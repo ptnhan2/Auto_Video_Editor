@@ -67,7 +67,7 @@ Therefore, all components, props, and schemas must be designed for an LLM to und
 
 - **Semantic Naming:** Use clear, descriptive names for IDs (`talk_sad`, `run_cycle`) instead of arbitrary names (`action_01`).
 - **Strict Enums:** Use strict string literals/enums (e.g., `facingDirection: 'left' | 'right'`) rather than expecting the AI to guess arbitrary values like CSS transforms.
-- **Abstract Complexity:** Hide pixel-perfect coordinates or complex math from the AI's API. Provide high-level relative positioning (e.g., `position: 'left'`) that the internal React/Remotion engine converts to absolute values.
+- **Abstract Complexity:** Hide pixel-perfect coordinates or complex math from the AI's API. Provide high-level relative positioning (e.g., `position: 'left'`) that the React engine converts to absolute values.
 - **Safe Fallbacks:** Ensure robust error handling and fallbacks if the AI hallucinates an ID.
 
 ### Rule F: "Fence Editing"
@@ -96,7 +96,7 @@ After making changes, the agent MUST:
 
 ### Rule G: "Frontend Component Discipline"
 
-Applies to all Next.js/React/Remotion components. FE Dev Agent MUST follow these rules.
+Applies to all Next.js/React components. FE Dev Agent MUST follow these rules.
 
 1. **Pages only compose** — `/src/app/**/page.tsx` imports and arranges components only. No raw `<div className="flex...">` blocks in pages.
 2. **Design tokens only** — No hardcoded colors (`#fff`, `rgb(...)`). Use shadcn/ui CSS variables (`bg-primary`, `text-muted-foreground`).
@@ -131,3 +131,120 @@ For SQLite access from Next.js API routes, the project standard is **node:sqlite
 - Python subprocess for DB reads from API routes
 - `better-sqlite3` (replaced by `node:sqlite`)
 
+### Rule I: "Comment Convention (AI-First Documentation)"
+
+All code in this project is consumed by both humans and AI (Gemini via Function Calling). Every function must be self-documenting enough for an LLM to understand its purpose without reading the implementation.
+
+#### Mandatory Docstrings
+
+- **ALL functions** (public AND private) MUST have a docstring/JSDoc.
+- **TypeScript:** Use JSDoc format `/** ... */`.
+- **Python:** Use Google-style triple-quote docstring `"""..."""`.
+
+#### Content Requirements
+
+Every docstring MUST include:
+1. **What the function does** — 1-2 sentences in Vietnamese (business logic)
+2. **Parameters** — `@param` (TS) or `Args:` (Python), with type and description in English
+3. **Returns** — `@returns` (TS) or `Returns:` (Python), with type and description
+4. **Side effects** — If the function mutates state, writes to DB, makes API calls, etc.
+
+Example (TypeScript):
+```ts
+/**
+ * Lấy danh sách assets từ DB với filter và phân trang.
+ *
+ * @param status - Filter by asset status (PENDING, PROCESSING, READY, FAILED)
+ * @param limit  - Max items per page (default 20, max 100)
+ * @param offset - Pagination offset (default 0)
+ * @returns Paginated asset list with total count
+ * @sideEffect Reads from SQLite asset_queue table (read-only)
+ */
+```
+
+Example (Python):
+```python
+def save_script(episode_id: str, content: str) -> dict:
+    """Lưu nội dung kịch bản đã được viết lại vào tập phim trong database.
+
+    Args:
+        episode_id: Episode ID to save the script to.
+        content: Full rewritten screenplay content (min 100 chars).
+
+    Returns:
+        dict with "message" and "word_count" on success, or "error" on failure.
+
+    Side Effects:
+        Updates Episode.script_content in the database. Rolls back on error.
+    """
+```
+
+#### Section Organization
+
+Use consistent section separators to organize code within files:
+
+- **TypeScript:** `// ── Section Name ──────────────────────────────────────────`
+- **Python:** `# ── Section Name ──────────────────────────────────────────`
+
+Common section labels: `Constants`, `Types`, `Helpers`, `Handlers`, `Main`, `Tests`, etc.
+
+#### Comment Language
+
+| Context | Language |
+|---------|----------|
+| Business logic / domain concepts | Vietnamese |
+| Function parameters, return types, error messages | English (for Gemini tool calling) |
+| TODO / FIXME | Bilingual: `TODO(#issue): Vietnamese description` |
+| Inline explanation for complex/non-obvious logic | Vietnamese |
+
+#### Forbidden
+
+- ❌ Functions without docstring
+- ❌ Comments that restate obvious code (`// increment i`)
+- ❌ Commented-out code left in commit (delete it — git history preserves it)
+- ❌ Outdated comments that don't match the code
+
+
+---
+
+## 3. TECHNOLOGY PIVOT — Remotion → OpenCut
+
+### Rule J: "Remotion Deprecated — OpenCut is the Video Editor"
+
+**Effective:** 2026-06-15
+
+Remotion has been **completely removed** from the technology stack. All Remotion code has been archived to `.archive/remotion/`.
+
+**Why:** Remotion is a programmatic render engine (suitable for server-side MP4 generation), NOT a video editor (suitable for timeline-based editing with multi-track, effects, ripple edit, snapping). The project requires a CapCut-like editor that can be controlled by AI via API.
+
+**New direction:** The project is pivoting to integrate **OpenCut** (open-source video editor) as the primary editor engine. OpenCut provides:
+- Professional timeline (multi-track, ripple edit, snapping, undo/redo)
+- Preview panel
+- Asset management
+- Export capabilities
+
+**Platform role:** The Next.js Platform (Landing Page, Asset Dashboard, Episode Detail, APIs) continues as the **management layer** — drama/episode/asset management, pipeline trigger, and AI orchestration. OpenCut handles the **editing layer**.
+
+**Remaining stack:** Next.js + React (Web Platform), Python S1-S7 Pipeline (content generation), SQLite (data), OpenCut (video editing).
+
+**For AI coding agents:** If you see `remotion/`, `@remotion/`, or Remotion-related code, it is **DEPRECATED**. Do NOT modify, use, or reference it. Direct all video editing work to OpenCut integration.
+
+---
+
+## 3. TECHNOLOGY PIVOT — Remotion to OpenCut
+
+### Rule J: "Remotion Deprecated — OpenCut is the Video Editor"
+
+**Effective:** 2026-06-15
+
+Remotion has been **completely removed** from the technology stack. All Remotion code has been archived to .archive/remotion/.`r
+
+**Why:** Remotion is a programmatic render engine, NOT a video editor. The project requires a CapCut-like editor that can be controlled by AI via API.
+
+**New direction:** The project is pivoting to integrate **OpenCut** (open-source video editor) as the primary editor engine. OpenCut provides: professional timeline (multi-track, ripple edit, snapping, undo/redo), preview panel, asset management, export capabilities.
+
+**Platform role:** The Next.js Platform continues as the **management layer** (drama/episode/asset management, pipeline trigger, AI orchestration). OpenCut handles the **editing layer**.
+
+**Remaining stack:** Next.js + React (Web Platform), Python S1-S7 Pipeline (content generation), SQLite (data), OpenCut (video editing).
+
+**For AI coding agents:** If you see emotion/, @remotion/, or Remotion-related code, it is **DEPRECATED**. Do NOT modify, use, or reference it. Direct all video editing work to OpenCut integration.

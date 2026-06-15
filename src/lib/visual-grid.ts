@@ -2,18 +2,18 @@ import { CSSProperties } from 'react';
 
 /**
  * UTILITY: getActorPositionStyle
- * Chuyển đổi position string (9-Point Grid) sang CSS properties cho Remotion Actor.
- * Tuân thủ docs/architecture/visual_foundation_implementation.md
+ * Chuyá»ƒn Ä‘á»•i position string (9-Point Grid) sang CSS properties cho Video Actor.
+ * TuÃ¢n thá»§ docs/architecture/visual_foundation_implementation.md
  */
 export function getActorPositionStyle(position: string): CSSProperties {
   const styles: CSSProperties = {
     position: 'absolute',
     transformOrigin: 'bottom center',
-    transform: 'translate(-50%, 0)', // Canh giữa theo chiều ngang dựa trên 'left'
+    transform: 'translate(-50%, 0)', // Canh giá»¯a theo chiá»u ngang dá»±a trÃªn 'left'
   };
 
-  // 1. Phân tách logic Chiều sâu (Depth) - Hàng ngang (Row)
-  // Các prefix: back_, mid_, front_
+  // 1. PhÃ¢n tÃ¡ch logic Chiá»u sÃ¢u (Depth) - HÃ ng ngang (Row)
+  // CÃ¡c prefix: back_, mid_, front_
   if (position.startsWith('back_')) {
     styles.bottom = '40%';
     styles.scale = 0.3;
@@ -27,14 +27,14 @@ export function getActorPositionStyle(position: string): CSSProperties {
     styles.scale = 0.7;
     styles.zIndex = 30;
   } else {
-    // Fallback mặc định (mid) nếu không khớp prefix
+    // Fallback máº·c Ä‘á»‹nh (mid) náº¿u khÃ´ng khá»›p prefix
     styles.bottom = '15%';
     styles.scale = 0.5;
     styles.zIndex = 20;
   }
 
-  // 2. Phân tách logic Vị trí Ngang (Horizontal) - Cột (Column)
-  // Các suffix: _left, _center, _right
+  // 2. PhÃ¢n tÃ¡ch logic Vá»‹ trÃ­ Ngang (Horizontal) - Cá»™t (Column)
+  // CÃ¡c suffix: _left, _center, _right
   if (position.endsWith('_left')) {
     styles.left = '15%';
   } else if (position.endsWith('_center')) {
@@ -42,7 +42,7 @@ export function getActorPositionStyle(position: string): CSSProperties {
   } else if (position.endsWith('_right')) {
     styles.left = '85%';
   } else {
-    // Fallback mặc định (center) nếu không khớp suffix
+    // Fallback máº·c Ä‘á»‹nh (center) náº¿u khÃ´ng khá»›p suffix
     styles.left = '50%';
   }
 

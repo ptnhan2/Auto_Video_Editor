@@ -99,10 +99,10 @@ def compile_episode(episode_id):
         )
 
         if not storyboards:
-            logger.warning(f"⚠️ No storyboards found for episode {episode_id}")
+            logger.warning(f"âš ï¸ No storyboards found for episode {episode_id}")
             return {"error": f"No storyboards found for episode {episode_id}"}
 
-        logger.info(f"📊 Found {len(storyboards)} storyboards")
+        logger.info(f"ðŸ“Š Found {len(storyboards)} storyboards")
 
         scenes = []
         current_scene = None
@@ -139,7 +139,7 @@ def compile_episode(episode_id):
             characters = list(sb.characters) if sb.characters else []
             speaking_char_id = sb.speaker_id
 
-            # Phân tích character_position từ DB
+            # PhÃ¢n tÃ­ch character_position tá»« DB
             char_states = {}
             if getattr(sb, "character_position", None):
                 try:
@@ -156,7 +156,7 @@ def compile_episode(episode_id):
                 is_speaker = speaking_char_id == char.id
                 dialogue_text = sb.dialogue if is_speaker else None
                 
-                # Áp dụng trạng thái cụ thể của nhân vật nếu có
+                # Ãp dá»¥ng tráº¡ng thÃ¡i cá»¥ thá»ƒ cá»§a nhÃ¢n váº­t náº¿u cÃ³
                 state = char_states.get(char.id, {})
 
                 actor = {
@@ -203,9 +203,9 @@ def compile_episode(episode_id):
             json.dump(result, f, ensure_ascii=False, indent=2)
 
         log_logic_transition(logger, "STATION_COMPLETE", f"Compiled {len(scenes)} scenes to {output_path}")
-        logger.info(f"✅ Output written to: {output_path}")
+        logger.info(f"âœ… Output written to: {output_path}")
 
-        # Cập nhật danh sách file cho Remotion Studio
+        # Cáº­p nháº­t danh sÃ¡ch file cho Remotion Studio
         try:
             scripts = [f for f in os.listdir(output_dir) if f.endswith(".json") and os.path.getsize(os.path.join(output_dir, f)) > 10]
             anim_dir = os.path.join(os.getcwd(), "public", "animations")
@@ -218,16 +218,16 @@ def compile_episode(episode_id):
             gen_content += f"export const actionFiles: string[] = {json.dumps(anims, indent=2)};\n"
             gen_content += f"export const characterFolders: string[] = {json.dumps(chars, indent=2)};\n"
             
-            gen_path = os.path.join(os.getcwd(), "remotion", "_generated-files.ts")
+            gen_path = os.path.join(os.getcwd(), 'output', 'opencut_project.json')
             with open(gen_path, "w", encoding="utf-8") as f:
                 f.write(gen_content)
         except Exception as e:
-            logger.warning(f"Failed to generate remotion/_generated-files.ts: {e}")
+            logger.warning(f"Failed to generate opencut_project.json: {e}")
 
         return result
 
     except Exception as e:
-        logger.error(f"❌ Compilation error: {e}")
+        logger.error(f"âŒ Compilation error: {e}")
         raise
     finally:
         db.close()

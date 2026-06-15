@@ -9,18 +9,18 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 def extract_frames(episode_id):
-    print(f"🎬 Bắt đầu trích xuất frames cho episode: {episode_id}")
+    print(f"ðŸŽ¬ Báº¯t Ä‘áº§u trÃ­ch xuáº¥t frames cho episode: {episode_id}")
     
-    # 1. Đọc file JSON để lấy thông tin duration
+    # 1. Äá»c file JSON Ä‘á»ƒ láº¥y thÃ´ng tin duration
     json_path = f"public/scripts/compiled_{episode_id}.json"
     if not os.path.exists(json_path):
-        print(f"❌ Không tìm thấy file JSON: {json_path}")
+        print(f"âŒ KhÃ´ng tÃ¬m tháº¥y file JSON: {json_path}")
         sys.exit(1)
         
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
         
-    # Tính tổng số frame (mặc định 30fps)
+    # TÃ­nh tá»•ng sá»‘ frame (máº·c Ä‘á»‹nh 30fps)
     total_seconds = 0
     for scene in data.get('scenes', []):
         if 'totalDurationSeconds' in scene:
@@ -29,57 +29,57 @@ def extract_frames(episode_id):
             total_seconds += sum(shot.get('durationSeconds', 5) for shot in scene['shots'])
             
     total_frames = max(math.ceil(total_seconds * 30), 30)
-    print(f"⏱️ Tổng thời lượng: {total_seconds}s ({total_frames} frames)")
+    print(f"â±ï¸ Tá»•ng thá»i lÆ°á»£ng: {total_seconds}s ({total_frames} frames)")
     
-    # 2. Tạo props file (tránh lỗi escape string trên Windows)
+    # 2. Táº¡o props file (trÃ¡nh lá»—i escape string trÃªn Windows)
     props_file = "_audit_props.json"
     with open(props_file, 'w', encoding='utf-8') as f:
         json.dump({"scriptFile": f"compiled_{episode_id}.json"}, f)
         
-    # 3. Tạo thư mục chứa ảnh
+    # 3. Táº¡o thÆ° má»¥c chá»©a áº£nh
     out_dir = f"out/audit_{episode_id}"
     os.makedirs(out_dir, exist_ok=True)
     
-    # 4. Trích xuất 4 frames rải đều khắp video
-    # Tránh frame 0 vì đôi khi bị đen do transition_in
+    # 4. TrÃ­ch xuáº¥t 4 frames ráº£i Ä‘á»u kháº¯p video
+    # TrÃ¡nh frame 0 vÃ¬ Ä‘Ã´i khi bá»‹ Ä‘en do transition_in
     target_frames = [
-        30,                                  # Giây thứ 1
+        30,                                  # GiÃ¢y thá»© 1
         math.floor(total_frames * 0.3),      # 30% video
         math.floor(total_frames * 0.6),      # 60% video
         math.floor(total_frames * 0.9)       # 90% video
     ]
     
-    # Gọi Remotion Still
+    # Gá»i Remotion Still
     npx_cmd = "npx.cmd" if sys.platform == "win32" else "npx"
     extracted_files = []
     
     for i, frame in enumerate(target_frames):
         out_file = f"{out_dir}/frame_{i+1}_f{frame}.png"
-        print(f"📸 Đang chụp frame {frame} -> {out_file}...")
+        print(f"ðŸ“¸ Äang chá»¥p frame {frame} -> {out_file}...")
         
         cmd = [
-            npx_cmd, "remotion", "still", "remotion/index.ts", "AIStoryCompiler", 
+            npx_cmd, "echo", "remotion-still-deprecated", "(deprecated)", "AIStoryCompiler", 
             out_file, 
             f"--props={props_file}", 
             f"--frame={frame}",
-            "--port=3005"  # Tránh đụng port 3002 của Studio
+            "--port=3005"  # TrÃ¡nh Ä‘á»¥ng port 3002 cá»§a Studio
         ]
         
         try:
             subprocess.run(cmd, check=True, capture_output=True)
             extracted_files.append(out_file)
-            print("✅ OK")
+            print("âœ… OK")
         except subprocess.CalledProcessError as e:
-            print(f"❌ Lỗi khi chụp frame {frame}: {e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)}")
+            print(f"âŒ Lá»—i khi chá»¥p frame {frame}: {e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)}")
             
     # Cleanup
     if os.path.exists(props_file):
         os.remove(props_file)
         
-    print(f"\n🎉 Đã trích xuất xong {len(extracted_files)} frames. Sẵn sàng cho AI Audit!")
+    print(f"\nðŸŽ‰ ÄÃ£ trÃ­ch xuáº¥t xong {len(extracted_files)} frames. Sáºµn sÃ ng cho AI Audit!")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Trích xuất frames để AI Audit")
+    parser = argparse.ArgumentParser(description="TrÃ­ch xuáº¥t frames Ä‘á»ƒ AI Audit")
     parser.add_argument("episode_id", help="Episode ID")
     args = parser.parse_args()
     extract_frames(args.episode_id)

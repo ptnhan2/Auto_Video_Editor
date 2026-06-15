@@ -6,7 +6,7 @@ from difflib import SequenceMatcher
 import whisperx
 from faster_whisper.audio import decode_audio
 
-# Thiết lập encoding UTF-8 cho console
+# Thiáº¿t láº­p encoding UTF-8 cho console
 if sys.stdout.encoding != 'utf-8':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
@@ -14,28 +14,28 @@ if sys.stdout.encoding != 'utf-8':
         pass
 
 def clean_word(word):
-    """Làm sạch từ để so khớp (bỏ dấu câu, viết thường)."""
+    """LÃ m sáº¡ch tá»« Ä‘á»ƒ so khá»›p (bá» dáº¥u cÃ¢u, viáº¿t thÆ°á»ng)."""
     return re.sub(r'[^\w\s]', '', word).lower().strip()
 
 def align_subtitles_precise(original_text, whisper_results):
     """
-    Thuật toán so khớp chuỗi (Sequence Matching) để ánh xạ timing chuẩn xác nhất.
-    Không dùng nội suy tuyến tính toàn bộ mà dựa trên từng từ khớp được.
+    Thuáº­t toÃ¡n so khá»›p chuá»—i (Sequence Matching) Ä‘á»ƒ Ã¡nh xáº¡ timing chuáº©n xÃ¡c nháº¥t.
+    KhÃ´ng dÃ¹ng ná»™i suy tuyáº¿n tÃ­nh toÃ n bá»™ mÃ  dá»±a trÃªn tá»«ng tá»« khá»›p Ä‘Æ°á»£c.
     """
     original_words = original_text.split()
-    # Danh sách từ đã làm sạch từ Whisper
+    # Danh sÃ¡ch tá»« Ä‘Ã£ lÃ m sáº¡ch tá»« Whisper
     whisper_words_clean = [clean_word(w['word']) for w in whisper_results]
-    # Danh sách từ đã làm sạch từ Kịch bản
+    # Danh sÃ¡ch tá»« Ä‘Ã£ lÃ m sáº¡ch tá»« Ká»‹ch báº£n
     original_words_clean = [clean_word(w) for w in original_words]
 
-    # Dùng SequenceMatcher để tìm các đoạn khớp nhau giữa 2 mảng từ
+    # DÃ¹ng SequenceMatcher Ä‘á»ƒ tÃ¬m cÃ¡c Ä‘oáº¡n khá»›p nhau giá»¯a 2 máº£ng tá»«
     matcher = SequenceMatcher(None, original_words_clean, whisper_words_clean)
     matching_blocks = matcher.get_matching_blocks()
 
-    # Mảng kết quả cuối cùng (độ dài bằng đúng original_words)
+    # Máº£ng káº¿t quáº£ cuá»‘i cÃ¹ng (Ä‘á»™ dÃ i báº±ng Ä‘Ãºng original_words)
     final_timings = [None] * len(original_words)
 
-    # 1. Điền timing cho các từ khớp hoàn toàn
+    # 1. Äiá»n timing cho cÃ¡c tá»« khá»›p hoÃ n toÃ n
     for block in matching_blocks:
         orig_start, whisp_start, length = block
         for i in range(length):
@@ -46,11 +46,11 @@ def align_subtitles_precise(original_text, whisper_results):
                 "end": w_info['end']
             }
 
-    # 2. Xử lý các từ không khớp bằng cách phân bổ đều thời gian (Interpolation)
+    # 2. Xá»­ lÃ½ cÃ¡c tá»« khÃ´ng khá»›p báº±ng cÃ¡ch phÃ¢n bá»• Ä‘á»u thá»i gian (Interpolation)
     missing_indices = [i for i, t in enumerate(final_timings) if t is None]
     
     if missing_indices:
-        # Gom các index bị thiếu liên tiếp thành các nhóm
+        # Gom cÃ¡c index bá»‹ thiáº¿u liÃªn tiáº¿p thÃ nh cÃ¡c nhÃ³m
         groups = []
         current_group = []
         for idx in missing_indices:
@@ -66,12 +66,12 @@ def align_subtitles_precise(original_text, whisper_results):
             first_idx = group[0]
             last_idx = group[-1]
             
-            # Tìm mốc thời gian bắt đầu của khoảng trống
+            # TÃ¬m má»‘c thá»i gian báº¯t Ä‘áº§u cá»§a khoáº£ng trá»‘ng
             start_time = 0.0
             if first_idx > 0 and final_timings[first_idx - 1] is not None:
                 start_time = final_timings[first_idx - 1]['end']
             
-            # Tìm mốc thời gian kết thúc của khoảng trống
+            # TÃ¬m má»‘c thá»i gian káº¿t thÃºc cá»§a khoáº£ng trá»‘ng
             end_time = None
             if last_idx < len(final_timings) - 1:
                 for j in range(last_idx + 1, len(final_timings)):
@@ -85,11 +85,11 @@ def align_subtitles_precise(original_text, whisper_results):
                 else:
                     end_time = start_time + len(group) * 0.3
                 
-            # Tránh lỗi end_time < start_time (do Whisper có thể đè timing)
+            # TrÃ¡nh lá»—i end_time < start_time (do Whisper cÃ³ thá»ƒ Ä‘Ã¨ timing)
             if end_time < start_time:
                 end_time = start_time + 0.1
 
-            # Chia đều thời gian cho số lượng từ bị thiếu
+            # Chia Ä‘á»u thá»i gian cho sá»‘ lÆ°á»£ng tá»« bá»‹ thiáº¿u
             time_per_word = (end_time - start_time) / len(group)
             
             for i, idx in enumerate(group):
@@ -102,16 +102,16 @@ def align_subtitles_precise(original_text, whisper_results):
     return final_timings
 
 def process_script_with_whisper(json_path):
-    """Duyệt script và cập nhật wordTimings bằng Forced Alignment (bỏ qua Transcription)."""
-    print("🚀 Bắt đầu quy trình Karaoke TỐI ƯU (Bỏ qua Transcribe, chỉ dùng Wav2Vec2)...")
+    """Duyá»‡t script vÃ  cáº­p nháº­t wordTimings báº±ng Forced Alignment (bá» qua Transcription)."""
+    print("ðŸš€ Báº¯t Ä‘áº§u quy trÃ¬nh Karaoke Tá»I Æ¯U (Bá» qua Transcribe, chá»‰ dÃ¹ng Wav2Vec2)...")
     
     device = "cuda" if os.environ.get("USE_GPU") == "1" else "cpu"
     
-    print("⏳ Đang tải mô hình Forced Alignment (Wav2Vec2) tiếng Việt...")
+    print("â³ Äang táº£i mÃ´ hÃ¬nh Forced Alignment (Wav2Vec2) tiáº¿ng Viá»‡t...")
     align_model, metadata = whisperx.load_align_model(language_code="vi", device=device)
 
     if not os.path.exists(json_path):
-        print(f"❌ Không tìm thấy file: {json_path}")
+        print(f"âŒ KhÃ´ng tÃ¬m tháº¥y file: {json_path}")
         return
 
     with open(json_path, "r", encoding="utf-8") as f:
@@ -127,24 +127,24 @@ def process_script_with_whisper(json_path):
             audio_path = os.path.join("public", "assets", "audio", "tts", f"{audio_id}.mp3")
             
             if os.path.exists(audio_path):
-                print(f"🎙️ Đang ép mốc thời gian (Align): {audio_id}.mp3...")
+                print(f"ðŸŽ™ï¸ Äang Ã©p má»‘c thá»i gian (Align): {audio_id}.mp3...")
                 
-                # Load audio dưới dạng mảng NumPy (Sample rate 16000)
-                # Dùng decode_audio của faster_whisper để tránh lỗi thiếu ffmpeg.exe trên Windows
+                # Load audio dÆ°á»›i dáº¡ng máº£ng NumPy (Sample rate 16000)
+                # DÃ¹ng decode_audio cá»§a faster_whisper Ä‘á»ƒ trÃ¡nh lá»—i thiáº¿u ffmpeg.exe trÃªn Windows
                 audio = decode_audio(audio_path, sampling_rate=16000)
                 audio_duration = len(audio) / 16000.0
                 
-                # Lưu trữ duration thật vào file json để Remotion sử dụng làm Auto Pacing
+                # LÆ°u trá»¯ duration tháº­t vÃ o file json Ä‘á»ƒ Remotion sá»­ dá»¥ng lÃ m Auto Pacing
                 shot["audioDuration"] = round(audio_duration, 3)
                 
-                # Tạo segment thô từ kịch bản có sẵn
+                # Táº¡o segment thÃ´ tá»« ká»‹ch báº£n cÃ³ sáºµn
                 mock_segments = [{
                     "text": dialogue,
                     "start": 0.0,
                     "end": audio_duration
                 }]
                 
-                # Align (Ép khớp trực tiếp Text chuẩn vào Audio)
+                # Align (Ã‰p khá»›p trá»±c tiáº¿p Text chuáº©n vÃ o Audio)
                 try:
                     aligned_result = whisperx.align(mock_segments, align_model, metadata, audio, device, return_char_alignments=False)
                     
@@ -161,26 +161,26 @@ def process_script_with_whisper(json_path):
                     if whisper_words:
                         original_words = dialogue.split()
                         if len(original_words) == len(whisper_words):
-                            print(f"   ✅ Ép khớp hoàn hảo {len(original_words)} từ.")
+                            print(f"   âœ… Ã‰p khá»›p hoÃ n háº£o {len(original_words)} tá»«.")
                             shot["wordTimings"] = [
                                 {"text": original_words[i], "start": whisper_words[i]['start'], "end": whisper_words[i]['end']}
                                 for i in range(len(original_words))
                             ]
                         else:
-                            print(f"   ⚠️ Lệch từ nhẹ trong quá trình ép ({len(original_words)} vs {len(whisper_words)}), nội suy phần còn lại...")
+                            print(f"   âš ï¸ Lá»‡ch tá»« nháº¹ trong quÃ¡ trÃ¬nh Ã©p ({len(original_words)} vs {len(whisper_words)}), ná»™i suy pháº§n cÃ²n láº¡i...")
                             shot["wordTimings"] = align_subtitles_precise(dialogue, whisper_words)
                     else:
-                        print(f"⚠️ Cảnh báo: Thuật toán không tìm thấy mốc thời gian nào cho {audio_id}")
+                        print(f"âš ï¸ Cáº£nh bÃ¡o: Thuáº­t toÃ¡n khÃ´ng tÃ¬m tháº¥y má»‘c thá»i gian nÃ o cho {audio_id}")
                 except Exception as e:
-                    print(f"❌ Lỗi ép khớp {audio_id}: {str(e)}")
+                    print(f"âŒ Lá»—i Ã©p khá»›p {audio_id}: {str(e)}")
 
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print("\n✅ HOÀN TẤT QUY TRÌNH KẾT NỐI TIMING SIÊU TỐC!")
+    print("\nâœ… HOÃ€N Táº¤T QUY TRÃŒNH Káº¾T Ná»I TIMING SIÃŠU Tá»C!")
 
 if __name__ == "__main__":
-    # Cho phép truyền tham số từ command line
+    # Cho phÃ©p truyá»n tham sá»‘ tá»« command line
     script_arg = sys.argv[1] if len(sys.argv) > 1 else "reviewed_script.json"
     JSON_PATH = os.path.join("public", "scripts", script_arg)
     process_script_with_whisper(JSON_PATH)
