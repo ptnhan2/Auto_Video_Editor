@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Film, Loader2 } from "lucide-react";
 import type { Episode, Drama } from "@/shared/types/episode";
-import { mockDramas } from "./mock-data";
 import { DramaCard } from "./drama-card";
 import { EpisodeCard } from "./episode-card";
 import { CreateEpisodeForm } from "./create-episode-form";
@@ -16,11 +15,11 @@ type DataState =
   | { status: "success"; episodes: Episode[]; dramas: Drama[] };
 
 /** Map API snake_case row → camelCase Episode */
-function mapEpisodeRow(row: Record<string, unknown>): Episode {
+function mapEpisodeRow(row: Record<string, unknown>, dramas: Drama[]): Episode {
   return {
     id: row.id as string,
     dramaId: (row.drama_id ?? "") as string,
-    dramaTitle: mockDramas.find((d) => d.id === (row.drama_id as string))?.title,
+    dramaTitle: dramas.find((d) => d.id === (row.drama_id as string))?.title,
     episodeNumber: (row.episode_number ?? 1) as number,
     title: (row.title ?? "") as string,
     content: (row.content ?? null) as string | null,
@@ -43,12 +42,20 @@ export function LandingClient() {
 
     async function load() {
       try {
-        const res = await fetch("/api/episodes?limit=50");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const episodes: Episode[] = (json.episodes ?? []).map(mapEpisodeRow);
+        const [epRes, dramaRes] = await Promise.all([
+          fetch("/api/episodes?limit=50"),
+          fetch("/api/dramas"),
+        ]);
+        if (!epRes.ok) throw new Error(`HTTP ${epRes.status}`);
+        const json = await epRes.json();
+        const dramas: Drama[] = dramaRes.ok
+          ? (await dramaRes.json()).dramas ?? []
+          : [];
+        const episodes: Episode[] = (json.episodes ?? []).map((r: Record<string, unknown>) =>
+          mapEpisodeRow(r, dramas),
+        );
         if (!cancelled) {
-          setData({ status: "success", episodes, dramas: mockDramas });
+          setData({ status: "success", episodes, dramas });
         }
       } catch (err) {
         console.error("[LandingClient] Failed to fetch episodes:", err);
