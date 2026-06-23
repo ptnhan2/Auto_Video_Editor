@@ -129,7 +129,7 @@ export async function importAsset(
   fileBuffer: Uint8Array,
 ): Promise<ImportAssetResult> {
   const formData = new FormData();
-  const blob = new Blob([fileBuffer]);
+  const blob = new Blob([fileBuffer as BlobPart]);
   formData.append('file', blob, mediaId);
   formData.append('projectId', projectId);
   formData.append('mediaId', mediaId);
