@@ -1,0 +1,250 @@
+{
+  "_schema_version": 10,
+  "_description": "OpenCut-AI Project JSON sample — đầy đủ video + audio + text + transition. File này là định dạng SerializedProject, tương thích để load vào OpenCut-AI qua IndexedDB storage adapter. Tất cả thời gian tính bằng giây (second). Tọa độ gốc (0,0) = top-left của canvas.",
+
+  "metadata": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Drama tập 1 — Cảnh mở đầu",
+    "thumbnail": null,
+    "duration": 30.0,
+    "createdAt": "2026-06-23T12:00:00.000Z",
+    "updatedAt": "2026-06-23T12:05:00.000Z"
+  },
+
+  "scenes": [
+    {
+      "id": "scene-main-001",
+      "name": "Main scene",
+      "isMain": true,
+      "tracks": [
+        {
+          "id": "track-video-001",
+          "name": "Main Track",
+          "color": "default",
+          "type": "video",
+          "elements": [
+            {
+              "id": "elem-clip-001",
+              "name": "Cảnh quay 1 — toàn cảnh",
+              "duration": 12.0,
+              "startTime": 0.0,
+              "trimStart": 0.0,
+              "trimEnd": 0.0,
+              "sourceDuration": 15.0,
+              "type": "video",
+              "mediaId": "media-video-001",
+              "muted": false,
+              "hidden": false,
+              "playbackRate": 1.0,
+              "transform": {
+                "scale": 1.0,
+                "position": { "x": 0, "y": 0 },
+                "rotate": 0
+              },
+              "opacity": 1.0,
+              "blendMode": "normal",
+              "transitionOut": {
+                "type": "cross-dissolve",
+                "duration": 0.5
+              },
+              "crop": null,
+              "mask": null,
+              "effects": []
+            },
+            {
+              "id": "elem-clip-002",
+              "name": "Cảnh quay 2 — cận mặt",
+              "duration": 18.0,
+              "startTime": 12.0,
+              "trimStart": 0.0,
+              "trimEnd": 0.0,
+              "sourceDuration": 20.0,
+              "type": "video",
+              "mediaId": "media-video-002",
+              "muted": false,
+              "hidden": false,
+              "playbackRate": 1.0,
+              "transform": {
+                "scale": 1.0,
+                "position": { "x": 0, "y": 0 },
+                "rotate": 0
+              },
+              "opacity": 1.0,
+              "blendMode": "normal",
+              "transitionOut": null,
+              "crop": null,
+              "mask": null,
+              "effects": []
+            }
+          ],
+          "isMain": true,
+          "muted": false,
+          "hidden": false,
+          "volume": 1.0
+        },
+
+        {
+          "id": "track-audio-001",
+          "name": "Nhạc nền + lời thoại",
+          "color": "blue",
+          "type": "audio",
+          "elements": [
+            {
+              "id": "elem-audio-bgm",
+              "name": "Nhạc nền",
+              "duration": 30.0,
+              "startTime": 0.0,
+              "trimStart": 0.0,
+              "trimEnd": 0.0,
+              "sourceDuration": 120.0,
+              "type": "audio",
+              "sourceType": "upload",
+              "mediaId": "media-audio-001",
+              "volume": 0.3,
+              "muted": false,
+              "playbackRate": 1.0
+            }
+          ],
+          "muted": false,
+          "volume": 1.0,
+          "pan": 0
+        },
+
+        {
+          "id": "track-text-001",
+          "name": "Subtitles",
+          "color": "yellow",
+          "type": "text",
+          "elements": [
+            {
+              "id": "elem-sub-001",
+              "name": "Subtitle 1",
+              "duration": 3.5,
+              "startTime": 2.0,
+              "trimStart": 0.0,
+              "trimEnd": 0.0,
+              "type": "text",
+              "content": "Xin chào, hôm nay trời đẹp quá!",
+              "fontSize": 48,
+              "fontFamily": "Arial",
+              "color": "#FFFFFF",
+              "highlightColor": "#FFD700",
+              "wordTimings": [
+                { "word": "Xin", "start": 0.0, "end": 0.4 },
+                { "word": "chào,", "start": 0.4, "end": 0.8 },
+                { "word": "hôm", "start": 0.8, "end": 1.1 },
+                { "word": "nay", "start": 1.1, "end": 1.4 },
+                { "word": "trời", "start": 1.4, "end": 1.7 },
+                { "word": "đẹp", "start": 1.7, "end": 2.1 },
+                { "word": "quá!", "start": 2.1, "end": 2.8 }
+              ],
+              "wordPopScale": 1.15,
+              "background": {
+                "enabled": true,
+                "color": "#00000080",
+                "cornerRadius": 8,
+                "paddingX": 12,
+                "paddingY": 4
+              },
+              "textAlign": "center",
+              "fontWeight": "bold",
+              "fontStyle": "normal",
+              "textDecoration": "none",
+              "letterSpacing": 0,
+              "lineHeight": 1.2,
+              "hidden": false,
+              "transform": {
+                "scale": 1.0,
+                "position": { "x": 960, "y": 920 },
+                "rotate": 0
+              },
+              "opacity": 1.0,
+              "blendMode": "normal"
+            },
+            {
+              "id": "elem-sub-002",
+              "name": "Subtitle 2",
+              "duration": 3.0,
+              "startTime": 6.5,
+              "trimStart": 0.0,
+              "trimEnd": 0.0,
+              "type": "text",
+              "content": "Chúng ta cùng đi dạo nhé!",
+              "fontSize": 48,
+              "fontFamily": "Arial",
+              "color": "#FFFFFF",
+              "highlightColor": "#FFD700",
+              "wordTimings": [
+                { "word": "Chúng", "start": 0.0, "end": 0.4 },
+                { "word": "ta", "start": 0.4, "end": 0.7 },
+                { "word": "cùng", "start": 0.7, "end": 1.1 },
+                { "word": "đi", "start": 1.1, "end": 1.4 },
+                { "word": "dạo", "start": 1.4, "end": 1.8 },
+                { "word": "nhé!", "start": 1.8, "end": 2.4 }
+              ],
+              "wordPopScale": 1.15,
+              "background": {
+                "enabled": true,
+                "color": "#00000080",
+                "cornerRadius": 8,
+                "paddingX": 12,
+                "paddingY": 4
+              },
+              "textAlign": "center",
+              "fontWeight": "bold",
+              "fontStyle": "normal",
+              "textDecoration": "none",
+              "letterSpacing": 0,
+              "lineHeight": 1.2,
+              "hidden": false,
+              "transform": {
+                "scale": 1.0,
+                "position": { "x": 960, "y": 920 },
+                "rotate": 0
+              },
+              "opacity": 1.0,
+              "blendMode": "normal"
+            }
+          ],
+          "hidden": false
+        }
+      ],
+      "bookmarks": [],
+      "markers": [
+        {
+          "id": "marker-001",
+          "time": 12.0,
+          "note": "Chuyển cảnh — cận mặt nhân vật",
+          "color": "yellow",
+          "createdAt": 1719144000000
+        }
+      ],
+      "createdAt": "2026-06-23T12:00:00.000Z",
+      "updatedAt": "2026-06-23T12:05:00.000Z"
+    }
+  ],
+
+  "currentSceneId": "scene-main-001",
+
+  "settings": {
+    "fps": 30,
+    "canvasSize": {
+      "width": 1920,
+      "height": 1080
+    },
+    "originalCanvasSize": null,
+    "background": {
+      "type": "color",
+      "color": "#000000"
+    },
+    "proxyEditing": false,
+    "proxyResolution": null
+  },
+
+  "version": 10,
+  "timelineViewState": {
+    "zoomLevel": 1.0,
+    "scrollLeft": 0,
+    "playheadTime": 0
+  }
+}
