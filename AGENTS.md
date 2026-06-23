@@ -1,4 +1,4 @@
-﻿# 🤖 AI AGENTS CONSTITUTION & PROJECT STRUCTURE
+# 🤖 AI AGENTS CONSTITUTION & PROJECT STRUCTURE
 
 **IMPORTANT:** All AI agents must read and adhere to this document and `WORKFLOW.md` before creating, modifying, or moving any files. Failure to comply with the directory structure will result in immediate rejection of the task.
 
@@ -10,21 +10,23 @@ To prevent fragmentation, this project uses a **Feature-Sliced/Domain-Driven** a
 / (Root)
 ├── /src                   # Core source code & Backend Services
 │   ├── /app               # Next.js Pages & Layouts (UI Tools ONLY: action-builder, bg-editor)
-│   ├── /pipeline          # 🌟 PIPELINE LOGIC (Data/Video processing pipelines)
+│   ├── /pipeline          # 🌟 PIPELINE LOGIC (Data/Video processing pipelines: S1-S7)
+│   │                      #    S1: Script Rewriter → S2: Extractor → S3: Storyboard Breaker
+│   │                      #    S4: Audio Generator → S5: Visual Director → S6: Sound/VFX
+│   │                      #    S7: Video Compiler → output opencut_{id}.json (v10 format)
 │   ├── /services          # 🌟 DOMAIN-DRIVEN LOGIC (All business logic goes here)
 │   │   ├── /ai-director   # AI generation scripts, triple-script-engine, director
 │   │   ├── /character     # Character pipeline, rigger, action-factory, rig-anatomy
 │   │   ├── /asset-manager # Asset registry, ingestors, missing assets backlog processing
 │   │   └── /video-builder # Subtitles sync, chunk scripts, stitch video, render prep
 │   ├── /shared            # Shared utilities across domains
-│   │   ├── /api-clients   # LLM providers (nano-banana-v2, vercel-ai, tts_manager)
+│   │   ├── /api-clients   # LLM providers (nano-banana-v2, vercel-ai, tts_manager) + OpenCut bridge
 │   │   └── /types         # TypeScript definitions and interfaces (ai-schemas, animation)
 │   └── /ui                # Reusable React components for /app (ExpressionPlayer, etc.)
 │
-├── /remotion              # Video Rendering Logic ONLY (Runs in Puppeteer)
-│   ├── /components        # Video-specific visual components (e.g., Puppet.tsx)
-│   ├── /compositions      # Assembly of components into video scenes
-│   └── Root.tsx           # Remotion entry point
+├── /OpenCut-AI            # 🌟 OpenCut-AI Video Editor (nested repo, ptnhan2/OpenCut-AI)
+│                          #    Port 3001. Runs independently from Platform (port 3000).
+│                          #    Connected via API Bridge + project JSON import.
 │
 ├── /scripts               # 🌟 CLI ENTRY POINTS ONLY (Terminal Automation)
 │                          # MUST NOT contain business logic. These are thin wrappers
@@ -32,9 +34,11 @@ To prevent fragmentation, this project uses a **Feature-Sliced/Domain-Driven** a
 │
 ├── /public                # Static Assets
 │   └── /assets            # Unified Asset Pipeline (expressions, items, backgrounds, etc.)
+│   └── /scripts           # Pipeline output: opencut_{episode_id}.json (OpenCut v10)
 │
 ├── /.archive              # Trash/Deprecated/Lab code. Agents should ignore this folder.
 └── /docs                  # Planning artifacts, architecture, and logs
+│   └── /architecture      # OpenCut integration guide + project schema
 ```
 
 ## 2. AI DISCIPLINE RULES
@@ -118,7 +122,8 @@ All agents MUST read their respective constitution before starting any task.
 
 ---
 
-_Last updated: May 2026_
+_Last updated: June 2026_
+
 ### Rule H: "Approved Runtime Dependencies"
 
 For SQLite access from Next.js API routes, the project standard is **node:sqlite** (Node.js 22+ built-in, zero external deps). Requires --experimental-sqlite flag.
@@ -231,20 +236,44 @@ Remotion has been **completely removed** from the technology stack. All Remotion
 
 ---
 
-## 3. TECHNOLOGY PIVOT — Remotion to OpenCut
+### Rule K: "OpenCut-AI Integration — Pipeline Output & API Bridge"
 
-### Rule J: "Remotion Deprecated — OpenCut is the Video Editor"
+**Effective:** 2026-06-23
 
-**Effective:** 2026-06-15
+OpenCut-AI is a **separate repo** (`ptnhan2/OpenCut-AI`, nested in `OpenCut-AI/`) running on **port 3001**.
 
-Remotion has been **completely removed** from the technology stack. All Remotion code has been archived to .archive/remotion/.`r
+#### Key Facts for AI Agents
 
-**Why:** Remotion is a programmatic render engine, NOT a video editor. The project requires a CapCut-like editor that can be controlled by AI via API.
+| Concept | Value |
+|---------|-------|
+| OpenCut-AI location | `OpenCut-AI/` (nested git repo, NOT submodule) |
+| Editor URL | `http://localhost:3001` |
+| Platform URL | `http://localhost:3000` |
+| Pipeline output | `public/scripts/opencut_{episode_id}.json` |
+| Output format | OpenCut v10 SerializedProject JSON |
+| Integration docs | `docs/architecture/opencut_integration_guide.md` |
+| Sample schema | `docs/architecture/opencut_project_schema.json` |
 
-**New direction:** The project is pivoting to integrate **OpenCut** (open-source video editor) as the primary editor engine. OpenCut provides: professional timeline (multi-track, ripple edit, snapping, undo/redo), preview panel, asset management, export capabilities.
+#### Pipeline → OpenCut Data Flow
 
-**Platform role:** The Next.js Platform continues as the **management layer** (drama/episode/asset management, pipeline trigger, AI orchestration). OpenCut handles the **editing layer**.
+```
+S5 (Visual Director) ──→ DB: opencut_transition, opencut_effects (JSON)
+S6 (Sound/VFX)       ──→ DB: sfx_id, vfx_tags, bgm_track
+S7 (Video Compiler)  ──→ public/scripts/opencut_{id}.json
+                         ↓
+                    OpenCut-AI import (via API bridge)
+```
 
-**Remaining stack:** Next.js + React (Web Platform), Python S1-S7 Pipeline (content generation), SQLite (data), OpenCut (video editing).
+#### S5 Visual Director — AI Prompt Rules
 
-**For AI coding agents:** If you see emotion/, @remotion/, or Remotion-related code, it is **DEPRECATED**. Do NOT modify, use, or reference it. Direct all video editing work to OpenCut integration.
+S5 teaches AI to output **OpenCut-AI native terminology** (via enums in `src/shared/schema_validator.py`):
+- **Transitions:** 20 OpenCut types (cross-dissolve, dip-black, morph, glitch, film-burn, page-peel, ...)
+- **Camera Effects:** 5 types (zoom, shake, pan, rotate, static)
+- **Atmosphere Effects:** 9 types (grain, chromatic, vignette, blur, glow, shadow, halftone, light-leak, paper-texture)
+- **Character Position:** Pixel coordinates on 1920×1080 canvas (not 9-grid strings)
+
+> ⚠️ **Do NOT add mapping tables in S7.** AI handles all terminology translation in its prompt. S7 is a pure assembler — reads JSON from DB columns, assembles v10 project structure.
+
+#### Git Operations on OpenCut-AI
+
+When modifying OpenCut-AI code, use `git -C OpenCut-AI` for all git commands. Push/PR go to `ptnhan2/OpenCut-AI`, NOT `ptnhan2/Auto_Video_Editor`.
