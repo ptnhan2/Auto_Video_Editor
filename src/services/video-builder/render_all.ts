@@ -8,7 +8,7 @@ function main() {
     process.exit(1);
   }
 
-  const inputFile = `public/scripts/compiled_${episode_id}.json`;
+  const inputFile = `public/scripts/opencut_${episode_id}.json`;
   const outDir = 'out';
   const outMp4 = `${outDir}/episode_${episode_id}.mp4`;
 
