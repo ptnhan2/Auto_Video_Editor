@@ -157,7 +157,9 @@ class Storyboard(Base):
     visual_metaphor = Column(String, nullable=True)  # red_string, magnifying_glass...
     transition_in = Column(String, nullable=True)    # paper_tear, ink_bleed...
     atmosphere_fx = Column(String, nullable=True)    # halftone_grain, vintage_vignette...
-    
+    opencut_transition = Column(Text, nullable=True)  # JSON: {"type":"page-peel","duration":0.5}
+    opencut_effects = Column(Text, nullable=True)     # JSON: [{"type":"zoom","intensity":1.5}]
+
     # Mapping Assets
     action_id = Column(String, nullable=True)
     expression_tag = Column(String, nullable=True)

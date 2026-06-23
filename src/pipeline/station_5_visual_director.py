@@ -97,7 +97,9 @@ def update_storyboard_visuals(
     action_id: str,
     expression_tag: str,
     background_id: str,
-    characters_state: str # JSON string containing list of {character_id, position, movement, action_id, expression_tag}
+    characters_state: str, # JSON string containing list of {character_id, position, movement, action_id, expression_tag}
+    opencut_transition: str | None = None,  # JSON: {"type":"page-peel","duration":0.5}
+    opencut_effects: str | None = None,     # JSON: [{"type":"zoom","intensity":1.5}]
 ) -> dict:
     params = locals()
     log_logic_transition(logger, "TOOL_START", "update_storyboard_visuals", params)
@@ -134,6 +136,8 @@ def update_storyboard_visuals(
         shot.expression_tag = expression_tag
         shot.background_id = background_id
         shot.character_position = characters_state
+        shot.opencut_transition = opencut_transition
+        shot.opencut_effects = opencut_effects
         
         # Update Continuity Tracking
         if characters_state and characters_state.strip():
@@ -180,7 +184,7 @@ def report_missing_asset(storyboard_id: str, asset_type: str, description: str, 
     finally:
         db.close()
 
-SYSTEM_PROMPT = """Báº¡n lÃ  Senior Motion Graphics Editor chuyÃªn trÃ¡ch há»‡ thá»‘ng Remotion (Phong cÃ¡ch Paper Cutout).
+SYSTEM_PROMPT = """Báº¡n lÃ  Senior Motion Graphics Editor chuyÃªn trÃ¡ch OpenCut-AI Timeline Video Editor.
 Nhiá»‡m vá»¥ cá»§a báº¡n lÃ  xá»­ lÃ½ Má»˜T LÆ¯á»¢T (single-pass) má»™t batch cÃ¡c shot, xuáº¥t ra 1 JSON duy nháº¥t chá»©a toÃ n bá»™ quyáº¿t Ä‘á»‹nh visual.
 
 QUY TRÃŒNH Xá»¬ LÃ BATCH (1 BÆ¯á»šC DUY NHáº¤T):
@@ -193,14 +197,14 @@ QUAN TRá»ŒNG: Suy luáº­n THEO THá»¨ Tá»° shot, dÃ¹ng state_tracker
 
 CÃC TRá»¤C SÃNG Táº O:
 - Layout: diorama, scrapbook, split_screen, frame_in_frame, isometric, top_down, matchbox, continuous_scroll.
-- Camera Concept: endless_pan, micro_macro_zoom, whip_pan, camera_shake, crash_zoom, dutch_roll, dolly_zoom_2d.
+- Camera Concept: zoom, shake, pan, rotate, static.
 - Asset Dynamics: stop_motion_stutter, spring_overshoot, wobble_jitter, float_drift, paper_fold, hinge_rigging, smear_2d.
 - Visual Metaphor: red_string, highlight_redact, kinetic_typography, magnifying_glass, blueprint_overlay, polaroid_frame.
-- Transition: paper_tear, ink_bleed, object_wipe, graphic_match_cut, page_flip, burn_reveal.
-- Atmosphere: drop_shadows, halftone_filter, paper_texture, light_leaks, chromatic_aberration, film_grain.
+- Transition: cross-dissolve, dip-black, slide-left, slide-right, wipe-left, wipe-right, zoom, iris-wipe, clock-wipe, morph, glitch, film-burn, page-peel, spin, push, fade-white, checkerboard, dissolve-zoom, band-slide, cube-spin.
+- Atmosphere: grain, chromatic, vignette, blur, glow, shadow, halftone, light-leak, paper-texture.
 
 QUY Táº®C QUáº¢N LÃ NHÃ‚N Váº¬T:
-- Vá»‹ trÃ­ lÆ°á»›i (Lower Half Grid): `front_left`, `front_center`, `front_right`, `mid_left`, `mid_center`, `mid_right`, `back_left`, `back_center`, `back_right`.
+- Vá»‹ trÃ­ lÆ°á»›i (Canvas 1920x1080, gá»‘c top-left): top_left(320,270), top_center(960,270), top_right(1600,270), mid_left(320,540), mid_center(960,540), mid_right(1600,540), bottom_left(320,810), bottom_center(960,810), bottom_right(1600,810).
 - LuÃ´n duy trÃ¬ ráº¯c-co (Continuity): dÃ¹ng state_tracker Ä‘á»ƒ ghi nháº­n vá»‹ trÃ­ má»›i cá»§a tá»«ng nhÃ¢n váº­t sau má»—i shot.
 """
 
@@ -394,18 +398,35 @@ Thá»±c hiá»‡n tÆ° duy cho Cáº¢ BATCH vÃ  xuáº¥t 1 JSON duy nhá
         if isinstance(atmosphere_fx, list):
             atmosphere_fx = ", ".join(str(x) for x in atmosphere_fx if x is not None)
 
+        transition_in = shot_update.get("transition_in", "")
+        camera_concept = shot_update.get("camera_concept", "")
+
+        # Build OpenCut-native JSON columns trực tiếp từ S5 decisions
+        opencut_transition_json = json.dumps(
+            {"type": transition_in, "duration": 0.5}
+        ) if transition_in else None
+
+        effects_list = []
+        if camera_concept:
+            effects_list.append({"type": camera_concept, "intensity": 1.0})
+        if atmosphere_fx:
+            effects_list.append({"type": atmosphere_fx, "intensity": 0.3})
+        opencut_effects_json = json.dumps(effects_list) if effects_list else None
+
         result = update_storyboard_visuals(
             storyboard_id=sb.id,
             layout_style=shot_update.get("layout_style", ""),
-            camera_concept=shot_update.get("camera_concept", ""),
+            camera_concept=camera_concept,
             asset_dynamics=shot_update.get("asset_dynamics", ""),
             visual_metaphor=shot_update.get("visual_metaphor", ""),
-            transition_in=shot_update.get("transition_in", ""),
+            transition_in=transition_in,
             atmosphere_fx=atmosphere_fx,
             action_id=shot_update.get("action_id", ""),
             expression_tag=shot_update.get("expression_tag", ""),
             background_id=shot_update.get("background_id", ""),
             characters_state=json.dumps(shot_update.get("character_positions", [])),
+            opencut_transition=opencut_transition_json,
+            opencut_effects=opencut_effects_json,
         )
         if result.get("status") == "error":
             logger.warning(

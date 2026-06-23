@@ -22,13 +22,11 @@ LAYOUT_STYLE_ENUM = (
 )
 
 CAMERA_CONCEPT_ENUM = (
-    "endless_pan",
-    "micro_macro_zoom",
-    "whip_pan",
-    "camera_shake",
-    "crash_zoom",
-    "dutch_roll",
-    "dolly_zoom_2d",
+    "zoom",
+    "shake",
+    "pan",
+    "rotate",
+    "static",
 )
 
 ASSET_DYNAMICS_ENUM = (
@@ -51,21 +49,38 @@ VISUAL_METAPHOR_ENUM = (
 )
 
 TRANSITION_IN_ENUM = (
-    "paper_tear",
-    "ink_bleed",
-    "object_wipe",
-    "graphic_match_cut",
-    "page_flip",
-    "burn_reveal",
+    "cross-dissolve",
+    "dip-black",
+    "slide-left",
+    "slide-right",
+    "wipe-left",
+    "wipe-right",
+    "zoom",
+    "iris-wipe",
+    "clock-wipe",
+    "morph",
+    "glitch",
+    "film-burn",
+    "page-peel",
+    "spin",
+    "push",
+    "fade-white",
+    "checkerboard",
+    "dissolve-zoom",
+    "band-slide",
+    "cube-spin",
 )
 
 ATMOSPHERE_FX_ENUM = (
-    "drop_shadows",
-    "halftone_filter",
-    "paper_texture",
-    "light_leaks",
-    "chromatic_aberration",
-    "film_grain",
+    "grain",
+    "chromatic",
+    "vignette",
+    "blur",
+    "glow",
+    "shadow",
+    "halftone",
+    "light-leak",
+    "paper-texture",
 )
 
 # ---------------------------------------------------------------------------
