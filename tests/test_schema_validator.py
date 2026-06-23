@@ -18,11 +18,11 @@ def _make_s5_update(shot_number=1, overrides=None):
         "shot_number": shot_number,
         "storyboard_id": f"sb_{shot_number}",
         "layout_style": "diorama",
-        "camera_concept": "endless_pan",
+        "camera_concept": "zoom",
         "asset_dynamics": "stop_motion_stutter",
         "visual_metaphor": "red_string",
-        "transition_in": "paper_tear",
-        "atmosphere_fx": "drop_shadows",
+        "transition_in": "cross-dissolve",
+        "atmosphere_fx": "grain",
         "action_id": "act_hero_dodge",
         "expression_tag": "expr_focused",
         "background_id": "bg_arena",
@@ -210,8 +210,7 @@ def test_feedback_format_contains_enum_error():
     errors = {
         2: [
             "INVALID enum for 'camera_concept': got 'crazy_zoom', "
-            "allowed: ['endless_pan', 'micro_macro_zoom', 'whip_pan', "
-            "'camera_shake', 'crash_zoom', 'dutch_roll', 'dolly_zoom_2d']"
+            "allowed: ['zoom', 'shake', 'pan', 'rotate', 'static']"
         ]
     }
     feedback = build_validation_feedback(errors)
