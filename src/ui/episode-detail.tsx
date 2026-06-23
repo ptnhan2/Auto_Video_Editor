@@ -21,6 +21,7 @@ import {
   Eye,
   Music,
   Film,
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Episode, Drama } from "@/shared/types/episode";
@@ -189,7 +190,7 @@ function EpisodeContent({
 
       {/* Right column: Pipeline stepper */}
       <div className="lg:col-span-3">
-        <PipelineStepper steps={pipelineSteps} episodeId={episode.id} />
+        <PipelineStepper steps={pipelineSteps} episodeId={episode.id} status={episode.status} />
       </div>
     </div>
   );
@@ -262,9 +263,11 @@ function InfoCard({ episode, drama }: { episode: Episode; drama: Drama | null })
 function PipelineStepper({
   steps,
   episodeId,
+  status,
 }: {
   steps: PipelineStep[];
   episodeId: string;
+  status: string;
 }) {
   const handleRunPipeline = () => {
     // TODO: POST /api/pipeline/run when API is ready
@@ -289,6 +292,26 @@ function PipelineStepper({
         >
           <Play className="h-3.5 w-3.5 fill-current" />
           Run Pipeline
+        </button>
+        <button
+          type="button"
+          onClick={async () => {
+            const res = await fetch("/api/opencut/import", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ episodeId }),
+            });
+            if (res.ok) {
+              window.open("http://localhost:3001", "_blank");
+            } else {
+              alert("OpenCut không khả dụng");
+            }
+          }}
+          disabled={status !== "completed"}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 active:scale-95 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+          Open in Editor
         </button>
       </div>
 
