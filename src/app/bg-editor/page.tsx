@@ -11,11 +11,6 @@ interface PoiData {
   description: string;
 }
 
-interface Point {
-  x: number;
-  y: number;
-}
-
 interface BgPoiSchema {
   horizon_y?: number;
   pois: PoiData[];
@@ -41,13 +36,13 @@ export default function BgEditor() {
       const res = await fetch("/api/bg/list");
       const data = await res.json();
       setBackgrounds(data.backgrounds || []);
-    } catch (e) {
-      console.error("Failed to fetch backgrounds", e);
+    } catch {
+      console.error("Failed to fetch backgrounds");
     }
   };
 
   useEffect(() => {
-    fetchBackgrounds();
+    void fetchBackgrounds();
   }, []);
 
   const loadPoiData = async (bg: BackgroundInfo) => {
@@ -102,7 +97,7 @@ export default function BgEditor() {
         body: JSON.stringify({ bgFile: selectedBg.id, data: poiData }),
       });
       if (res.ok) alert("✅ Đã lưu POI!");
-    } catch (e) {
+    } catch {
       alert("❌ Lỗi khi lưu!");
     }
     setLoading(false);
@@ -124,7 +119,7 @@ export default function BgEditor() {
       } else {
         alert("❌ AI không trả về dữ liệu POI.");
       }
-    } catch (e) {
+    } catch {
       alert("❌ Lỗi khi phân tích bằng AI!");
     }
     setLoading(false);
