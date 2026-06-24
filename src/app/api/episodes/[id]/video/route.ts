@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { DatabaseSync } from "node:sqlite";
 import path from "path";
 
-// ── Types ──────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-/** Body gửi từ OpenCut sau khi export MP4 thành công. */
+/** Body gá»­i tá»« OpenCut sau khi export MP4 thÃ nh cÃ´ng. */
 interface VideoSyncBody {
   videoUrl: string;
   duration?: number;
@@ -12,7 +12,7 @@ interface VideoSyncBody {
   filesize?: number;
 }
 
-/** Episode row từ database (khớp với schema.py Episode model). */
+/** Episode row tá»« database (khá»›p vá»›i schema.py Episode model). */
 interface EpisodeRow {
   id: string;
   drama_id: string;
@@ -32,16 +32,16 @@ interface EpisodeRow {
   updated_at: string;
 }
 
-// ── Database ───────────────────────────────────────────────────────
+// â”€â”€ Database â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 let db: DatabaseSync | null = null;
 
 /**
- * Lấy singleton kết nối SQLite.
- * Dùng WAL mode cho concurrent reads tốt hơn.
+ * Láº¥y singleton káº¿t ná»‘i SQLite.
+ * DÃ¹ng WAL mode cho concurrent reads tá»‘t hÆ¡n.
  *
  * @returns DatabaseSync instance (reused across requests)
- * @sideEffect Mở file database.sqlite nếu chưa mở
+ * @sideEffect Má»Ÿ file database.sqlite náº¿u chÆ°a má»Ÿ
  */
 function getDb(): DatabaseSync {
   if (!db) {
@@ -52,20 +52,20 @@ function getDb(): DatabaseSync {
   return db;
 }
 
-// ── PATCH Handler ──────────────────────────────────────────────────
+// â”€â”€ PATCH Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * PATCH /api/episodes/[id]/video
  *
- * Nhận metadata video export từ OpenCut-AI và cập nhật Episode.
- * OpenCut gọi endpoint này sau khi export MP4 thành công.
+ * Nháº­n metadata video export tá»« OpenCut-AI vÃ  cáº­p nháº­t Episode.
+ * OpenCut gá»i endpoint nÃ y sau khi export MP4 thÃ nh cÃ´ng.
  *
  * Body JSON: { videoUrl: string, duration?: number, format?: string, filesize?: number }
  *
- * @returns { success: true, episode: EpisodeRow } nếu cập nhật thành công
- * @returns 400 nếu thiếu videoUrl hoặc id không hợp lệ
- * @returns 404 nếu không tìm thấy episode
- * @returns 500 nếu lỗi database
+ * @returns { success: true, episode: EpisodeRow } náº¿u cáº­p nháº­t thÃ nh cÃ´ng
+ * @returns 400 náº¿u thiáº¿u videoUrl hoáº·c id khÃ´ng há»£p lá»‡
+ * @returns 404 náº¿u khÃ´ng tÃ¬m tháº¥y episode
+ * @returns 500 náº¿u lá»—i database
  * @sideEffect UPDATE episodes SET video_url, status, duration, updated_at
  */
 export async function PATCH(
@@ -125,7 +125,7 @@ export async function PATCH(
     const database = getDb();
     const now = new Date().toISOString();
 
-    // Kiểm tra episode tồn tại
+    // Kiá»ƒm tra episode tá»“n táº¡i
     const existing = database
       .prepare("SELECT id FROM episodes WHERE id = ? AND deleted_at IS NULL")
       .get(episodeId);
@@ -137,7 +137,7 @@ export async function PATCH(
       );
     }
 
-    // Cập nhật video_url, status, và duration nếu được cung cấp
+    // Cáº­p nháº­t video_url, status, vÃ  duration náº¿u Ä‘Æ°á»£c cung cáº¥p
     const newDuration = body.duration !== undefined ? body.duration : null;
     database
       .prepare(
@@ -150,7 +150,7 @@ export async function PATCH(
       )
       .run(body.videoUrl, newDuration, newDuration, now, episodeId);
 
-    // Đọc lại episode đã cập nhật
+    // Äá»c láº¡i episode Ä‘Ã£ cáº­p nháº­t
     const episode = database
       .prepare(
         `SELECT id, drama_id, episode_number, title, content, script_content,
@@ -163,9 +163,10 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, episode });
   } catch (error) {
-    console.error(`[PATCH /api/episodes/${episodeId}/video]`, error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`[PATCH /api/episodes/${episodeId}/video]`, msg);
     return NextResponse.json(
-      { error: "Failed to update episode video metadata" },
+      { error: `Database error: ${msg}` },
       { status: 500 },
     );
   }
