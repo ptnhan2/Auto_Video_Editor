@@ -3,7 +3,7 @@
 # 
 # Steps:
 # 1. Copy database.sqlite from main worktree if not exists
-# 2. Install dependencies if node_modules missing
+# 2. Install dependencies if node_modules missing (npm ci for deterministic)
 # 3. Start dev server on unique port (avoid 3000 conflict)
 
 $ErrorActionPreference = "Stop"
@@ -27,8 +27,8 @@ if (-not (Test-Path "database.sqlite")) {
 # ── 2. Install dependencies if needed ──────────────────────────────
 
 if (-not (Test-Path "node_modules")) {
-    Write-Output "[kilo] Installing npm dependencies..."
-    npm install
+    Write-Output "[kilo] Installing npm dependencies (npm ci)..."
+    npm ci
 }
 
 # ── 3. Start dev server ────────────────────────────────────────────
