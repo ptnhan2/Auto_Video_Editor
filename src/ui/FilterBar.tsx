@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { X, Filter } from "lucide-react";
 import type { AssetStatus } from "./StatusBadge";
-import { StatusBadge } from "./StatusBadge";
 
 export type AssetType = "Background" | "BGM" | "SFX" | "Expression";
 export type AssetFilterStatus = AssetStatus | "ALL";
