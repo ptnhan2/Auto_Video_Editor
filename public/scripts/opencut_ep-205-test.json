@@ -1,0 +1,59 @@
+{
+  "metadata": { "id": "ep-205-test", "name": "Tập 205 — Demo AI Video Editor" },
+  "scenes": [
+    {
+      "id": "scene-intro",
+      "name": "Intro — Giới thiệu",
+      "tracks": [
+        {
+          "id": "track-video-1",
+          "type": "video",
+          "elements": [
+            { "id": "elem-intro", "name": "intro.mp4", "type": "video", "startTime": 0, "duration": 5 }
+          ]
+        },
+        { "id": "track-text-1", "type": "text", "elements": [] },
+        { "id": "track-audio-1", "type": "audio", "elements": [] }
+      ]
+    },
+    {
+      "id": "scene-dialogue",
+      "name": "Dialogue — Hội thoại",
+      "tracks": [
+        {
+          "id": "track-video-2",
+          "type": "video",
+          "elements": [
+            { "id": "elem-dialogue", "name": "dialogue.mp4", "type": "video", "startTime": 5, "duration": 8 }
+          ]
+        },
+        { "id": "track-text-2", "type": "text", "elements": [] },
+        {
+          "id": "track-audio-2",
+          "type": "audio",
+          "elements": [
+            { "id": "elem-bgm", "name": "bgm_calm.mp3", "type": "audio", "startTime": 0, "duration": 13, "volume": 0.6 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scene-climax",
+      "name": "Climax — Cao trào",
+      "tracks": [
+        {
+          "id": "track-video-3",
+          "type": "video",
+          "elements": [
+            { "id": "elem-climax", "name": "climax.mp4", "type": "video", "startTime": 13, "duration": 6 }
+          ]
+        },
+        { "id": "track-text-3", "type": "text", "elements": [] },
+        { "id": "track-audio-3", "type": "audio", "elements": [] }
+      ]
+    }
+  ],
+  "currentSceneId": "scene-intro",
+  "settings": { "width": 1920, "height": 1080, "fps": 30 },
+  "version": 10
+}
