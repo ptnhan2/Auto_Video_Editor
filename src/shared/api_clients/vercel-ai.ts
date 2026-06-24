@@ -1,5 +1,5 @@
 import { google } from '@ai-sdk/google';
-import { createOpenAI, openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 
 // Primary Model: Gemini 3 Flash Preview (Experimental/Preview)
 export const primaryModel = google('gemini-3-flash-preview');
