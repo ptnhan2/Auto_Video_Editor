@@ -2,6 +2,19 @@ import fs from 'fs';
 import path from 'path';
 import { VideoScriptData } from '../../shared/types/ai-schemas';
 
+// ── Types ──────────────────────────────────────────────────────────
+
+interface RequestedAssetEntry {
+  type?: string;
+  missingConcept?: string;
+  reason?: string;
+}
+
+interface MissingAssetReport extends RequestedAssetEntry {
+  sceneId: string;
+  shotId: string;
+}
+
 function extractMissingAssets(inputFile: string, outputFile: string) {
   try {
     if (!fs.existsSync(inputFile)) {
@@ -12,12 +25,12 @@ function extractMissingAssets(inputFile: string, outputFile: string) {
     const rawData = fs.readFileSync(inputFile, 'utf-8');
     const script: VideoScriptData = JSON.parse(rawData);
     
-    const missingAssets: any[] = [];
+    const missingAssets: MissingAssetReport[] = [];
 
     script.scenes.forEach(scene => {
       scene.shots.forEach((shot) => {
         if (shot.requestedAssets && shot.requestedAssets.length > 0) {
-          shot.requestedAssets.forEach((asset: any) => {
+          shot.requestedAssets.forEach((asset: RequestedAssetEntry) => {
             missingAssets.push({
               sceneId: scene.sceneId,
               shotId: shot.shotId,
