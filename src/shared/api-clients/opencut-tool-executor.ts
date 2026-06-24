@@ -227,6 +227,7 @@ export async function executeToolCall(
       // Exhaustive check: nếu TypeScript không báo lỗi ở đây nghĩa là
       // tất cả các case đã được xử lý (type-safe union exhaustiveness).
       const _exhaustive: never = toolCall;
+      void _exhaustive;
       return {
         success: false,
         error: `Unknown tool: ${(toolCall as OpenCutToolParams).name}`,

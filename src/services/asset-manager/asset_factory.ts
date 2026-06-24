@@ -5,6 +5,29 @@ import { execSync } from 'child_process';
 const PUBLIC_SCRIPTS_DIR = path.join(process.cwd(), 'public', 'scripts');
 const ASSETS_DIR = path.join(process.cwd(), 'public', 'assets');
 
+// ── Types ──────────────────────────────────────────────────────────
+
+interface AssetProfile {
+  assetId?: string;
+  type?: string;
+  visualPrompt?: string;
+  visual_prompt?: string;
+}
+
+interface ActorEntry {
+  characterId?: string;
+}
+
+interface ShotEntry {
+  actors?: ActorEntry[];
+}
+
+interface SceneEntry {
+  backgroundId?: string;
+  actors?: ActorEntry[];
+  shots?: ShotEntry[];
+}
+
 async function runAssetFactory() {
     const scriptName = process.argv[2] || 'reviewed_script.json';
     const scriptPath = path.join(PUBLIC_SCRIPTS_DIR, scriptName);
@@ -23,24 +46,24 @@ async function runAssetFactory() {
 
     const assetProfiles = scriptData.new_assets_profiles || [];
     const getVisualPrompt = (id: string, type: string) => {
-        const profile = assetProfiles.find((p: any) => p.assetId === id && p.type === type);
+        const profile = assetProfiles.find((p: AssetProfile) => p.assetId === id && p.type === type);
         return profile ? (profile.visualPrompt || profile.visual_prompt || '') : '';
     };
 
-    scriptData.scenes.forEach((scene: any) => {
+    scriptData.scenes.forEach((scene: SceneEntry) => {
         if (scene.backgroundId) backgrounds.add(scene.backgroundId);
         
         const actors = scene.actors || [];
-        actors.forEach((actor: any) => {
+        actors.forEach((actor: ActorEntry) => {
             if (actor.characterId && actor.characterId !== 'narrator') {
                 characters.add(actor.characterId);
             }
         });
         
         const shots = scene.shots || [];
-        shots.forEach((shot: any) => {
+        shots.forEach((shot: ShotEntry) => {
             const shotActors = shot.actors || [];
-            shotActors.forEach((actor: any) => {
+            shotActors.forEach((actor: ActorEntry) => {
                 if (actor.characterId && actor.characterId !== 'narrator') {
                     characters.add(actor.characterId);
                 }

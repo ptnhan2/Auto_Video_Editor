@@ -3,8 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Film, Loader2, AlertCircle, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowLeft, Film, AlertCircle } from "lucide-react";
 import type { Episode, Drama } from "@/shared/types/episode";
 import { mapEpisodeRow } from "@/shared/mappers";
 import { StatusBadge } from "@/ui/StatusBadge";

@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     const content = fs.readFileSync(jsonPath, 'utf-8');
     const data = JSON.parse(content);
     return NextResponse.json(data);
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Failed to parse JSON' }, { status: 500 });
   }
 }

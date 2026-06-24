@@ -28,7 +28,7 @@ function generateRegistry() {
 
   // 2. BACKGROUNDS (Standardizing on singular 'background' folder)
   const backgroundDir = path.join(ASSETS_DIR, 'background');
-  let backgrounds = [
+  const backgrounds = [
     { id: 'bg_transparent', description: 'Phông nền trong suốt hoặc màu trơn.' },
   ];
   if (fs.existsSync(backgroundDir)) {
@@ -46,7 +46,7 @@ function generateRegistry() {
 
   // 3. AUDIO
   const audioDir = path.join(ASSETS_DIR, 'audio');
-  let audioTracks = [
+  const audioTracks = [
     { id: 'bgm_happy', type: 'bgm', description: 'Nhạc nền vui tươi, nhẹ nhàng.' },
     { id: 'bgm_sad', type: 'bgm', description: 'Nhạc nền buồn, chậm, cảm động.' },
     { id: 'bgm_tense', type: 'bgm', description: 'Nhạc nền hồi hộp, kịch tính, đánh nhau.' },
@@ -75,7 +75,7 @@ function generateRegistry() {
 
   // 4. PROPS
   const propsDir = path.join(ASSETS_DIR, 'props');
-  let props = [
+  const props = [
     { id: 'prop_none', description: 'Không cầm gì.' },
     { id: 'prop_sword', description: 'Cầm một thanh kiếm.' },
     { id: 'prop_phone', description: 'Cầm điện thoại.' }

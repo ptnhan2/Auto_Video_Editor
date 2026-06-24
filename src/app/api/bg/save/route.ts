@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 
     return NextResponse.json({ success: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Failed to save JSON' }, { status: 500 });
   }
 }

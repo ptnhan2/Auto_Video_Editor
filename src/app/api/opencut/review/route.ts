@@ -20,13 +20,6 @@ interface ProposedEdit {
   after?: unknown;
 }
 
-/** Request body cho POST /api/opencut/review. */
-interface ReviewRequest {
-  episodeId: string;
-  decision: 'approve' | 'reject';
-  edits?: ProposedEdit[];
-}
-
 /** Kết quả thành công từ review API. */
 interface ReviewSuccessResponse {
   success: true;

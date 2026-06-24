@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     // const engine = new TripleScriptEngine();
     // const result = await engine.decompose(script);
-    const result: any = { moderation: { flagged: false }, data: {} };
+    const result: { moderation?: { flagged?: boolean }; data: Record<string, unknown> } = { moderation: { flagged: false }, data: {} };
 
     // Story 1.6: Return user-friendly error if content is flagged
     if (result.moderation?.flagged) {
