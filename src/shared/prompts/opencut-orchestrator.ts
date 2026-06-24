@@ -259,53 +259,89 @@ function toolCallToEdit(
 // ── Section: Tool Definitions for Vercel AI SDK ──────────────────
 
 /**
- * Build tool definitions cho Vercel AI SDK generateText().
- * Mỗi tool map name → { description, parameters (Zod schema) }.
- * KHÔNG có execute — tool calls được dispatch thủ công qua executeToolCall().
+ * Build tool definitions cho Vercel AI SDK generateText() với execute functions.
+ * SDK sẽ tự động gọi execute → gửi kết quả về model → loop cho đến khi model
+ * không gọi tool nữa hoặc đạt MAX_ROUNDS steps.
  *
- * @returns Record<string, Tool> cho Vercel AI SDK.
+ * Mỗi execute wrapper dispatch sang executeToolCall() để gọi OpenCut API,
+ * đồng thời ghi nhận kết quả vào edits[] và toolResults[].
+ *
+ * @param edits - Mutable array để tích lũy AgentEdit.
+ * @param toolResults - Mutable array để tích lũy ToolResult.
+ * @returns Record<string, Tool> với execute functions cho Vercel AI SDK.
  */
-function buildOpenCutTools() {
+function buildOpenCutToolsWithExecute(
+  edits: AgentEdit[],
+  toolResults: ToolResult[],
+) {
+  /** Helper: wrap executeToolCall + ghi nhận edit/result. */
+  const wrap = (toolName: string) => ({
+    execute: async (args: Record<string, unknown>) => {
+      const toolCall: OpenCutToolParams = {
+        name: toolName,
+        args,
+      } as OpenCutToolParams;
+
+      const result = await executeToolCall(toolCall);
+      toolResults.push(result);
+
+      const edit = toolCallToEdit(toolName, args, result);
+      edits.push(edit);
+
+      return result.success
+        ? (result.data ?? { message: "ok" })
+        : { error: result.error ?? "Unknown error" };
+    },
+  });
+
   return {
     add_clip: tool({
       description:
         "Add a video or audio clip to a specific track on the OpenCut timeline. Use when inserting new media into the project.",
       inputSchema: AddClipParamsSchema,
+      ...wrap("add_clip"),
     }),
     remove_element: tool({
       description:
         "Remove an element (clip, text, effect) from the timeline by its element ID and track ID.",
       inputSchema: RemoveElementParamsSchema,
+      ...wrap("remove_element"),
     }),
     set_transition: tool({
       description:
         "Set a transition effect between two adjacent clips on the timeline. The transition is applied to the specified element's transitionOut field.",
       inputSchema: SetTransitionParamsSchema,
+      ...wrap("set_transition"),
     }),
     add_effect: tool({
       description:
         "Apply a visual effect (blur, grain, glow, vignette, etc.) to a video or image element on the timeline.",
       inputSchema: AddEffectParamsSchema,
+      ...wrap("add_effect"),
     }),
     add_subtitle: tool({
       description:
         "Add a text subtitle overlay to a text track at a specific time position with customizable font, color, and position.",
       inputSchema: AddSubtitleParamsSchema,
+      ...wrap("add_subtitle"),
     }),
     adjust_volume: tool({
       description:
         "Adjust the volume level of an audio track. 0.0 = silent, 1.0 = normal, 2.0 = doubled.",
       inputSchema: AdjustVolumeParamsSchema,
+      ...wrap("adjust_volume"),
     }),
     split_clip: tool({
       description:
         "Split a clip into two separate clips at a specified time point relative to the clip's start.",
       inputSchema: SplitClipParamsSchema,
+      ...wrap("split_clip"),
     }),
     export_video: tool({
       description:
         "Export the current OpenCut project to an MP4 or WebM video file at the specified resolution.",
       inputSchema: ExportVideoParamsSchema,
+      ...wrap("export_video"),
     }),
   };
 }
@@ -347,52 +383,30 @@ export async function runOpenCutAgent(
   const projectJson = await readProjectJson(trimmedEpisodeId);
   const projectContext = buildProjectContext(projectJson);
 
-  // ── Bước 2: Build tools & system prompt ──
+  // ── Bước 2: Build system prompt ──
   const systemMessage = `${OPENCUT_SYSTEM_PROMPT}\n\n${projectContext}`;
-  const tools = buildOpenCutTools();
 
   const edits: AgentEdit[] = [];
   const toolResults: ToolResult[] = [];
   let finalText = "";
 
-  // ── Bước 3: Orchestration loop ──
-  // Mỗi round: gọi generateText với stepCountIs(1) → xử lý tool calls → lặp
-  for (let round = 0; round < MAX_ROUNDS; round++) {
+  // ── Bước 3: Orchestration — để Vercel AI SDK tự loop tool calling ──
+  // SDK sẽ tự gọi generateText → execute tools → gửi kết quả → repeat
+  // cho đến khi model không gọi tool nữa hoặc đạt MAX_ROUNDS steps.
+  try {
     const response = await generateText({
       model: primaryModel,
       system: systemMessage,
-      prompt: round === 0 ? trimmedRequest : "Tiếp tục xử lý timeline.",
-      tools,
-      stopWhen: stepCountIs(1),
+      prompt: trimmedRequest,
+      tools: buildOpenCutToolsWithExecute(edits, toolResults),
+      stopWhen: stepCountIs(MAX_ROUNDS),
     });
 
-    // ── Xử lý tool calls (nếu có) ──
-    if (response.toolCalls && response.toolCalls.length > 0) {
-      for (const tc of response.toolCalls) {
-        // Type assertion: tc.input đã được Zod validate bởi parameters schema
-        const args = tc.input as Record<string, unknown>;
-
-        const toolCall: OpenCutToolParams = {
-          name: tc.toolName as OpenCutToolParams["name"],
-          args: args,
-        } as OpenCutToolParams;
-
-        // Thực thi tool call qua OpenCut API bridge
-        const result = await executeToolCall(toolCall);
-        toolResults.push(result);
-
-        // Tạo AgentEdit từ tool call + result
-        const edit = toolCallToEdit(tc.toolName, args, result);
-        edits.push(edit);
-      }
-
-      // Tiếp tục loop — Gemini có thể gọi thêm tool hoặc trả lời text
-      continue;
-    }
-
-    // ── Không còn tool calls → đây là phản hồi cuối cùng ──
     finalText = response.text;
-    break;
+  } catch (err) {
+    // Nếu Gemini hoặc tool execution lỗi, trả về những gì đã làm được
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    finalText = `Lỗi trong quá trình xử lý: ${errorMsg}. Đã thực thi ${toolResults.length} tool call(s), ${edits.length} edit(s) được đề xuất.`;
   }
 
   // ── Fallback nếu loop hết mà không có final text ──
