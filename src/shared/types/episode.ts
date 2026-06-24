@@ -10,6 +10,7 @@ export type EpisodeStatus =
   | "scripting"
   | "rendering"
   | "completed"
+  | "needs_review"
   | "failed";
 
 export interface Drama {
