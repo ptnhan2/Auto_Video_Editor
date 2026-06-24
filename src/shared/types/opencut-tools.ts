@@ -298,6 +298,7 @@ function toGeminiDeclaration(
   const { $schema: _schema, ...rest } = jsonSchema as Record<string, unknown> & {
     $schema?: unknown;
   };
+  void _schema; // intentionally strip $schema from Gemini parameters
   return { name, description, parameters: rest };
 }
 
