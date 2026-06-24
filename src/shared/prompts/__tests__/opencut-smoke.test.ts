@@ -15,7 +15,6 @@ import { describe, it, expect } from "vitest";
 import { ZodError } from "zod";
 import {
   AddClipParamsSchema,
-  RemoveElementParamsSchema,
   SetTransitionParamsSchema,
   AddEffectParamsSchema,
   AddSubtitleParamsSchema,
@@ -27,8 +26,6 @@ import {
 import {
   buildProjectContext,
   MAX_ROUNDS,
-  type AgentEdit,
-  type AgentResult,
 } from "../opencut-orchestrator";
 import { OPENCUT_SYSTEM_PROMPT } from "../opencut-system-prompt";
 import type { SerializedProject } from "@/shared/api-clients/opencut-bridge";
