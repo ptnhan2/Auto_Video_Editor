@@ -15,7 +15,7 @@ export type AssetStatus = "READY" | "PENDING" | "FAILED";
 /**
  * Re-exported from `src/shared/types/episode.ts`.
  * @see DramaStatus — Drama lifecycle status (`"draft" | "in_progress" | "completed"`)
- * @see EpisodeStatus — Episode pipeline status (`"draft" | "pending" | "scripting" | "rendering" | "completed" | "failed"`)
+ * @see EpisodeStatus — Episode pipeline status (`"draft" | "pending" | "scripting" | "rendering" | "completed" | "needs_review" | "failed"`)
  */
 export type { DramaStatus, EpisodeStatus };
 
@@ -80,6 +80,11 @@ const statusConfig: Record<StatusType, StatusConfig> = {
     label: "Rendering",
     className:
       "bg-chart-3/15 text-chart-3 border-chart-3/30 dark:bg-chart-3/20",
+  },
+  needs_review: {
+    label: "Needs Review",
+    className:
+      "bg-chart-5/15 text-chart-5 border-chart-5/30 dark:bg-chart-5/20",
   },
   failed: {
     label: "Failed",

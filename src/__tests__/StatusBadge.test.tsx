@@ -55,6 +55,11 @@ const statusConfig: Record<string, StatusConfig> = {
     className:
       "bg-chart-3/15 text-chart-3 border-chart-3/30 dark:bg-chart-3/20",
   },
+  needs_review: {
+    label: "Needs Review",
+    className:
+      "bg-chart-5/15 text-chart-5 border-chart-5/30 dark:bg-chart-5/20",
+  },
   failed: {
     label: "Failed",
     className:
@@ -73,7 +78,7 @@ function getStatusConfig(status: string): StatusConfig | undefined {
 
 describe("StatusBadge — statusConfig completeness", () => {
   it("has exactly 10 status entries", () => {
-    expect(Object.keys(statusConfig)).toHaveLength(10);
+    expect(Object.keys(statusConfig)).toHaveLength(11);
   });
 
   it("every entry has a non-empty label", () => {
@@ -90,7 +95,7 @@ describe("StatusBadge — statusConfig completeness", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Tests: Label accuracy — all 10 statuses
+// Tests: Label accuracy — all 11 statuses
 // ---------------------------------------------------------------------------
 
 describe("StatusBadge — label accuracy", () => {
@@ -104,6 +109,7 @@ describe("StatusBadge — label accuracy", () => {
     ["pending", "Pending"],
     ["scripting", "Scripting"],
     ["rendering", "Rendering"],
+    ["needs_review", "Needs Review"],
     ["failed", "Failed"],
   ])('"%s" maps to label "%s"', (status, expectedLabel) => {
     const config = getStatusConfig(status);
@@ -148,6 +154,10 @@ describe("StatusBadge — color class accuracy", () => {
   it("rendering uses chart-3 color", () => {
     expect(statusConfig["rendering"].className).toContain("chart-3");
   });
+
+  it("needs_review uses chart-5 color", () => {
+    expect(statusConfig["needs_review"].className).toContain("chart-5");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -181,7 +191,7 @@ describe("StatusBadge — StatusType union coverage", () => {
   const allStatusKeys = [
     "READY", "PENDING", "FAILED",           // AssetStatus (3)
     "draft", "in_progress", "completed",    // DramaStatus (3)
-    "pending", "scripting", "rendering", "failed", // EpisodeStatus (6)
+    "pending", "scripting", "rendering", "needs_review", "failed", // EpisodeStatus (7)
   ];
 
   it("all expected StatusType keys exist in statusConfig", () => {
