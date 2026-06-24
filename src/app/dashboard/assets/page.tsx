@@ -8,7 +8,6 @@ import type { AssetType, AssetFilterStatus } from "@/ui/FilterBar";
 import { FilterBar } from "@/ui/FilterBar";
 import type { TableAsset } from "@/ui/AssetTable";
 import { AssetTable } from "@/ui/AssetTable";
-import type { PreviewAsset } from "@/ui/AssetPreviewModal";
 import { AssetPreviewModal } from "@/ui/AssetPreviewModal";
 import type { AssetStatus } from "@/ui/StatusBadge";
 
