@@ -295,7 +295,7 @@ function toGeminiDeclaration(
 ): GeminiFunctionDeclaration {
   const jsonSchema = z.toJSONSchema(schema);
   // Bỏ $schema field (không cần thiết cho Gemini API)
-  const { $schema: _, ...rest } = jsonSchema as Record<string, unknown> & {
+  const { $schema: _schema, ...rest } = jsonSchema as Record<string, unknown> & {
     $schema?: unknown;
   };
   return { name, description, parameters: rest };
