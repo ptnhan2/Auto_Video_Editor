@@ -124,7 +124,7 @@ export const AddEffectParamsSchema = z.object({
     .enum(EFFECT_TYPES)
     .describe("Effect type identifier (9 available types)."),
   params: z
-    .record(z.unknown())
+    .record(z.string(), z.unknown())
     .optional()
     .describe("Effect-specific parameters, e.g. { intensity: 5 }."),
 });
