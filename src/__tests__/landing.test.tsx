@@ -58,9 +58,10 @@ describe("Status mapping — completeness check", () => {
       "scripting",
       "rendering",
       "completed",
+      "needs_review",
       "failed",
     ];
-    expect(statuses).toHaveLength(6);
+    expect(statuses).toHaveLength(7);
     statuses.forEach((s) => expect(typeof s).toBe("string"));
   });
 });
