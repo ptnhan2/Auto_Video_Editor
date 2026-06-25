@@ -82,11 +82,9 @@ def run_station(station_key, episode_id):
     for attempt in range(1, max_retries + 1):
         start = time.time()
         try:
-            result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=600)
+            result = subprocess.run(cmd, check=True, capture_output=True, timeout=600)
             elapsed = time.time() - start
             logger.info("  OK (%.0fs)", elapsed)
-            if result.stdout.strip():
-                logger.info("  %s", result.stdout.strip()[-500:])
             return True
         except subprocess.TimeoutExpired:
             elapsed = time.time() - start
@@ -104,7 +102,8 @@ def run_station(station_key, episode_id):
         except subprocess.CalledProcessError as e:
             elapsed = time.time() - start
             logger.error("  FAILED after %.0fs (exit code %d)", elapsed, e.returncode)
-            stderr_tail = e.stderr.strip()[-500:] if e.stderr and e.stderr.strip() else "(empty)"
+            stderr = (e.stderr or b"").decode("utf-8", errors="replace").strip()
+            stderr_tail = stderr[-500:] if stderr else "(empty)"
             logger.error("  STDERR: %s", stderr_tail)
             
             if attempt < max_retries:
