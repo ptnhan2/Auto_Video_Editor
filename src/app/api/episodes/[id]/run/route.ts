@@ -114,7 +114,10 @@ export async function POST(
       )
       .run("scripting", episodeId);
 
-    const python = process.platform === "win32" ? "python" : "python3";
+    // Use Python 3.13 (system python is a 3.11 venv without sqlalchemy)
+    const python = process.platform === "win32"
+      ? "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
+      : "python3";
     const child = spawn(python, ["scripts/run_pipeline.py", episodeId], {
       detached: true,
       stdio: "ignore",
