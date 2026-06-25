@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db import init_db, get_session, Episode
+from src.db import init_db, get_session, Episode  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,
