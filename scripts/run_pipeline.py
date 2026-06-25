@@ -32,7 +32,6 @@ STATION_META = {
 }
 
 def update_episode_status(episode_id: str, status: str) -> None:
-    """Cập nhật trạng thái episode trong database."""
     session = SessionLocal()
     try:
         ep = session.query(Episode).filter(Episode.id == episode_id).first()
@@ -78,18 +77,35 @@ def run_station(station_key, episode_id):
     logger.info("  Running: %s", " ".join(cmd))
 
     max_retries = 3
-    base_delay = 10  # seconds
+    base_delay = 10
 
     for attempt in range(1, max_retries + 1):
         start = time.time()
         try:
-            subprocess.run(cmd, check=True, capture_output=False)
+            result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=600)
             elapsed = time.time() - start
             logger.info("  OK (%.0fs)", elapsed)
+            if result.stdout.strip():
+                logger.info("  %s", result.stdout.strip()[-500:])
+            return True
+        except subprocess.TimeoutExpired:
+            elapsed = time.time() - start
+            logger.error("  TIMEOUT after %.0fs", elapsed)
+            if attempt < max_retries:
+                delay = base_delay * attempt
+                logger.warning("  [RETRY] %s timeout. Attempt %d/%d. Retrying in %ds...", meta["name"], attempt, max_retries, delay)
+                time.sleep(delay)
+            else:
+                logger.error("  [FATAL] %s timed out.", meta["name"])
+                return False
+        except FileNotFoundError:
+            logger.warning("  [SKIP] Command not found: %s", cmd[0])
             return True
         except subprocess.CalledProcessError as e:
             elapsed = time.time() - start
             logger.error("  FAILED after %.0fs (exit code %d)", elapsed, e.returncode)
+            stderr_tail = e.stderr.strip()[-500:] if e.stderr and e.stderr.strip() else "(empty)"
+            logger.error("  STDERR: %s", stderr_tail)
             
             if attempt < max_retries:
                 delay = base_delay * attempt
@@ -107,22 +123,23 @@ def main():
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
-    parser = argparse.ArgumentParser(
-        description="Run the full Auto Video Editor pipeline sequentially."
-    )
+    parser = argparse.ArgumentParser(description="Run the full Auto Video Editor pipeline sequentially.")
     parser.add_argument("episode_id", help="Episode ID to process")
-    parser.add_argument("--from", dest="from_station", metavar="STATION",
-                        choices=STATION_SEQUENCE, help="Start from a specific station (e.g. S3)")
-    parser.add_argument("--to", dest="to_station", metavar="STATION",
-                        choices=STATION_SEQUENCE, help="Stop after a specific station (e.g. S5)")
+    parser.add_argument("--from", dest="from_station", metavar="STATION", choices=STATION_SEQUENCE, help="Start from specific station")
+    parser.add_argument("--to", dest="to_station", metavar="STATION", choices=STATION_SEQUENCE, help="Stop after specific station")
+    parser.add_argument("--skip-s0", action="store_true", help="Skip S0 (asset indexer)")
     args = parser.parse_args()
 
     episode_id = args.episode_id
     from_idx = STATION_META[args.from_station]["index"] if args.from_station else 0
     to_idx = STATION_META[args.to_station]["index"] if args.to_station else len(STATION_SEQUENCE) - 1
 
+    if args.skip_s0 and from_idx <= 0:
+        from_idx = 1
+        logger.info("Skipping S0\n")
+
     if from_idx > to_idx:
-        logger.error("Invalid range: --from %s is after --to %s", args.from_station, args.to_station)
+        logger.error("Invalid range: --from %s after --to %s", args.from_station, args.to_station)
         sys.exit(1)
 
     stations_to_run = [s for s in STATION_SEQUENCE if from_idx <= STATION_META[s]["index"] <= to_idx]
