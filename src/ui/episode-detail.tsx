@@ -295,17 +295,9 @@ function PipelineStepper({
         </button>
         <button
           type="button"
-          onClick={async () => {
-            const res = await fetch("/api/opencut/import", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ episodeId }),
-            });
-            if (res.ok) {
-              window.open("http://localhost:3001", "_blank");
-            } else {
-              alert("OpenCut không khả dụng");
-            }
+          onClick={() => {
+            const jsonUrl = `${window.location.origin}/scripts/opencut_${episodeId}.json`;
+            window.open(`http://localhost:3001/editor/new?import=${encodeURIComponent(jsonUrl)}`, "_blank");
           }}
           disabled={status !== "completed"}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 active:scale-95 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
