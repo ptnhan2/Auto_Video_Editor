@@ -56,7 +56,7 @@ Mục tiêu: Tách bạch luồng Generate Draft và Render để Human-in-the-l
 ### 📈 GIAI ĐOẠN 5: Scale hệ thống cho Production (MỚI BỔ SUNG)
 
 Mục tiêu: Xử lý bài toán hàng ngàn Scene và tự động hóa quản lý Asset.
-Chi tiết xem tại: [`docs/architecture/scaling_production.md`](../architecture/scaling_production.md)
+Chi tiết xem tại: [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) — Pipeline Architecture section
 
 - [ ] **5.1. Auto-Sync Asset Registry (`scripts/core/sync_registry.ts`)**
   - Viết script quét tự động thư mục `public/` (Animations, Humanoids) để sinh ra file `src/config/asset-registry.ts` trước mỗi lần build. Loại bỏ việc nhập tay.
