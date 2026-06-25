@@ -4,8 +4,11 @@ import subprocess
 import time
 import logging
 import argparse
+from datetime import datetime, timezone
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.db import init_db, get_session, Episode
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,6 +29,29 @@ STATION_META = {
     "S6": {"index": 6, "script": "src/pipeline/station_6_sound_vfx_engineer.py", "name": "Sound & VFX Engineer"},
     "S7": {"index": 7, "script": "src/pipeline/station_7_video_compiler.py", "name": "Video Compiler"},
     "S8": {"index": 8, "script": "src/services/video-builder/render_all.ts", "name": "Render MP4"},
+}
+
+def update_episode_status(episode_id: str, status: str) -> None:
+    """Cập nhật trạng thái episode trong database."""
+    session = get_session()
+    try:
+        ep = session.query(Episode).filter(Episode.id == episode_id).first()
+        if ep:
+            ep.status = status
+            ep.updated_at = datetime.now(timezone.utc)
+            session.commit()
+            logger.info("  [STATUS] Episode %s -> %s", episode_id, status)
+        else:
+            logger.warning("  [STATUS] Episode %s not found", episode_id)
+    except Exception as e:
+        logger.error("  [STATUS] Failed to update: %s", e)
+        session.rollback()
+    finally:
+        session.close()
+
+STATUS_BEFORE = {
+    "S1": "scripting",
+    "S4": "rendering",
 }
 
 def build_station_args(station_key, episode_id):
@@ -102,9 +128,13 @@ def main():
     stations_to_run = [s for s in STATION_SEQUENCE if from_idx <= STATION_META[s]["index"] <= to_idx]
     total_count = len(stations_to_run)
 
+    init_db()
+
     logger.info("Pipeline: %s -> %s", stations_to_run[0], stations_to_run[-1])
     logger.info("Episode ID: %s", episode_id)
     logger.info("Stations to run: %d\n", total_count)
+
+    update_episode_status(episode_id, "scripting")
 
     pipeline_start = time.time()
     completed = 0
@@ -114,12 +144,18 @@ def main():
         station_num = meta["index"]
         logger.info("[%d/%d] Station %d: %s...", i + 1, total_count, station_num, meta["name"])
 
+        if sk in STATUS_BEFORE:
+            update_episode_status(episode_id, STATUS_BEFORE[sk])
+
         success = run_station(sk, episode_id)
         if not success:
+            update_episode_status(episode_id, "failed")
             logger.error("\nPipeline ABORTED at Station %d (%s).", station_num, meta["name"])
             sys.exit(1)
 
         completed += 1
+
+    update_episode_status(episode_id, "completed")
 
     total_elapsed = time.time() - pipeline_start
     logger.info("\nPipeline complete: %d/%d stations OK (total %.0fs)", completed, total_count, total_elapsed)
