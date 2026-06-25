@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db import init_db, get_session, Episode  # noqa: E402
+from src.db import init_db, SessionLocal, Episode  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,7 +33,7 @@ STATION_META = {
 
 def update_episode_status(episode_id: str, status: str) -> None:
     """Cập nhật trạng thái episode trong database."""
-    session = get_session()
+    session = SessionLocal()
     try:
         ep = session.query(Episode).filter(Episode.id == episode_id).first()
         if ep:
