@@ -30,49 +30,31 @@ Episode = _schema.Episode
 logger = setup_logger("station_7_video_compiler")
 
 
-# ── OpenCut v10 Builder Constants ────────────────────────────────────
-
 DEFAULT_FPS = 30
 DEFAULT_CANVAS_WIDTH = 1920
 DEFAULT_CANVAS_HEIGHT = 1080
 CURRENT_SCHEMA_VERSION = 10
-SUBTITLE_Y_POSITION = 920  # Vị trí Y mặc định cho subtitle
+SUBTITLE_Y_POSITION = 920
 
-
-# ── OpenCut v10 Helpers ──────────────────────────────────────────────
 
 def _uid() -> str:
-    """Sinh unique ID ngắn gọn để dễ đọc log.
+    """Sinh unique ID cho OpenCut element/project.
 
     Returns:
-        String 8 ký tự hex từ UUID4.
+        String UUID4 đầy đủ (36 chars, format 8-4-4-4-12).
     """
-    return str(uuid.uuid4())[:8]
+    return str(uuid.uuid4())
 
 
 def _iso_now() -> str:
-    """Trả về ISO 8601 timestamp hiện tại (UTC).
-
-    Returns:
-        ISO 8601 string format "2026-06-23T12:00:00.000Z".
-    """
+    """Trả về ISO 8601 timestamp hiện tại (UTC)."""
     return datetime.now(timezone.utc).isoformat().replace("+00:00", ".000Z")
 
 
 def _make_transform(
     x: float = 0, y: float = 0, scale: float = 1.0, rotate: float = 0.0,
 ) -> dict[str, Any]:
-    """Tạo Transform object cho OpenCut element.
-
-    Args:
-        x: Vị trí X (pixel, gốc top-left).
-        y: Vị trí Y (pixel, gốc top-left).
-        scale: Tỉ lệ phóng to/thu nhỏ (default 1.0).
-        rotate: Góc xoay (degree, default 0.0).
-
-    Returns:
-        Transform dict {"scale": float, "position": {"x": float, "y": float}, "rotate": float}.
-    """
+    """Tạo Transform object cho OpenCut element."""
     return {
         "scale": scale,
         "position": {"x": x, "y": y},
@@ -81,11 +63,6 @@ def _make_transform(
 
 
 def _make_subtitle_background() -> dict[str, Any]:
-    """Tạo TextBackground mặc định cho subtitle.
-
-    Returns:
-        TextBackground dict với nền đen bán trong suốt, bo góc 8px.
-    """
     return {
         "enabled": True,
         "color": "#00000080",
@@ -94,8 +71,6 @@ def _make_subtitle_background() -> dict[str, Any]:
         "paddingY": 4,
     }
 
-
-# ── OpenCut v10 Element Builders ─────────────────────────────────────
 
 def build_video_element(
     media_id: str,
@@ -106,20 +81,7 @@ def build_video_element(
     transition_out: dict[str, Any] | None = None,
     effects: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Tạo VideoElement cho OpenCut video track.
-
-    Args:
-        media_id: ID của media asset trong storage.
-        name: Tên hiển thị trên timeline.
-        start_time: Vị trí bắt đầu trên timeline (seconds).
-        duration: Độ dài hiển thị (seconds).
-        source_duration: Độ dài file gốc (seconds). Nếu không có, dùng duration.
-        transition_out: TransitionData dict hoặc None.
-        effects: Danh sách Effect dict hoặc None.
-
-    Returns:
-        VideoElement dict tương thích với OpenCut v10 schema.
-    """
+    """Tạo VideoElement cho OpenCut video track."""
     return {
         "id": _uid(),
         "name": name,
@@ -151,19 +113,7 @@ def build_text_subtitle_element(
     font_size: int = 48,
     position_y: float | None = None,
 ) -> dict[str, Any]:
-    """Tạo TextElement cho OpenCut text track (subtitle).
-
-    Args:
-        content: Nội dung subtitle.
-        start_time: Vị trí bắt đầu (seconds absolute trên timeline).
-        duration: Độ dài hiển thị (seconds).
-        word_timings: Danh sách word timing cho karaoke highlight.
-        font_size: Cỡ chữ (px).
-        position_y: Vị trí Y (px). Default là SUBTITLE_Y_POSITION.
-
-    Returns:
-        TextElement dict tương thích với OpenCut v10 schema.
-    """
+    """Tạo TextElement cho OpenCut text track (subtitle)."""
     y = position_y if position_y is not None else SUBTITLE_Y_POSITION
     return {
         "id": _uid(),
@@ -204,21 +154,7 @@ def build_audio_element(
     source_type: str = "upload",
     source_url: str | None = None,
 ) -> dict[str, Any]:
-    """Tạo AudioElement cho OpenCut audio track.
-
-    Args:
-        media_id: ID của media asset (cho sourceType="upload").
-        name: Tên hiển thị.
-        start_time: Vị trí trên timeline (seconds).
-        duration: Độ dài (seconds).
-        source_duration: Độ dài file gốc.
-        volume: Âm lượng (0.0 - 2.0).
-        source_type: "upload" hoặc "library".
-        source_url: URL cho library source.
-
-    Returns:
-        AudioElement dict tương thích với OpenCut v10 schema.
-    """
+    """Tạo AudioElement cho OpenCut audio track."""
     element: dict[str, Any] = {
         "id": _uid(),
         "name": name,
@@ -240,8 +176,6 @@ def build_audio_element(
     return element
 
 
-# ── OpenCut v10 Project Assembler ────────────────────────────────────
-
 def build_opencut_project(
     episode_id: str,
     episode_name: str,
@@ -250,26 +184,9 @@ def build_opencut_project(
     canvas_height: int = DEFAULT_CANVAS_HEIGHT,
     fps: int = DEFAULT_FPS,
 ) -> dict[str, Any]:
-    """Xây dựng SerializedProject JSON từ dữ liệu scene đã compile.
-
-    Nhận output của S7 compiler (VideoScriptData.scenes) và chuyển đổi
-    sang định dạng OpenCut-AI v10 project. KHÔNG mapping — dùng trực tiếp
-    opencut_transition và opencut_effects từ DB.
-
-    Args:
-        episode_id: Episode ID để sinh project ID.
-        episode_name: Tên project hiển thị.
-        compiled_scenes: Danh sách SceneData từ pipeline.
-        canvas_width: Chiều rộng canvas (default 1920).
-        canvas_height: Chiều cao canvas (default 1080).
-        fps: Frame rate (default 30).
-
-    Returns:
-        SerializedProject dict sẵn sàng serialize ra JSON.
-
-    Side Effects: Không có (pure function).
-    """
+    """Xây dựng SerializedProject JSON từ dữ liệu scene đã compile."""
     now_iso = _iso_now()
+    project_id = _uid()
     opencut_scenes: list[dict[str, Any]] = []
     total_duration = 0.0
 
@@ -289,13 +206,8 @@ def build_opencut_project(
             if duration <= 0:
                 continue
 
-            # ── Video element cho shot ──
             media_id = f"media-video-{shot.get('shotId', _uid())}"
-
-            # Dùng trực tiếp opencut_transition từ DB — KHÔNG mapping
             transition_out = shot.get("opencut_transition")
-
-            # Dùng trực tiếp opencut_effects từ DB — KHÔNG mapping
             shot_effects = shot.get("opencut_effects", [])
 
             video_elements.append(build_video_element(
@@ -307,20 +219,16 @@ def build_opencut_project(
                 effects=shot_effects,
             ))
 
-            # ── Audio: BGM (chỉ thêm 1 lần cho cả scene) ──
             bgm_id = shot.get("bgmId")
             if bgm_id and not bgm_elements:
                 bgm_elements.append(build_audio_element(
                     media_id=f"media-bgm-{bgm_id}",
                     name=f"BGM: {bgm_id}",
                     start_time=scene_start_time,
-                    duration=sum(
-                        float(s.get("durationSeconds", 0)) for s in shots
-                    ),
+                    duration=sum(float(s.get("durationSeconds", 0)) for s in shots),
                     volume=0.3,
                 ))
 
-            # ── Audio: SFX ──
             sfx_id = shot.get("sfxId")
             if sfx_id:
                 sfx_audio.append(build_audio_element(
@@ -331,7 +239,6 @@ def build_opencut_project(
                     volume=0.8,
                 ))
 
-            # ── Subtitle & Dialogue audio từ mỗi actor ──
             for actor in shot.get("actors", []):
                 dialogue = (actor.get("dialogue") or "").strip()
                 if not dialogue:
@@ -341,7 +248,6 @@ def build_opencut_project(
                 audio_dur = float(actor.get("audioDuration", duration))
                 word_timings = actor.get("wordTimings")
 
-                # Subtitle
                 subtitle_elements.append(build_text_subtitle_element(
                     content=dialogue,
                     start_time=scene_start_time + current_time,
@@ -349,7 +255,6 @@ def build_opencut_project(
                     word_timings=word_timings,
                 ))
 
-                # Dialogue audio
                 if audio_id:
                     dialogue_audio.append(build_audio_element(
                         media_id=f"media-tts-{audio_id}",
@@ -361,10 +266,8 @@ def build_opencut_project(
 
             current_time += duration
 
-        # ── Dựng tracks cho scene ──
         tracks: list[dict[str, Any]] = []
 
-        # Video track (main)
         tracks.append({
             "id": _uid(),
             "name": "Main Track",
@@ -377,7 +280,6 @@ def build_opencut_project(
             "volume": 1.0,
         })
 
-        # Audio track: dialogue
         if dialogue_audio:
             tracks.append({
                 "id": _uid(),
@@ -390,7 +292,6 @@ def build_opencut_project(
                 "pan": 0,
             })
 
-        # Audio track: SFX
         if sfx_audio:
             tracks.append({
                 "id": _uid(),
@@ -403,7 +304,6 @@ def build_opencut_project(
                 "pan": 0,
             })
 
-        # Audio track: BGM
         if bgm_elements:
             tracks.append({
                 "id": _uid(),
@@ -416,7 +316,6 @@ def build_opencut_project(
                 "pan": 0,
             })
 
-        # Text track: subtitle
         if subtitle_elements:
             tracks.append({
                 "id": _uid(),
@@ -427,7 +326,6 @@ def build_opencut_project(
                 "hidden": False,
             })
 
-        # Scene markers tại mỗi scene boundary
         markers: list[dict[str, Any]] = []
         if scene_idx > 0:
             markers.append({
@@ -442,7 +340,7 @@ def build_opencut_project(
         total_duration += scene_duration
 
         opencut_scenes.append({
-            "id": scene_data.get("sceneId", _uid()),
+            "id": _uid(),
             "name": f"Scene {scene_idx + 1}",
             "isMain": scene_idx == 0,
             "tracks": tracks,
@@ -452,10 +350,9 @@ def build_opencut_project(
             "updatedAt": now_iso,
         })
 
-    # ── Dựng TProject ──
     project: dict[str, Any] = {
         "metadata": {
-            "id": _uid(),
+            "id": project_id,
             "name": episode_name,
             "thumbnail": None,
             "duration": total_duration,
@@ -482,15 +379,6 @@ def save_opencut_project(
     project: dict[str, Any],
     output_path: str,
 ) -> None:
-    """Ghi project ra file JSON với định dạng đẹp.
-
-    Args:
-        project: SerializedProject dict từ build_opencut_project().
-        output_path: Đường dẫn file output (vd: public/scripts/opencut_{id}.json).
-
-    Side Effects:
-        Ghi file JSON ra disk. Ghi đè nếu file đã tồn tại.
-    """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(project, f, indent=2, ensure_ascii=False)
