@@ -106,6 +106,9 @@ interface EpisodeDetailProps {
  */
 export function EpisodeDetail({ episodeId }: EpisodeDetailProps) {
   const [data, setData] = useState<DataState>({ status: "loading" });
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRefresh = () => setRefreshKey((k) => k + 1);
 
   useEffect(() => {
     let cancelled = false;
@@ -149,7 +152,7 @@ export function EpisodeDetail({ episodeId }: EpisodeDetailProps) {
     return () => {
       cancelled = true;
     };
-  }, [episodeId]);
+  }, [episodeId, refreshKey]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -165,7 +168,7 @@ export function EpisodeDetail({ episodeId }: EpisodeDetailProps) {
       {data.status === "loading" && <DetailSkeleton />}
       {data.status === "error" && <ErrorDisplay message={data.message} />}
       {data.status === "success" && (
-        <EpisodeContent episode={data.episode} drama={data.drama} />
+        <EpisodeContent episode={data.episode} drama={data.drama} onRefresh={handleRefresh} />
       )}
     </div>
   );
@@ -174,9 +177,11 @@ export function EpisodeDetail({ episodeId }: EpisodeDetailProps) {
 function EpisodeContent({
   episode,
   drama,
+  onRefresh,
 }: {
   episode: Episode;
   drama: Drama | null;
+  onRefresh?: () => void;
 }) {
   const pipelineSteps = useMemo(() => derivePipelineSteps(episode), [episode]);
 
@@ -190,7 +195,7 @@ function EpisodeContent({
 
       {/* Right column: Pipeline stepper */}
       <div className="lg:col-span-3">
-        <PipelineStepper steps={pipelineSteps} episodeId={episode.id} status={episode.status} />
+        <PipelineStepper steps={pipelineSteps} episodeId={episode.id} status={episode.status} onRefresh={onRefresh} />
       </div>
     </div>
   );
@@ -264,15 +269,50 @@ function PipelineStepper({
   steps,
   episodeId,
   status,
+  onRefresh,
 }: {
   steps: PipelineStep[];
   episodeId: string;
   status: string;
+  onRefresh?: () => void;
 }) {
-  const handleRunPipeline = () => {
-    // TODO: POST /api/pipeline/run when API is ready
-    console.log("Pipeline triggered for", episodeId);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const handleRunPipeline = async () => {
+    setIsRunning(true);
+    try {
+      const res = await fetch(`/api/episodes/${episodeId}/run`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Failed to start pipeline");
+        setIsRunning(false);
+        return;
+      }
+    } catch {
+      alert("Network error");
+      setIsRunning(false);
+    }
   };
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/episodes/${episodeId}`);
+        if (!res.ok) return;
+        const { episode } = await res.json();
+        if (episode?.status === "completed" || episode?.status === "failed") {
+          setIsRunning(false);
+        }
+        onRefresh?.();
+      } catch {
+        /* ignore polling errors */
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isRunning, episodeId, onRefresh]);
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 space-y-6 shadow-sm">
@@ -288,10 +328,11 @@ function PipelineStepper({
         <button
           type="button"
           onClick={handleRunPipeline}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 active:scale-95 transition-all shadow-sm"
+          disabled={isRunning}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 active:scale-95 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Play className="h-3.5 w-3.5 fill-current" />
-          Run Pipeline
+          {isRunning ? "Running..." : "Run Pipeline"}
         </button>
         <button
           type="button"
