@@ -333,7 +333,7 @@ def build_opencut_project(
 
             # ── Subtitle & Dialogue audio từ mỗi actor ──
             for actor in shot.get("actors", []):
-                dialogue = actor.get("dialogue", "").strip()
+                dialogue = (actor.get("dialogue") or "").strip()
                 if not dialogue:
                     continue
 
@@ -545,10 +545,10 @@ def compile_episode(episode_id):
         )
 
         if not storyboards:
-            logger.warning(f"âš ï¸ No storyboards found for episode {episode_id}")
+            logger.warning(f"⚠️ No storyboards found for episode {episode_id}")
             return {"error": f"No storyboards found for episode {episode_id}"}
 
-        logger.info(f"ðŸ“Š Found {len(storyboards)} storyboards")
+        logger.info(f"📊 Found {len(storyboards)} storyboards")
 
         scenes = []
         current_scene = None
@@ -579,7 +579,7 @@ def compile_episode(episode_id):
                 "camera": {"type": sb.camera_concept} if sb.camera_concept else None,
                 "bgmId": _parse_bgm_id(sb.bgm_prompt),
                 "sfxId": _parse_sfx_id(sb.sound_effect),
-                "vfxId": None,  # Expand later if vfx is extracted
+                "vfxId": None,
                 "opencut_transition": json.loads(sb.opencut_transition) if getattr(sb, "opencut_transition", None) else None,
                 "opencut_effects": json.loads(sb.opencut_effects) if getattr(sb, "opencut_effects", None) else [],
             }
@@ -587,7 +587,6 @@ def compile_episode(episode_id):
             characters = list(sb.characters) if sb.characters else []
             speaking_char_id = sb.speaker_id
 
-            # PhÃ¢n tÃ­ch character_position tá»« DB
             char_states = {}
             if getattr(sb, "character_position", None):
                 try:
@@ -604,7 +603,6 @@ def compile_episode(episode_id):
                 is_speaker = speaking_char_id == char.id
                 dialogue_text = sb.dialogue if is_speaker else None
                 
-                # Ãp dá»¥ng tráº¡ng thÃ¡i cá»¥ thá»ƒ cá»§a nhÃ¢n váº­t náº¿u cÃ³
                 state = char_states.get(char.id, {})
 
                 actor = {
@@ -627,7 +625,6 @@ def compile_episode(episode_id):
 
                 shot["actors"].append(actor)
 
-            # Cleanup None keys in shot to match Zod optional/nullable nicely
             for key in ("layoutStyle", "visualMetaphor", "transitionIn", "atmosphereFx", "assetDynamics", "camera", "bgmId", "sfxId", "vfxId"):
                 if shot.get(key) is None:
                     del shot[key]
@@ -638,7 +635,6 @@ def compile_episode(episode_id):
         if current_scene is not None:
             scenes.append(current_scene)
 
-        # ── Dựng OpenCut v10 Project JSON trực tiếp từ scenes ──
         project = build_opencut_project(episode_id, title, scenes)
         output_dir = os.path.join(os.getcwd(), "public", "scripts")
         output_path = os.path.join(output_dir, f"opencut_{episode_id}.json")
@@ -646,12 +642,12 @@ def compile_episode(episode_id):
 
         log_logic_transition(logger, "STATION_COMPLETE",
             f"Compiled {len(scenes)} scenes to OpenCut v10 project: {output_path}")
-        logger.info(f"\u2705 OpenCut v10 project written to: {output_path}")
+        logger.info(f"✅ OpenCut v10 project written to: {output_path}")
 
         return project
 
     except Exception as e:
-        logger.error(f"âŒ Compilation error: {e}")
+        logger.error(f"❌ Compilation error: {e}")
         raise
     finally:
         db.close()
