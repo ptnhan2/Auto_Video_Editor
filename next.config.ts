@@ -27,6 +27,15 @@ const nextConfig: NextConfig = {
           { key: "Access-Control-Allow-Headers", value: "Range" },
         ],
       },
+      {
+        // Pipeline project JSON (opencut_{id}.json) fetched by OpenCut-AI (:3001)
+        // during the import flow. Required for cross-origin import to work.
+        source: "/scripts/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+        ],
+      },
     ];
   },
 };
