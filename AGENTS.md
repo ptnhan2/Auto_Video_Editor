@@ -277,3 +277,104 @@ S5 teaches AI to output **OpenCut-AI native terminology** (via enums in `src/sha
 #### Git Operations on OpenCut-AI
 
 When modifying OpenCut-AI code, use `git -C OpenCut-AI` for all git commands. Push/PR go to `ptnhan2/OpenCut-AI`, NOT `ptnhan2/Auto_Video_Editor`.
+
+---
+
+### Rule L: "Live Runtime — Servers & Browser Verification"
+
+**Khi nào áp dụng:** User yêu cầu "run live", "test live", "chạy runtime", "mở browser check", "verify thực tế", "chạy thử xem có hoạt động không". Khi User nói vậy, **KHÔNG** chỉ chạy unit test / curl mock — phải mở server thật + browser thật và để User nhìn thấy kết quả.
+
+> ⚠️ **Mục tiêu:** User nói "run live" → Agent đọc section này 1 lần là làm đúng từ đầu: mở cả 2 server (background), mở browser thật, verify bằng DOM/state, để nguyên cho User check. Đừng lan man sang `WORKFLOW.md` (file đó lỗi thời, không phải runbook).
+
+#### L.1 — Kiến trúc 2 server
+
+| Server | Repo / vị trí | Port | Lệnh chạy | Pkg manager |
+|--------|---------------|------|-----------|-------------|
+| **Platform** (backend: API, assets, pipeline) | worktree hiện tại (root) | `:3000` | `npx cross-env NODE_OPTIONS=--experimental-sqlite next dev` | npm |
+| **OpenCut-AI** (editor frontend) | `C:\DevWork\Auto_Video_Editor\OpenCut-AI\apps\web` | `:3001` | `bun dev` | bun |
+
+Platform gọi cross-origin từ OpenCut-AI (xem L.5 CORS). Lệnh dev của Platform (`npm run dev`) có `predev` chạy `sync-assets` — có thể chậm/lỗi; khi chỉ test API route thì dùng `next dev` trực tiếp như bảng trên.
+
+#### L.2 — Khởi động server: DÙNG `background_process`, KHÔNG `bash`
+
+Server là tiến trình dài hạn. **BẮT BUỘC** tool `background_process` (action `start`) với `ready.port` + `ready.pattern`. Dùng `bash`/PowerShell chạy `next dev` → **treo session vô thời hạn**.
+
+Ví dụ Platform:
+```
+background_process start:
+  command: npx cross-env NODE_OPTIONS=--experimental-sqlite next dev
+  workdir: <worktree root>
+  ready: { port: 3000, pattern: "Ready in|Local:", timeout: 120 }
+```
+OpenCut-AI: tương tự, `command: bun dev`, `workdir: .../OpenCut-AI/apps/web`, port 3001.
+
+- Để server **chạy nguyên**. **KHÔNG tự stop** trừ khi User yêu cầu test "tắt Platform".
+- Kiểm tra: `background_process list` / `status` / `logs`.
+- Sau khi sửa `next.config.ts` → **restart** server (next.config KHÔNG HMR).
+
+#### L.3 — Worktree realities (ĐỌC KỸ — tránh lặp sai lầm)
+
+1. **OpenCut-AI KHÔNG có trong worktree.** Nó là nested git repo riêng, chỉ tồn tại ở main worktree `C:\DevWork\Auto_Video_Editor\OpenCut-AI`. Để test thay đổi OpenCut-AI → làm việc trong thư mục đó (tạo branch riêng `git -C .../OpenCut-AI checkout -b ...`), KHÔNG trong worktree Platform.
+2. **Artifacts bị gitignore KHÔNG có trong worktree mới:** `public/assets/audio/tts/*.mp3`, `public/scripts/opencut_*.json` (do pipeline sinh ra, `*.mp3` bị gitignore). Worktree = trống. Để test live, **copy artifact thật từ main worktree** (file gitignored → không ô nhiễm git):
+   ```powershell
+   Copy-Item "C:\DevWork\Auto_Video_Editor\public\assets\audio\tts\*.mp3" "public\assets\audio\tts\"
+   Copy-Item "C:\DevWork\Auto_Video_Editor\public\scripts\opencut_*.json" "public\scripts\"
+   ```
+3. **KHÔNG tạo file giả/mock** (VD fake `.mp3` 10 byte) để "smoke test" — User ghét và đó không phải verify thật. Luôn dùng artifact thật từ main worktree.
+
+#### L.4 — Browser verification: Chrome DevTools MCP (KHÔNG screenshot)
+
+Dùng bộ tool `chrome-devtools_*` để mở browser thật:
+- `chrome-devtools_new_page` / `navigate_page` — mở URL
+- `chrome-devtools_take_snapshot` — đọc DOM dạng **text** (a11y tree): xem tracks, nút, text
+- `chrome-devtools_evaluate_script` — chạy JS đọc trạng thái thật (IndexedDB, editor state, fetch test)
+- `chrome-devtools_list_network_requests` — xem API calls thực tế
+- `chrome-devtools_list_console_messages` — xem errors
+- `chrome-devtools_select_page` (`bringToFront: true`) — đưa tab lên cho User xem
+
+> 🚨 **Model KHÔNG đọc được screenshot** (image input không hỗ trợ). **TUYỆT ĐỐI KHÔNG** dùng `take_screenshot` rồi claim "tôi thấy X" — đó là bịa kết quả. **Phải dùng `take_snapshot` (text DOM) hoặc `evaluate_script` (đọc state thật)**, báo kết quả dựa trên output text trả về.
+
+Mở trang cho User xem xong → **đừng đóng tab**. Để server + browser chạy nguyên, báo User tự check.
+
+#### L.5 — Cross-origin CORS
+
+OpenCut-AI (`:3001`) gọi Platform (`:3000`) = cross-origin. **Mỗi path Platform serve cho OpenCut-AI phải có CORS header** trong `next.config.ts`:
+```ts
+{ source: "/<path>/:path*", headers: [
+  { key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
+  { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+]}
+```
+Path đã có CORS: `/api/assets/:path*`, `/scripts/:path*` (project JSON import), `/api/opencut/:path*`, `/assets/:path*`. **Thiếu CORS → browser block → "Failed to fetch".**
+
+#### L.6 — Verify pattern chuẩn (làm theo thứ tự)
+
+1. Start cả 2 server (background_process, L.2). Chờ `ready`.
+2. Nếu cần artifact → copy thật từ main worktree (L.3).
+3. `curl` endpoint Platform xác nhận `200` + headers đúng (Content-Type, CORS).
+4. `chrome-devtools_new_page` mở editor / URL import.
+5. **Chờ load** — import có thể mất **60–180 giây** (bottleneck là `importMediaPhase2` sinh 51 ảnh placeholder qua `genPNGBlob`, CHƯA phải 33 lần fetch audio). Đừng kết luận sớm: dùng `evaluate_script` poll cho đến khi audio elements có `mediaId` local (UUID, không còn `media-tts-`) thay vì `sleep` cố định, rồi `take_snapshot` xác nhận UI.
+6. `list_network_requests` xác nhận API calls đúng (VD `/api/assets/tts/...` → `200`). **Lưu ý:** network log bị clear giữa các redirect (import flow có 2-3 redirect) → dùng `includePreservedRequests: true`, hoặc fallback `evaluate_script` đếm `performance.getEntriesByType('resource').filter(e => e.name.includes('/api/assets/tts/'))`.
+7. `list_console_messages` xác nhận KHÔNG có error liên quan đến feature.
+8. Để browser + server chạy nguyên, đưa tab lên (`select_page` + `bringToFront`), báo User check.
+
+#### L.7 — Reset state để re-test (OpenCut-AI IndexedDB)
+
+OpenCut-AI cache project/media trong IndexedDB. Để re-import sạch (xóa project cũ đang chặn test):
+```js
+// chrome-devtools_evaluate_script
+const dbs = await indexedDB.databases();
+for (const d of dbs) await new Promise(r=>{
+  const q = indexedDB.deleteDatabase(d.name);
+  q.onsuccess=q.onerror=q.onblocked=()=>r();
+});
+localStorage.clear(); sessionStorage.clear();
+```
+
+> ⚠️ **Lưu ý version-control:** OpenCut-AI có feature version-control (branch/commit) bị **race khi React StrictMode double-invoke ở dev** → log `ConstraintError "by-name"` (non-fatal, đã catch). Nếu import bị chặn kỳ lạ → reset IndexedDB như trên rồi retry.
+
+#### L.8 — Import flow (tham khảo)
+
+OpenCut-AI import project qua URL: `http://localhost:3001/editor/x?import=<URL_JSON>`. URL JSON thường là `http://localhost:3000/scripts/opencut_<id>.json`. Flow: fetch JSON → `postProcessProject` → localStorage → redirect → `importProjectPhase1` (IndexedDB) → redirect → `importMediaPhase2` (fetch+store media). Cả chain cross-origin → cần CORS ở L.5.
+
+---
