@@ -353,8 +353,8 @@ Path đã có CORS: `/api/assets/:path*`, `/scripts/:path*` (project JSON import
 2. Nếu cần artifact → copy thật từ main worktree (L.3).
 3. `curl` endpoint Platform xác nhận `200` + headers đúng (Content-Type, CORS).
 4. `chrome-devtools_new_page` mở editor / URL import.
-5. **Chờ load** (import + media fetch có thể 30–90 giây) → `take_snapshot` / `evaluate_script` xác nhận UI/state.
-6. `list_network_requests` xác nhận API calls đúng (VD `/api/assets/tts/...` → `200`).
+5. **Chờ load** — import có thể mất **60–180 giây** (bottleneck là `importMediaPhase2` sinh 51 ảnh placeholder qua `genPNGBlob`, CHƯA phải 33 lần fetch audio). Đừng kết luận sớm: dùng `evaluate_script` poll cho đến khi audio elements có `mediaId` local (UUID, không còn `media-tts-`) thay vì `sleep` cố định, rồi `take_snapshot` xác nhận UI.
+6. `list_network_requests` xác nhận API calls đúng (VD `/api/assets/tts/...` → `200`). **Lưu ý:** network log bị clear giữa các redirect (import flow có 2-3 redirect) → dùng `includePreservedRequests: true`, hoặc fallback `evaluate_script` đếm `performance.getEntriesByType('resource').filter(e => e.name.includes('/api/assets/tts/'))`.
 7. `list_console_messages` xác nhận KHÔNG có error liên quan đến feature.
 8. Để browser + server chạy nguyên, đưa tab lên (`select_page` + `bringToFront`), báo User check.
 
