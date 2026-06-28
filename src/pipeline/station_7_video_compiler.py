@@ -233,18 +233,23 @@ def save_opencut_project(project: dict[str, Any], output_path: str) -> None:
 
 
 def _parse_sfx_id(sound_effect):
-    if not sound_effect: return None
-    try: return json.loads(sound_effect).get("sfx_id")
-    except (json.JSONDecodeError, TypeError): return None
+    if not sound_effect:
+        return None
+    try:
+        return json.loads(sound_effect).get("sfx_id")
+    except (json.JSONDecodeError, TypeError):
+        return None
 
 
 def _parse_bgm_id(bgm_prompt):
-    if not bgm_prompt: return None
+    if not bgm_prompt:
+        return None
     return re.sub(r'[^a-z0-9]+', '_', bgm_prompt.lower().strip()).strip('_') or None
 
 
 def _extract_audio_id(tts_audio_url):
-    if not tts_audio_url: return None
+    if not tts_audio_url:
+        return None
     return os.path.splitext(os.path.basename(tts_audio_url))[0]
 
 
@@ -267,7 +272,8 @@ def compile_episode(episode_id):
         for sb in storyboards:
             scene_id = sb.scene_id or f"scene_{sb.storyboard_number:03d}"
             if current_scene is None or current_scene["sceneId"] != scene_id:
-                if current_scene is not None: scenes.append(current_scene)
+                if current_scene is not None:
+                    scenes.append(current_scene)
                 current_scene = {"sceneId": scene_id, "backgroundId": sb.background_id or "bg_transparent", "totalDurationSeconds": 0, "shots": []}
             shot = {
                 "shotId": str(sb.id), "durationSeconds": float(sb.duration) if sb.duration and sb.duration >= 0.5 else 5.0,
@@ -289,8 +295,10 @@ def compile_episode(episode_id):
                     state_list = json.loads(sb.character_position)
                     if isinstance(state_list, list):
                         for state in state_list:
-                            if state.get("character_id"): char_states[state["character_id"]] = state
-                except Exception: pass
+                            if state.get("character_id"):
+                                char_states[state["character_id"]] = state
+                except Exception:
+                    pass
             for char in characters:
                 is_speaker = speaking_char_id == char.id
                 state = char_states.get(char.id, {})
@@ -302,15 +310,19 @@ def compile_episode(episode_id):
                     "dialogue": sb.dialogue if is_speaker else None,
                     "isSpeaking": is_speaker and bool(sb.dialogue),
                 }
-                if state.get("movement"): actor["movement"] = state["movement"]
+                if state.get("movement"):
+                    actor["movement"] = state["movement"]
                 audio_id = _extract_audio_id(sb.tts_audio_url)
-                if audio_id and is_speaker: actor["audioId"] = audio_id
+                if audio_id and is_speaker:
+                    actor["audioId"] = audio_id
                 shot["actors"].append(actor)
             for key in ("layoutStyle", "visualMetaphor", "transitionIn", "atmosphereFx", "assetDynamics", "camera", "bgmId", "sfxId", "vfxId"):
-                if shot.get(key) is None: del shot[key]
+                if shot.get(key) is None:
+                    del shot[key]
             current_scene["shots"].append(shot)
             current_scene["totalDurationSeconds"] += shot["durationSeconds"]
-        if current_scene is not None: scenes.append(current_scene)
+        if current_scene is not None:
+            scenes.append(current_scene)
         project = build_opencut_project(episode_id, title, scenes)
         output_dir = os.path.join(os.getcwd(), "public", "scripts")
         output_path = os.path.join(output_dir, f"opencut_{episode_id}.json")
