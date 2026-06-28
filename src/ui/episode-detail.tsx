@@ -54,7 +54,7 @@ const PIPELINE_STEPS: PipelineStepDef[] = [
   { id: "S7", label: "Video Compiler", icon: Film, index: 6 },
 ];
 
-function derivePipelineSteps(episode: Episode): PipelineStep[] {
+export function derivePipelineSteps(episode: Episode): PipelineStep[] {
   const now = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
   const status = episode.status;
 
