@@ -82,7 +82,7 @@ def run_station(station_key, episode_id):
     for attempt in range(1, max_retries + 1):
         start = time.time()
         try:
-            result = subprocess.run(cmd, check=True, capture_output=True, timeout=600)
+            subprocess.run(cmd, check=True, capture_output=True, timeout=600)
             elapsed = time.time() - start
             logger.info("  OK (%.0fs)", elapsed)
             return True
