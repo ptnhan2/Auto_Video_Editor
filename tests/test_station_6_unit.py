@@ -247,3 +247,74 @@ def test_report_missing_asset_handles_db_error(monkeypatch):
 
     assert result["status"] == "error"
     assert "message" in result
+
+
+# ---------------------------------------------------------------------------
+# AC: update_storyboard_audio normalizes placeholder sfx_id/bgm_track
+# Issue #239 (S6 root cause): LLM trả "None"/"none" → store empty, không
+# store string "None" vào DB (defense-in-depth cho best-effort path).
+# ---------------------------------------------------------------------------
+
+def test_update_storyboard_audio_normalizes_placeholder_sfx_bgm(initialized_engine, monkeypatch):
+    """update_storyboard_audio('None'/'none') → store '', không store 'None'."""
+    import json
+    from src.pipeline import station_6_sound_vfx_engineer as s6
+    from src.db.schema import Storyboard
+
+    SessionLocal = sessionmaker(bind=initialized_engine)
+    monkeypatch.setattr(s6, "SessionLocal", lambda: SessionLocal())
+
+    session = SessionLocal()
+    session.add(Storyboard(id="sb_norm", episode_id="ep_1", storyboard_number=1))
+    session.commit()
+    session.close()
+
+    result = s6.update_storyboard_audio(
+        storyboard_id="sb_norm",
+        sfx_id="None",
+        vfx_tags=[],
+        bgm_track="none",
+    )
+
+    assert result["status"] == "success"
+
+    session = SessionLocal()
+    try:
+        row = session.query(Storyboard).filter(Storyboard.id == "sb_norm").first()
+        stored_sfx = json.loads(row.sound_effect)["sfx_id"]
+        assert stored_sfx == "", f"Expected empty sfx_id, got {stored_sfx!r}"
+        assert row.bgm_prompt == "", f"Expected empty bgm_prompt, got {row.bgm_prompt!r}"
+    finally:
+        session.close()
+
+
+def test_update_storyboard_audio_preserves_real_sfx_bgm(initialized_engine, monkeypatch):
+    """update_storyboard_audio với ID thật → store nguyên ID (không normalize)."""
+    import json
+    from src.pipeline import station_6_sound_vfx_engineer as s6
+    from src.db.schema import Storyboard
+
+    SessionLocal = sessionmaker(bind=initialized_engine)
+    monkeypatch.setattr(s6, "SessionLocal", lambda: SessionLocal())
+
+    session = SessionLocal()
+    session.add(Storyboard(id="sb_real", episode_id="ep_1", storyboard_number=2))
+    session.commit()
+    session.close()
+
+    result = s6.update_storyboard_audio(
+        storyboard_id="sb_real",
+        sfx_id="sfx_rain_01",
+        vfx_tags=["vfx_speed"],
+        bgm_track="bgm_tension",
+    )
+
+    assert result["status"] == "success"
+
+    session = SessionLocal()
+    try:
+        row = session.query(Storyboard).filter(Storyboard.id == "sb_real").first()
+        assert json.loads(row.sound_effect)["sfx_id"] == "sfx_rain_01"
+        assert row.bgm_prompt == "bgm_tension"
+    finally:
+        session.close()
