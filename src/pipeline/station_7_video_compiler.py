@@ -232,19 +232,68 @@ def save_opencut_project(project: dict[str, Any], output_path: str) -> None:
         json.dump(project, f, indent=2, ensure_ascii=False)
 
 
-def _parse_sfx_id(sound_effect):
+# ✏️ EDIT ZONE START (Issue #239: filter placeholder SFX/BGM ids)
+# Tokens mà LLM (S6) đôi khi trả thay vì asset ID thật. Nếu không lọc, S7 sinh
+# audio element giả (media-sfx-None / media-bgm-none) với sourceType "upload"
+# nhưng không có file thật → OpenCut-AI tải media thất bại.
+_PLACEHOLDER_AUDIO_TOKENS = {"", "none", "null", "n/a", "na", "undefined", "-"}
+
+
+def _normalize_audio_id(value: Any) -> str | None:
+    """Chuẩn hoá ID asset audio; trả None nếu value là placeholder/rỗng.
+
+    LLM ở S6 đôi khi điền "None"/"none"/"null" thay vì ID thật khi không tìm
+    được asset. Hàm coi mọi token placeholder là "không có audio" để S7 không
+    sinh audio element giả.
+
+    Args:
+        value: Raw value từ DB column (string, None, hoặc JSON-decoded).
+
+    Returns:
+        str | None: ID đã trim nếu hợp lệ; None nếu placeholder hoặc rỗng.
+    """
+    if value is None:
+        return None
+    text = str(value).strip()
+    if text.lower() in _PLACEHOLDER_AUDIO_TOKENS:
+        return None
+    return text or None
+
+
+def _parse_sfx_id(sound_effect: str | None) -> str | None:
+    """Trích xuất sfx_id từ cột Storyboard.sound_effect (JSON string).
+
+    Args:
+        sound_effect: JSON string '{"sfx_id": "...", "vfx_tags": [...]}'.
+
+    Returns:
+        str | None: sfx_id đã chuẩn hoá, hoặc None nếu thiếu/placeholder/lỗi.
+    """
     if not sound_effect:
         return None
     try:
-        return json.loads(sound_effect).get("sfx_id")
+        raw = json.loads(sound_effect).get("sfx_id")
     except (json.JSONDecodeError, TypeError):
         return None
+    return _normalize_audio_id(raw)
 
 
-def _parse_bgm_id(bgm_prompt):
+def _parse_bgm_id(bgm_prompt: str | None) -> str | None:
+    """Slug hoá bgm_prompt thành BGM ID; trả None nếu placeholder/rỗng.
+
+    Args:
+        bgm_prompt: Raw BGM track string từ Storyboard.bgm_prompt.
+
+    Returns:
+        str | None: slug dạng 'bgm_rain_01', hoặc None nếu placeholder/rỗng.
+    """
     if not bgm_prompt:
         return None
-    return re.sub(r'[^a-z0-9]+', '_', bgm_prompt.lower().strip()).strip('_') or None
+    normalized = _normalize_audio_id(bgm_prompt)
+    if normalized is None:
+        return None
+    return re.sub(r'[^a-z0-9]+', '_', normalized.lower().strip()).strip('_') or None
+# ✏️ EDIT ZONE END (Issue #239)
 
 
 def _extract_audio_id(tts_audio_url):
