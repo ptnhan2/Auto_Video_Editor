@@ -54,8 +54,16 @@ const PIPELINE_STEPS: PipelineStepDef[] = [
   { id: "S7", label: "Video Compiler", icon: Film, index: 6 },
 ];
 
+/**
+ * Tính trạng thái pipeline (S1-S7) cho một tập phim dựa trên `episode.status`.
+ * Mapping status → step statuses đã được verify (FROZEN), chỉ timestamp được điều chỉnh.
+ *
+ * @param episode - Episode object; chỉ đọc `status` và `updatedAt`.
+ * @returns Mảng 7 PipelineStep, mỗi step có `status` và `timestamp` (ISO string | null).
+ * @sideEffect Không có — pure function, không mutate input hay gọi API.
+ */
 export function derivePipelineSteps(episode: Episode): PipelineStep[] {
-  const now = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+  const now = episode.updatedAt;
   const status = episode.status;
 
   if (status === "completed") {
