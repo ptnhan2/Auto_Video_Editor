@@ -27,6 +27,8 @@ from src.pipeline.station_7_video_compiler import (  # noqa: E402
     _uid,
     _iso_now,
     _make_transform,
+    _parse_sfx_id,
+    _parse_bgm_id,
     DEFAULT_CANVAS_WIDTH,
 )
 
@@ -401,3 +403,105 @@ def test_shot_with_zero_duration_skipped():
     assert len(video_track["elements"]) == 0, (
         "Zero-duration shot must not create a video element"
     )
+
+
+# ── Issue #239: filter placeholder SFX/BGM ids (regression) ───────────
+# ✏️ EDIT ZONE START (Issue #239: regression tests)
+
+def test_parse_sfx_id_none_string_returns_none():
+    """S6 lưu '{"sfx_id": "None"}' → phải ra None, không sinh element giả."""
+    assert _parse_sfx_id('{"sfx_id": "None"}') is None
+
+
+def test_parse_sfx_id_lowercase_none_returns_none():
+    """'none' thường cũng là placeholder."""
+    assert _parse_sfx_id('{"sfx_id": "none"}') is None
+
+
+def test_parse_sfx_id_empty_string_returns_none():
+    """Chuỗi rỗng → None."""
+    assert _parse_sfx_id('{"sfx_id": ""}') is None
+
+
+def test_parse_sfx_id_null_json_returns_none():
+    """JSON null → None."""
+    assert _parse_sfx_id('{"sfx_id": null}') is None
+
+
+def test_parse_sfx_id_missing_key_returns_none():
+    """Thiếu khoá sfx_id → None."""
+    assert _parse_sfx_id('{"vfx_tags": []}') is None
+
+
+def test_parse_sfx_id_invalid_json_returns_none():
+    """JSON hỏng → None, không raise."""
+    assert _parse_sfx_id("not-json") is None
+
+
+def test_parse_sfx_id_none_input_returns_none():
+    """Đầu vào None → None."""
+    assert _parse_sfx_id(None) is None
+
+
+def test_parse_sfx_id_real_id_returns_id():
+    """ID thật được giữ nguyên."""
+    assert _parse_sfx_id('{"sfx_id": "sfx_rain_01"}') == "sfx_rain_01"
+
+
+def test_parse_bgm_id_none_lowercase_returns_none():
+    """'none' → None (không sinh media-bgm-none)."""
+    assert _parse_bgm_id("none") is None
+
+
+def test_parse_bgm_id_none_capital_returns_none():
+    """'None' → None."""
+    assert _parse_bgm_id("None") is None
+
+
+def test_parse_bgm_id_empty_returns_none():
+    """Chuỗi rỗng → None."""
+    assert _parse_bgm_id("") is None
+
+
+def test_parse_bgm_id_null_token_returns_none():
+    """'null' token → None."""
+    assert _parse_bgm_id("null") is None
+
+
+def test_parse_bgm_id_real_prompt_returns_slug():
+    """Mô tả thật → slug."""
+    assert _parse_bgm_id("Rainy Night") == "rainy_night"
+
+
+def test_parse_bgm_id_real_id_returns_slug():
+    """ID thật → slug lowercase."""
+    assert _parse_bgm_id("BGM_Rain_01") == "bgm_rain_01"
+
+
+def test_no_sfx_track_when_sfxid_is_none():
+    """AC Layer 2: sfxId=None → không sinh SFX track (không placeholder)."""
+    shot = _make_shot({"sfxId": None, "durationSeconds": 5.0})
+    project = build_opencut_project("ep_001", "Test", [_make_scene(shots=[shot])])
+    names = [t["name"] for t in project["scenes"][0]["tracks"]]
+    assert "SFX" not in names, "Must not create empty SFX placeholder track"
+
+
+def test_no_bgm_track_when_bgmid_is_none():
+    """AC Layer 2: bgmId=None → không sinh Nhạc nền track."""
+    shot = _make_shot({"bgmId": None, "durationSeconds": 5.0})
+    project = build_opencut_project("ep_001", "Test", [_make_scene(shots=[shot])])
+    names = [t["name"] for t in project["scenes"][0]["tracks"]]
+    assert "Nhạc nền" not in names
+
+
+def test_dialogue_track_and_elements_are_unmuted():
+    """AC Layer 1: dialogue track + element phải muted=False (regression)."""
+    shot = _make_shot({"actors": [{
+        "characterId": "char_001", "dialogue": "Xin chào!",
+        "audioId": "tts_001", "audioDuration": 3.0, "isSpeaking": True,
+    }]})
+    project = build_opencut_project("ep_001", "Test", [_make_scene(shots=[shot])])
+    track = next(t for t in project["scenes"][0]["tracks"] if t["name"] == "Lời thoại")
+    assert track["muted"] is False, "Dialogue track must be unmuted"
+    assert track["elements"][0]["muted"] is False, "Dialogue element must be unmuted"
+# ✏️ EDIT ZONE END (Issue #239)
