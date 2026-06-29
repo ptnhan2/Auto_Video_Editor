@@ -83,6 +83,11 @@ ATMOSPHERE_FX_ENUM = (
     "paper-texture",
 )
 
+# Placeholder tokens mà LLM đôi khi trả thay vì asset ID thật hoặc "MISSING:...".
+# validate_batch_updates reject các token này cho field có "reject_placeholders".
+# Lưu ý: empty string ("") KHÔNG nằm trong set — empty = "omit" (hợp lệ).
+PLACEHOLDER_AUDIO_TOKENS = {"none", "null", "n/a", "na", "undefined", "-"}
+
 # ---------------------------------------------------------------------------
 # Layer 1 — Provider-level JSON Schemas (OpenAI strict structured output)
 # ---------------------------------------------------------------------------
@@ -218,9 +223,9 @@ S5_SHOT_SCHEMA = {
 }
 
 S6_SHOT_SCHEMA = {
-    "sfx_id": {"required": False},
+    "sfx_id": {"required": False, "reject_placeholders": True},
     "vfx_tags": {"required": False},
-    "bgm_track": {"required": False},
+    "bgm_track": {"required": False, "reject_placeholders": True},
 }
 
 # ---------------------------------------------------------------------------
@@ -273,6 +278,16 @@ def validate_batch_updates(updates, schema, expected_shot_count):
             # Skip enum validation for MISSING:... fallback values
             if isinstance(val, str) and val.startswith("MISSING:"):
                 continue
+
+            # Reject placeholder tokens (none/null/...) — LLM phải dùng ID thật,
+            # empty string (omit), hoặc 'MISSING: <mô tả>' fallback.
+            if spec.get("reject_placeholders") and isinstance(val, str):
+                if val.strip().lower() in PLACEHOLDER_AUDIO_TOKENS:
+                    shot_errors.append(
+                        f"PLACEHOLDER value for '{field}': got '{val}'. "
+                        f"Use a real asset id, empty string, or 'MISSING: <mô tả>'."
+                    )
+                    continue
 
             # Enum validation
             allowed = spec.get("enum")
