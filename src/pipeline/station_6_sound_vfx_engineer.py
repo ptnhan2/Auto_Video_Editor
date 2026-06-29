@@ -31,6 +31,8 @@ _config = importlib.import_module('src.config')
 get_model_for_station = _config.get_model_for_station
 generate_content = _llm.generate_content
 embed_texts = _llm.embed_texts
+_validator = importlib.import_module('src.shared.schema_validator')
+PLACEHOLDER_AUDIO_TOKENS = _validator.PLACEHOLDER_AUDIO_TOKENS
 
 load_dotenv(".env.local")
 
@@ -82,6 +84,24 @@ def search_audio_vfx_registry(query: str) -> list:
     return res
 
 def update_storyboard_audio(storyboard_id: str, sfx_id: str, vfx_tags: list[str], bgm_track: str) -> dict:
+    """Lưu quyết định âm thanh (SFX/VFX/BGM) cho một shot vào database.
+
+    Normalize placeholder tokens ("None"/"none"/"null"/...) → empty trước khi
+    store, để không bao giờ ghi string "None" vào DB (defense-in-depth cho
+    best-effort path khi schema reject nhưng S6 retry exhausted).
+
+    Args:
+        storyboard_id: Storyboard row id cần update.
+        sfx_id: SFX asset id (hoặc placeholder/empty nếu không có).
+        vfx_tags: List of VFX asset ids.
+        bgm_track: BGM track id (hoặc placeholder/empty nếu không có).
+
+    Returns:
+        dict: {"status": "success"} hoặc {"error": "..."}.
+
+    Side Effects:
+        Updates Storyboard.sound_effect và Storyboard.bgm_prompt trong DB.
+    """
     log_logic_transition(logger, "TOOL_START", "update_storyboard_audio", {"storyboard_id": storyboard_id})
     db = SessionLocal()
     try:
@@ -89,6 +109,14 @@ def update_storyboard_audio(storyboard_id: str, sfx_id: str, vfx_tags: list[str]
         if not shot:
             return {"error": "Storyboard not found"}
         
+        # Normalize placeholder tokens ("None"/"none"/"null"/...) → empty.
+        # S6 schema đã reject, nhưng best-effort path có thể vẫn gọi hàm này
+        # với "None" → normalize để không store string "None" vào DB.
+        if isinstance(sfx_id, str) and sfx_id.strip().lower() in PLACEHOLDER_AUDIO_TOKENS:
+            sfx_id = ""
+        if isinstance(bgm_track, str) and bgm_track.strip().lower() in PLACEHOLDER_AUDIO_TOKENS:
+            bgm_track = ""
+
         # Verify SFX ID exists if provided
         if sfx_id and not any(item.get('id') == sfx_id for item in available_sfx):
             logger.warning(f"SFX ID {sfx_id} not found in registry")

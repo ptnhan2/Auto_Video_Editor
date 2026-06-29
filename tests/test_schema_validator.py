@@ -250,3 +250,65 @@ def test_s6_optional_fields_missing_passes():
     updates = [{"shot_number": 1, "storyboard_id": "sb_1"}]
     is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
     assert is_valid is True
+
+
+# ---------------------------------------------------------------------------
+# AC: S6 reject placeholder tokens (none/null/...) for sfx_id + bgm_track
+# Issue #239 (S6 root cause): LLM trả "None"/"none" thay vì ID thật hoặc
+# "MISSING:..." → validate_batch_updates phải reject để S6 retry.
+# ---------------------------------------------------------------------------
+
+def test_s6_rejects_placeholder_none_sfx_id():
+    """sfx_id='None' → is_valid=False, error mentions sfx_id + PLACEHOLDER."""
+    updates = [_make_s6_update(1, {"sfx_id": "None"})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is False
+    assert 0 in errors
+    err_text = " ".join(errors[0])
+    assert "sfx_id" in err_text
+    assert "PLACEHOLDER" in err_text
+
+
+def test_s6_rejects_placeholder_none_lowercase_bgm_track():
+    """bgm_track='none' (thường) → is_valid=False."""
+    updates = [_make_s6_update(1, {"bgm_track": "none"})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is False
+    assert 0 in errors
+    assert "bgm_track" in " ".join(errors[0])
+
+
+def test_s6_rejects_placeholder_null_sfx_id():
+    """sfx_id='null' → is_valid=False."""
+    updates = [_make_s6_update(1, {"sfx_id": "null"})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is False
+
+
+def test_s6_rejects_placeholder_with_whitespace():
+    """sfx_id='  None  ' (whitespace) → is_valid=False (trim+lower)."""
+    updates = [_make_s6_update(1, {"sfx_id": "  None  "})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is False
+
+
+def test_s6_allows_empty_sfx_id():
+    """sfx_id='' (empty = omit) → is_valid=True (không phải placeholder)."""
+    updates = [_make_s6_update(1, {"sfx_id": ""})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is True
+    assert errors == {}
+
+
+def test_s6_allows_real_sfx_id_and_bgm_track():
+    """sfx_id + bgm_track thật → is_valid=True."""
+    updates = [_make_s6_update(1, {"sfx_id": "sfx_rain_01", "bgm_track": "bgm_tension"})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is True
+
+
+def test_s6_allows_missing_prefix_sfx_id():
+    """sfx_id='MISSING: không có sfx' → is_valid=True (fallback hợp lệ)."""
+    updates = [_make_s6_update(1, {"sfx_id": "MISSING: không có sfx phù hợp"})]
+    is_valid, errors = validate_batch_updates(updates, S6_SHOT_SCHEMA, 1)
+    assert is_valid is True
