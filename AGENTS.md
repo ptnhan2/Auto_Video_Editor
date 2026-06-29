@@ -236,22 +236,35 @@ Remotion has been **completely removed** from the technology stack. All Remotion
 
 ---
 
-### Rule K: "OpenCut-AI Integration — Pipeline Output & API Bridge"
+### Rule K: "OpenCut-AI Integration — Separate Repo & API Boundary"
 
-**Effective:** 2026-06-23
+**Effective:** 2026-06-23 (updated 2026-06-29 — Issue #246)
 
-OpenCut-AI is a **separate repo** (`ptnhan2/OpenCut-AI`, nested in `OpenCut-AI/`) running on **port 3001**.
+#### Repo Boundary (READ FIRST)
 
-#### Key Facts for AI Agents
+OpenCut-AI là **SEPARATE repo** — fork của `Ekaanth/OpenCut-AI`, mirror tại `ptnhan2/OpenCut-AI`, nằm vật lý trong `OpenCut-AI/` nhưng KHÔNG thuộc Platform (`ptnhan2/Auto_Video_Editor`).
+
+| Khía cạnh | Quy tắc |
+|-----------|---------|
+| Repo identity | `ptnhan2/OpenCut-AI` ≠ `ptnhan2/Auto_Video_Editor`. Hai lịch sử git riêng. |
+| `.gitignore` | `OpenCut-AI/` đã bị ignore ở Platform → KHÔNG bao giờ commit file OpenCut-AI vào repo này. |
+| Git operations | MỌI lệnh git cho OpenCut-AI phải dùng `git -C OpenCut-AI ...` (vd: `git -C OpenCut-AI status`, `git -C OpenCut-AI push`). KHÔNG chạy `git add OpenCut-AI/...` trong Platform. |
+| Push / PR | Push/PR OpenCut-AI code → `ptnhan2/OpenCut-AI`, KHÔNG → `ptnhan2/Auto_Video_Editor`. |
+| Worktree | Platform worktree KHÔNG include `OpenCut-AI/` (nó là nested repo, chỉ có ở main worktree `C:\DevWork\Auto_Video_Editor\OpenCut-AI`). Để làm việc với OpenCut-AI trong worktree riêng: `git -C OpenCut-AI worktree add <path> <branch>`. |
+| Cross-repo feature | Một feature chạm cả 2 repo = **2 PR** (1 Platform + 1 OpenCut-AI). Mỗi PR body phải link PR kia (`Related OpenCut-AI PR: #NN` / `Related Platform PR: #NN`). |
+| API contract | `docs/architecture/opencut-api-schema.yaml` (OpenAPI 3.0) là **"link" duy nhất** giữa 2 repo. Đổi contract = cập nhật schema TRƯỚC, rồi implement ở cả 2 bên. |
+
+#### Key Facts
 
 | Concept | Value |
 |---------|-------|
-| OpenCut-AI location | `OpenCut-AI/` (nested git repo, NOT submodule) |
+| OpenCut-AI location | `OpenCut-AI/` (nested git repo, NOT submodule, NOT part of Platform) |
 | Editor URL | `http://localhost:3001` |
 | Platform URL | `http://localhost:3000` |
 | Pipeline output | `public/scripts/opencut_{episode_id}.json` |
 | Output format | OpenCut v10 SerializedProject JSON |
 | Integration docs | `docs/architecture/opencut_integration_guide.md` |
+| API contract | `docs/architecture/opencut-api-schema.yaml` |
 | Sample schema | `docs/architecture/opencut_project_schema.json` |
 
 #### Pipeline → OpenCut Data Flow
@@ -276,7 +289,7 @@ S5 teaches AI to output **OpenCut-AI native terminology** (via enums in `src/sha
 
 #### Git Operations on OpenCut-AI
 
-When modifying OpenCut-AI code, use `git -C OpenCut-AI` for all git commands. Push/PR go to `ptnhan2/OpenCut-AI`, NOT `ptnhan2/Auto_Video_Editor`.
+When modifying OpenCut-AI code, use `git -C OpenCut-AI` for ALL git commands. Push/PR go to `ptnhan2/OpenCut-AI`, NOT `ptnhan2/Auto_Video_Editor`. See "Repo Boundary" table above for worktree & cross-repo rules.
 
 ---
 

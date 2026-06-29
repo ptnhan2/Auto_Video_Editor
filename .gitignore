@@ -172,3 +172,9 @@ remotion/_generated-files.ts
 
 # --- External References & Lab Code ---
 /.archive/
+
+# --- OpenCut-AI (separate repo, NOT part of Platform) ---
+# OpenCut-AI is a SEPARATE repo (ptnhan2/OpenCut-AI), NOT part of Platform.
+# Do NOT commit OpenCut-AI files to this repo.
+# See: docs/architecture/fe-be-migration-roadmap.md
+OpenCut-AI/

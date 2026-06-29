@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: Platform ↔ OpenCut-AI API Contract
+  description: |
+    API contract giua Platform (Auto_Video_Editor, backend :3000) va OpenCut-AI
+    (editor frontend, :3001). Day la "link" duy nhat giua 2 repo rieng biet —
+    OpenCut-AI KHONG phu thuoc code Platform, chi goi API nay.
+
+    Phases (xem docs/architecture/fe-be-migration-roadmap.md):
+      - Phase 1: GET /api/assets/tts/{id}  — da implement (#236)
+      - Phase 2: POST /api/projects/import
+      - Phase 4: GET /api/projects/{id}, PUT /api/projects/{id}
+
+    CORS: moi endpoint phai tra header
+      Access-Control-Allow-Origin: http://localhost:3001
+    (cau hinh trong next.config.ts). Thieu CORS -> browser block "Failed to fetch".
+  version: 0.1.0
+  contact:
+    name: Auto_Video_Editor
+    url: https://github.com/ptnhan2/Auto_Video_Editor
+  license:
+    name: TBD
+servers:
+  - url: http://localhost:3000
+    description: Platform dev server
+tags:
+  - name: assets
+    description: TTS audio & image assets served by Platform
+  - name: projects
+    description: Project import/load/save between Platform and OpenCut-AI
+
+paths:
+  /api/assets/tts/{id}:
+    get:
+      tags: [assets]
+      summary: Stream TTS audio by asset id (Phase 1 — implemented)
+      description: |
+        Stream file TTS audio tu public/assets/audio/tts/ theo id.
+        Ho tro HTTP Range (Accept-Ranges) de seek trong editor.
+        Phase 1: da implement trong #236.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: TTS asset id (filename khong duoi .mp3, vd "tts_ep1_001").
+          schema:
+            type: string
+            pattern: '^[A-Za-z0-9_-]+$'
+      responses:
+        '200':
+          description: Audio stream thanh cong.
+          headers:
+            Content-Type:
+              description: Luon la audio/mpeg cho TTS.
+              schema:
+                type: string
+                example: audio/mpeg
+            Accept-Ranges:
+              description: Bao ho tro Range request de seek.
+              schema:
+                type: string
+                example: bytes
+            Content-Range:
+              description: Co khi client gui Range header.
+              schema:
+                type: string
+                example: bytes 0-1023/2048
+            Access-Control-Allow-Origin:
+              description: CORS — cho phep OpenCut-AI (:3001) goi cross-origin.
+              schema:
+                type: string
+                example: http://localhost:3001
+          content:
+            audio/mpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Khong tim thay asset id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-cors:
+        note: |
+          "CORS bat buoc. them vao next.config.ts:
+          { source: \"/api/assets/:path*\", headers: [
+            { key: \"Access-Control-Allow-Origin\", value: \"http://localhost:3001\" },
+            { key: \"Access-Control-Allow-Methods\", value: \"GET, OPTIONS\" } ] }"
+
+  /api/projects/import:
+    post:
+      tags: [projects]
+      summary: Accept pipeline JSON, validate, normalize, store (Phase 2)
+      description: |
+        Nhan OpenCut v10 SerializedProject JSON tu pipeline (S7 output),
+        validate schema, normalize (startTime/fontSize/position/audio)
+        SERVER-SIDE, tra ve project id + danh sach asset can fetch.
+        Thay the hack import hien tai (redirect + localStorage + IndexedDB).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SerializedProject'
+            examples:
+              s7_output:
+                summary: Output tu S7 Video Compiler
+                value:
+                  version: 10
+                  id: ep-001
+                  name: Episode 1
+                  duration: 180000
+      responses:
+        '200':
+          description: Import thanh cong. Tra project id + asset list.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: http://localhost:3001
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResult'
+        '400':
+          description: JSON khong hop le hoac khong pass v10 schema.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-cors:
+        note: "CORS bat buoc. POST can them Allow-Methods: POST, OPTIONS va xu ly preflight OPTIONS."
+
+  /api/projects/{id}:
+    get:
+      tags: [projects]
+      summary: Return project JSON by id (Phase 4)
+      description: |
+        Tra ve project JSON de OpenCut-AI load vao editor.
+        Backend la source-of-truth; IndexedDB chi la cache offline.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Project id tra tu POST /api/projects/import.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project JSON.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: http://localhost:3001
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerializedProject'
+        '404':
+          description: Khong tim thay project id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-cors:
+        note: "CORS bat buoc (Allow-Origin: http://localhost:3001, GET, OPTIONS)."
+    put:
+      tags: [projects]
+      summary: Editor saves project back (Phase 4)
+      description: |
+        OpenCut-AI luu project (PUT) len backend. Backend la source-of-truth.
+        IndexedDB = cache offline; dong bo lai khi online.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Project id can luu.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SerializedProject'
+      responses:
+        '200':
+          description: Luu thanh cong. Tra version moi.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: http://localhost:3001
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResult'
+        '400':
+          description: Body khong hop le.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Project id khong ton tai.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-cors:
+        note: "CORS bat buoc. PUT can Allow-Methods: PUT, OPTIONS + preflight."
+
+components:
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: Thong bao loi (English, cho AI tool-calling).
+          example: Asset not found
+        code:
+          type: string
+          description: Ma loi may doc duoc.
+          example: ASSET_NOT_FOUND
+    SerializedProject:
+      type: object
+      description: |
+        OpenCut v10 SerializedProject. Day la output cua S7 Video Compiler
+        va la format editor load/luu. Schema day du xem
+        docs/architecture/opencut_project_schema.json.
+      required: [version, id]
+      properties:
+        version:
+          type: integer
+          example: 10
+        id:
+          type: string
+          example: ep-001
+        name:
+          type: string
+          example: Episode 1
+        duration:
+          type: integer
+          description: Miliseconds.
+          example: 180000
+        # TODO(#246): extend full v10 fields reference khi Phase 2 implement.
+    ImportResult:
+      type: object
+      required: [projectId, assets]
+      properties:
+        projectId:
+          type: string
+          example: ep-001
+        assets:
+          type: array
+          description: Danh sach asset id can fetch qua /api/assets/tts/{id}.
+          items:
+            type: string
+          example: [tts_ep1_001, tts_ep1_002]
+    SaveResult:
+      type: object
+      required: [projectId, version]
+      properties:
+        projectId:
+          type: string
+        version:
+          type: integer
+          description: Version tang sau moi lan luu (foundation cho versioning).
+          example: 2
