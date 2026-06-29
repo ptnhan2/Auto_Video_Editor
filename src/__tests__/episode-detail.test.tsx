@@ -19,16 +19,16 @@ describe("derivePipelineSteps", () => {
     expect(steps.every((s: PipelineStep) => s.status === "pending")).toBe(true);
   });
 
-  it("scripting status → S1 completed, S2 in_progress, rest pending", () => {
+  it("scripting status → S1 completed, rest pending", () => {
     const steps = derivePipelineSteps({ status: "scripting", updatedAt: ts } as Episode);
     expect(steps[0].status).toBe("completed");
-    expect(steps[1].status).toBe("in_progress");
-    expect(steps.slice(2).every((s: PipelineStep) => s.status === "pending")).toBe(true);
+    expect(steps.slice(1).every((s: PipelineStep) => s.status === "pending")).toBe(true);
   });
 
-  it("rendering status → S1-S5 completed, S6-S7 pending", () => {
+  it("rendering status → S1-S4 completed, S5-S7 pending", () => {
     const steps = derivePipelineSteps({ status: "rendering", updatedAt: ts } as Episode);
-    expect(steps.slice(0, 5).every((s: PipelineStep) => s.status === "completed")).toBe(true);
+    expect(steps.slice(0, 4).every((s: PipelineStep) => s.status === "completed")).toBe(true);
+    expect(steps[4].status).toBe("pending");
     expect(steps[5].status).toBe("pending");
     expect(steps[6].status).toBe("pending");
   });
@@ -52,7 +52,7 @@ describe("derivePipelineSteps", () => {
   it("completed steps have timestamp, pending steps have null timestamp", () => {
     const steps = derivePipelineSteps({ status: "scripting", updatedAt: ts } as Episode);
     expect(steps[0].timestamp).toBe(ts);
-    expect(steps[1].timestamp).toBe(ts);
+    expect(steps[1].timestamp).toBeNull();
     expect(steps[2].timestamp).toBeNull();
   });
 
