@@ -13,6 +13,7 @@ Verifies:
 """
 import sys
 import os
+import re
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -279,19 +280,19 @@ def test_scene_marker_at_scene_boundary():
 # ── Builder unit tests ────────────────────────────────────────────────
 
 def test_uid_is_unique_hex_string():
-    """_uid() returns unique 8-char hex strings."""
+    """_uid() returns unique UUID4 strings (36 chars, 8-4-4-4-12 hex)."""
+    uuid4_re = r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
     ids = {_uid() for _ in range(100)}
     assert len(ids) == 100, "All 100 calls should produce unique IDs"
     for uid in ids:
-        assert len(uid) == 8
-        int(uid, 16)  # Must be valid hex
+        assert re.match(uuid4_re, uid), f"Not a UUID4: {uid}"
 
 
 def test_iso_now_format():
-    """_iso_now() returns ISO 8601 string ending with .000Z."""
+    """_iso_now() returns ISO 8601 string with microseconds, ending in Z."""
+    iso_re = r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$'
     ts = _iso_now()
-    assert ts.endswith(".000Z"), f"Expected .000Z suffix, got: {ts}"
-    assert "T" in ts, "ISO 8601 must contain T separator"
+    assert re.match(iso_re, ts), f"Not ISO 8601 with microseconds: {ts}"
 
 
 def test_make_transform_defaults():
